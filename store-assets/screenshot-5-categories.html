@@ -1,0 +1,268 @@
+<\!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>Gmail Organizer – Categories</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1280px; height: 800px; overflow: hidden; font-family: 'Google Sans', Roboto, sans-serif; background: #f6f8fc; display: flex; }
+
+  /* Sidebar */
+  .sidebar { width: 220px; height: 800px; background: #fff; border-right: 1px solid #e0e0e0; flex-shrink: 0; display: flex; flex-direction: column; }
+  .sidebar-logo { padding: 20px 20px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #f1f3f4; }
+  .sidebar-logo .icon { font-size: 24px; }
+  .sidebar-logo h2 { font-size: 15px; font-weight: 700; color: #202124; }
+  .sidebar-logo span { font-size: 10px; color: #5f6368; display: block; }
+  .nav { padding: 8px 0; flex: 1; }
+  .nav-item { display: flex; align-items: center; gap: 12px; padding: 0 20px; height: 40px; cursor: pointer; font-size: 14px; color: #5f6368; border-radius: 0 20px 20px 0; margin-right: 12px; }
+  .nav-item.active { background: #e8f0fe; color: #1a73e8; font-weight: 600; }
+  .nav-item .ni { font-size: 17px; }
+  .sidebar-footer { padding: 12px 20px; border-top: 1px solid #f1f3f4; }
+  .user-row { display: flex; align-items: center; gap: 8px; }
+  .user-avatar { width: 30px; height: 30px; border-radius: 50%; background: #1a73e8; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; }
+  .user-name { font-weight: 600; color: #202124; font-size: 12px; }
+  .user-plan { color: #5f6368; font-size: 11px; }
+
+  /* Main */
+  .main { flex: 1; overflow-y: auto; padding: 20px 28px; }
+  .page-header { margin-bottom: 6px; }
+  .page-header h1 { font-size: 20px; font-weight: 600; color: #202124; }
+  .page-header .sub { font-size: 12px; color: #5f6368; margin-top: 3px; }
+
+  /* Info banner */
+  .info-banner { background: #e8f0fe; border: 1px solid #c5d8f8; border-radius: 10px; padding: 12px 16px; display: flex; align-items: flex-start; gap: 10px; margin: 14px 0 18px; }
+  .info-banner .ib-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .info-banner p { font-size: 13px; color: #1a3a6b; line-height: 1.5; }
+  .info-banner strong { font-weight: 600; }
+
+  /* Global actions */
+  .global-actions { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .btn { border: none; border-radius: 8px; padding: 7px 14px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .btn-primary { background: #1a73e8; color: #fff; }
+  .btn-secondary { background: #fff; color: #3c4043; border: 1px solid #dadce0; }
+  .btn-ghost { background: transparent; color: #1a73e8; border: none; font-size: 13px; font-weight: 600; padding: 7px 10px; cursor: pointer; }
+  .global-actions .spacer { flex: 1; }
+  .save-note { font-size: 12px; color: #34a853; display: flex; align-items: center; gap: 5px; font-weight: 500; }
+
+  /* Categories list */
+  .cat-list { background: #fff; border-radius: 12px; border: 1px solid #e8eaed; overflow: hidden; }
+  .cat-list-header { display: grid; grid-template-columns: 56px 1fr 180px 120px 100px; padding: 9px 16px; background: #f8f9fa; border-bottom: 1px solid #e8eaed; font-size: 11px; font-weight: 700; color: #5f6368; letter-spacing: .5px; text-transform: uppercase; align-items: center; gap: 0; }
+
+  .cat-row { display: grid; grid-template-columns: 56px 1fr 180px 120px 100px; padding: 14px 16px; border-bottom: 1px solid #f1f3f4; align-items: center; gap: 0; transition: background .12s; }
+  .cat-row:last-child { border-bottom: none; }
+  .cat-row:hover { background: #fafbfc; }
+
+  /* Toggle */
+  .toggle { width: 40px; height: 22px; border-radius: 11px; position: relative; cursor: pointer; }
+  .toggle.on { background: #1a73e8; }
+  .toggle.off { background: #bdc1c6; }
+  .toggle::after { content: ''; position: absolute; top: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: left .15s; }
+  .toggle.on::after { left: 21px; }
+  .toggle.off::after { left: 3px; }
+
+  /* Category info */
+  .cat-info { display: flex; align-items: center; gap: 12px; }
+  .cat-icon-wrap { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .cat-text h3 { font-size: 14px; font-weight: 600; color: #202124; }
+  .cat-text p { font-size: 12px; color: #5f6368; margin-top: 2px; line-height: 1.4; }
+
+  /* Label chip */
+  .label-chip { font-size: 12px; padding: 3px 12px; border-radius: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 5px; }
+
+  /* Action select */
+  .action-select { background: #f1f3f4; border: 1px solid #e0e0e0; border-radius: 8px; padding: 5px 10px; font-size: 12px; font-weight: 600; color: #202124; cursor: pointer; appearance: none; }
+
+  /* Match count */
+  .match-cell { font-size: 13px; font-weight: 700; color: #202124; }
+  .match-sub { font-size: 10px; color: #9aa0a6; }
+
+  /* Action badge */
+  .action-badge { font-size: 11px; padding: 3px 10px; border-radius: 10px; font-weight: 700; display: inline-block; }
+  .badge-move { background: #e8f0fe; color: #1a73e8; }
+  .badge-keep { background: #e6f4ea; color: #137333; }
+  .badge-off  { background: #f1f3f4; color: #5f6368; }
+</style>
+</head>
+<body>
+
+<\!-- Sidebar -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <span class="icon">📧</span>
+    <div><h2>Gmail Organizer</h2><span>v0.9.3</span></div>
+  </div>
+  <nav class="nav">
+    <div class="nav-item"><span class="ni">📥</span> Overview</div>
+    <div class="nav-item"><span class="ni">📊</span> Analytics</div>
+    <div class="nav-item"><span class="ni">⚙️</span> Rules</div>
+    <div class="nav-item active"><span class="ni">🏷️</span> Categories</div>
+    <div class="nav-item"><span class="ni">🌙</span> Snooze</div>
+    <div class="nav-item"><span class="ni">🔒</span> Settings</div>
+    <div class="nav-item"><span class="ni">❓</span> Help</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="user-avatar">A</div>
+      <div>
+        <div class="user-name">Alex Johnson</div>
+        <div class="user-plan">Free Plan · 87 credits left</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<\!-- Main -->
+<div class="main">
+  <div class="page-header">
+    <h1>Gmail Categories</h1>
+    <div class="sub">Map Gmail's built-in tabs to labels and actions. Changes take effect on the next organize run.</div>
+  </div>
+
+  <div class="info-banner">
+    <span class="ib-icon">ℹ️</span>
+    <p>Gmail automatically categorizes emails into tabs (Promotions, Social, Updates, etc.). Here you can choose whether to <strong>keep</strong> them in the inbox with a label, <strong>move them out</strong> to their own folder, or <strong>disable</strong> processing for that category entirely.</p>
+  </div>
+
+  <div class="global-actions">
+    <button class="btn btn-secondary">Enable All</button>
+    <button class="btn btn-secondary">Disable All</button>
+    <button class="btn btn-ghost">Set all to move-out</button>
+    <div class="spacer"></div>
+    <div class="save-note">✓ All changes saved automatically</div>
+    <button class="btn btn-primary">▶ Run Now</button>
+  </div>
+
+  <div class="cat-list">
+    <div class="cat-list-header">
+      <div>On/Off</div>
+      <div>Category</div>
+      <div>Gmail Label</div>
+      <div>Action</div>
+      <div>This Month</div>
+    </div>
+
+    <\!-- Promotions -->
+    <div class="cat-row">
+      <div><div class="toggle on"></div></div>
+      <div class="cat-info">
+        <div class="cat-icon-wrap" style="background:#fef0e0">🛍️</div>
+        <div class="cat-text">
+          <h3>Promotions</h3>
+          <p>Sales, deals, marketing and discount emails</p>
+        </div>
+      </div>
+      <div><span class="label-chip" style="background:#fef0e0;color:#b45309">🏷 Promotions</span></div>
+      <div><span class="action-badge badge-move">move-out</span></div>
+      <div><div class="match-cell">312</div><div class="match-sub">threads</div></div>
+    </div>
+
+    <\!-- Social -->
+    <div class="cat-row">
+      <div><div class="toggle on"></div></div>
+      <div class="cat-info">
+        <div class="cat-icon-wrap" style="background:#f3e8fd">👥</div>
+        <div class="cat-text">
+          <h3>Social</h3>
+          <p>Notifications from social networks and community sites</p>
+        </div>
+      </div>
+      <div><span class="label-chip" style="background:#f3e8fd;color:#7627bb">🏷 Social</span></div>
+      <div><span class="action-badge badge-move">move-out</span></div>
+      <div><div class="match-cell">148</div><div class="match-sub">threads</div></div>
+    </div>
+
+    <\!-- Updates -->
+    <div class="cat-row">
+      <div><div class="toggle on"></div></div>
+      <div class="cat-info">
+        <div class="cat-icon-wrap" style="background:#e8f0fe">🔔</div>
+        <div class="cat-text">
+          <h3>Updates</h3>
+          <p>Notifications, receipts, statements and alerts</p>
+        </div>
+      </div>
+      <div><span class="label-chip" style="background:#e8f0fe;color:#1a73e8">🏷 Updates</span></div>
+      <div><span class="action-badge badge-keep">keep</span></div>
+      <div><div class="match-cell">203</div><div class="match-sub">threads</div></div>
+    </div>
+
+    <\!-- Forums -->
+    <div class="cat-row">
+      <div><div class="toggle on"></div></div>
+      <div class="cat-info">
+        <div class="cat-icon-wrap" style="background:#e6f4ea">💬</div>
+        <div class="cat-text">
+          <h3>Forums</h3>
+          <p>Mailing lists, group discussions, and Q&amp;A platforms</p>
+        </div>
+      </div>
+      <div><span class="label-chip" style="background:#e6f4ea;color:#137333">🏷 Forums</span></div>
+      <div><span class="action-badge badge-move">move-out</span></div>
+      <div><div class="match-cell">67</div><div class="match-sub">threads</div></div>
+    </div>
+
+    <\!-- Finance -->
+    <div class="cat-row">
+      <div><div class="toggle on"></div></div>
+      <div class="cat-info">
+        <div class="cat-icon-wrap" style="background:#e8f0fe">🏦</div>
+        <div class="cat-text">
+          <h3>Finance / Banking</h3>
+          <p>Bank statements, credit card alerts, investment updates</p>
+        </div>
+      </div>
+      <div><span class="label-chip" style="background:#e8f0fe;color:#1a73e8">🏷 Finance</span></div>
+      <div><span class="action-badge badge-keep">keep</span></div>
+      <div><div class="match-cell">189</div><div class="match-sub">threads</div></div>
+    </div>
+
+    <\!-- Purchases -->
+    <div class="cat-row">
+      <div><div class="toggle on"></div></div>
+      <div class="cat-info">
+        <div class="cat-icon-wrap" style="background:#fef9e0">📦</div>
+        <div class="cat-text">
+          <h3>Purchases</h3>
+          <p>Order confirmations, shipping notifications, returns</p>
+        </div>
+      </div>
+      <div><span class="label-chip" style="background:#fef9e0;color:#b06000">🏷 Shopping</span></div>
+      <div><span class="action-badge badge-move">move-out</span></div>
+      <div><div class="match-cell">94</div><div class="match-sub">threads</div></div>
+    </div>
+
+    <\!-- Travel -->
+    <div class="cat-row">
+      <div><div class="toggle on"></div></div>
+      <div class="cat-info">
+        <div class="cat-icon-wrap" style="background:#e6f4ea">✈️</div>
+        <div class="cat-text">
+          <h3>Travel</h3>
+          <p>Flight confirmations, hotel bookings, itineraries</p>
+        </div>
+      </div>
+      <div><span class="label-chip" style="background:#e6f4ea;color:#137333">🏷 Travel</span></div>
+      <div><span class="action-badge badge-move">move-out</span></div>
+      <div><div class="match-cell">31</div><div class="match-sub">threads</div></div>
+    </div>
+
+    <\!-- Primary (off) -->
+    <div class="cat-row">
+      <div><div class="toggle on"></div></div>
+      <div class="cat-info">
+        <div class="cat-icon-wrap" style="background:#fce8e6">📰</div>
+        <div class="cat-text">
+          <h3>Newsletters</h3>
+          <p>Editorial digests, weekly roundups, subscriptions</p>
+        </div>
+      </div>
+      <div><span class="label-chip" style="background:#fce8e6;color:#c5221f">🏷 Newsletters</span></div>
+      <div><span class="action-badge badge-move">move-out</span></div>
+      <div><div class="match-cell">265</div><div class="match-sub">threads</div></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

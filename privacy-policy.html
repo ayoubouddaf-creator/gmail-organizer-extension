@@ -1,0 +1,173 @@
+<\!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Privacy Policy — Gmail Organizer</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #1a1a1a; background: #f9f9f9; }
+    .container { max-width: 780px; margin: 0 auto; padding: 48px 24px 80px; background: #fff; min-height: 100vh; }
+    header { border-bottom: 2px solid #e8f0fe; padding-bottom: 24px; margin-bottom: 36px; }
+    .logo { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg,#4285f4,#34a853); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; }
+    .logo-name { font-size: 20px; font-weight: 700; color: #1a73e8; }
+    h1 { font-size: 28px; font-weight: 800; color: #1a1a1a; margin-bottom: 8px; }
+    .meta { font-size: 14px; color: #666; }
+    .summary-box { background: #e8f0fe; border-left: 4px solid #1a73e8; border-radius: 8px; padding: 20px 24px; margin-bottom: 36px; }
+    .summary-box h2 { font-size: 15px; font-weight: 700; color: #1a73e8; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .summary-box ul { list-style: none; padding: 0; }
+    .summary-box ul li { padding: 4px 0; font-size: 14px; color: #1a1a1a; }
+    .summary-box ul li::before { content: "✅ "; }
+    section { margin-bottom: 36px; }
+    h2 { font-size: 20px; font-weight: 700; color: #1a1a1a; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #eee; }
+    p { font-size: 15px; line-height: 1.7; color: #333; margin-bottom: 12px; }
+    ul, ol { margin: 12px 0 12px 24px; }
+    li { font-size: 15px; line-height: 1.7; color: #333; margin-bottom: 6px; }
+    .highlight { background: #fff8e1; border: 1px solid #ffd54f; border-radius: 6px; padding: 14px 18px; margin: 16px 0; font-size: 14px; }
+    .contact-box { background: #f1f8e9; border: 1px solid #aed581; border-radius: 8px; padding: 20px 24px; }
+    .contact-box a { color: #388e3c; font-weight: 600; }
+    footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid #eee; font-size: 13px; color: #999; text-align: center; }
+    a { color: #1a73e8; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="logo">
+      <div class="logo-icon">📧</div>
+      <span class="logo-name">Gmail Organizer</span>
+    </div>
+    <h1>Privacy Policy</h1>
+    <p class="meta">Last updated: April 17, 2026 &nbsp;·&nbsp; Version 1.0</p>
+  </header>
+
+  <div class="summary-box">
+    <h2>Privacy at a Glance</h2>
+    <ul>
+      <li>We never read, store, or share your email content</li>
+      <li>Your emails are processed locally inside your browser only</li>
+      <li>We do not sell your data to anyone, ever</li>
+      <li>OAuth tokens are used only to access your Gmail and never stored on our servers</li>
+      <li>The only data sent to our backend is your Gmail address (for subscription management)</li>
+    </ul>
+  </div>
+
+  <section>
+    <h2>1. Introduction</h2>
+    <p>Gmail Organizer ("we", "our", or "the extension") is a Chrome Extension that helps you automatically organize your Gmail inbox using smart rules, labels, and categories. This Privacy Policy explains what information we collect, how we use it, and your rights regarding your data.</p>
+    <p>By installing and using Gmail Organizer, you agree to the practices described in this policy.</p>
+  </section>
+
+  <section>
+    <h2>2. Information We Collect</h2>
+    <h3 style="font-size:16px;margin:16px 0 8px;color:#333;">2.1 Gmail Data (Processed Locally Only)</h3>
+    <p>Gmail Organizer accesses your Gmail inbox to read email metadata (sender address, subject line, labels, and category flags). This data is:</p>
+    <ul>
+      <li>Processed entirely within your browser's local environment</li>
+      <li>Never transmitted to our servers or any third party</li>
+      <li>Never stored permanently — it is used only during an active organize session</li>
+    </ul>
+    <div class="highlight">⚠️ <strong>We never read, store, or transmit the body content of your emails.</strong> Only metadata (From, Subject, Labels) is used to match your rules.</div>
+
+    <h3 style="font-size:16px;margin:16px 0 8px;color:#333;">2.2 Account Information</h3>
+    <p>We collect your Gmail email address solely to manage your subscription and credit balance. This is sent securely to our backend server for the following purposes only:</p>
+    <ul>
+      <li>Verifying your subscription status before each organize run</li>
+      <li>Deducting a usage credit after a successful run</li>
+      <li>Retrieving your plan details in the settings page</li>
+    </ul>
+
+    <h3 style="font-size:16px;margin:16px 0 8px;color:#333;">2.3 Extension Settings</h3>
+    <p>Your rules, preferences, and configuration are stored locally using Chrome's built-in storage (chrome.storage.sync), which syncs across your Chrome devices via your Google account. We do not have access to this data.</p>
+  </section>
+
+  <section>
+    <h2>3. How We Use Your Information</h2>
+    <ul>
+      <li><strong>Organizing your inbox:</strong> Email metadata is used locally to match your rules and apply labels/actions</li>
+      <li><strong>Subscription management:</strong> Your email address is used to check and track your plan usage</li>
+      <li><strong>Payment processing:</strong> Your email is passed to Stripe to create a secure checkout session</li>
+      <li><strong>AI features:</strong> If you enable Gemini AI rule generation, email metadata summaries are sent to Google's Gemini API — never full email content</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>4. Third-Party Services</h2>
+    <p>Gmail Organizer integrates with the following third-party services:</p>
+    <ul>
+      <li><strong>Google Gmail API:</strong> Used to read and modify your inbox. Governed by <a href="https://policies.google.com/privacy" target="_blank">Google's Privacy Policy</a></li>
+      <li><strong>Google Gemini API:</strong> Optional AI rule generation. Only metadata summaries are sent — no email bodies. Governed by <a href="https://policies.google.com/privacy" target="_blank">Google's Privacy Policy</a></li>
+      <li><strong>Stripe:</strong> Payment processing for subscriptions. Governed by <a href="https://stripe.com/privacy" target="_blank">Stripe's Privacy Policy</a></li>
+      <li><strong>Google Cloud Functions:</strong> Our backend for subscription verification. Hosted in the US (us-central1)</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>5. Gmail API Scopes</h2>
+    <p>Gmail Organizer requests the following OAuth scopes:</p>
+    <ul>
+      <li><code>gmail.modify</code> — To read emails and apply labels/actions to your inbox</li>
+      <li><code>mail.google.com</code> — Required for full Gmail API access</li>
+    </ul>
+    <p>Gmail Organizer's use and transfer of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
+  </section>
+
+  <section>
+    <h2>6. Data Storage and Security</h2>
+    <ul>
+      <li>Email content is never stored anywhere — not on our servers, not in the extension</li>
+      <li>Your settings are stored in Chrome's encrypted sync storage</li>
+      <li>All communication between the extension and our backend uses HTTPS</li>
+      <li>OAuth tokens are managed by Chrome's identity API and never sent to our servers in plain form</li>
+      <li>We use your OAuth token only to verify your identity — it is not logged or stored</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>7. Data Retention</h2>
+    <ul>
+      <li>Run history (summaries only — no email content) is stored locally in your browser for up to 90 days</li>
+      <li>Your email address is retained in our backend only as long as your account is active</li>
+      <li>Deleting the extension removes all locally stored data immediately</li>
+      <li>You may request deletion of your account data by contacting us</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>8. Your Rights</h2>
+    <p>You have the right to:</p>
+    <ul>
+      <li>Access any personal data we hold about you (your email address and subscription status)</li>
+      <li>Request deletion of your account and all associated data</li>
+      <li>Revoke Gmail access at any time via <a href="https://myaccount.google.com/permissions" target="_blank">Google Account Permissions</a></li>
+      <li>Export your extension settings using the built-in Export feature</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>9. Children's Privacy</h2>
+    <p>Gmail Organizer is not directed at children under 13. We do not knowingly collect personal information from children. If you believe a child has used our extension, please contact us and we will delete the data immediately.</p>
+  </section>
+
+  <section>
+    <h2>10. Changes to This Policy</h2>
+    <p>We may update this Privacy Policy from time to time. When we do, we will update the "Last updated" date at the top of this page. Significant changes will be communicated through the extension update notes.</p>
+  </section>
+
+  <section>
+    <h2>11. Contact Us</h2>
+    <div class="contact-box">
+      <p>If you have questions about this Privacy Policy or want to request data deletion, contact us at:</p>
+      <p style="margin-top:12px;"><strong>Email:</strong> <a href="mailto:soufianeodf@gmail.com">soufianeodf@gmail.com</a></p>
+      <p><strong>Extension:</strong> Gmail Organizer — Chrome Web Store</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 Gmail Organizer. All rights reserved.</p>
+    <p style="margin-top:8px;">This extension is not affiliated with or endorsed by Google LLC.</p>
+  </footer>
+</div>
+</body>
+</html>

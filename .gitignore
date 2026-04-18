@@ -1,0 +1,16 @@
+# Dev tool artifacts
+.playwright-mcp/
+.claude/
+push-to-github.sh
+
+# Old packaged zips
+*.zip
+gmail-organizer-v*/
+
+# Private docs
+privacy-policy.docx
+
+# Misc
+.DS_Store
+*.log
+node_modules/

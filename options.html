@@ -1,0 +1,2862 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Gmail Organizer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset ───────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Fyxer design tokens ─────────────────────────────────────────────── */
+    :root {
+      --font: 'Poppins', -apple-system, sans-serif;
+
+      /* Sidebar */
+      --sidebar-w:       228px;
+      --sidebar-bg:      #fafaf8;
+      --sidebar-border:  #e8e8e3;
+
+      /* Brand */
+      --brand:           #e8441a;
+
+      /* Main */
+      --main-bg:         #ffffff;
+
+      /* Text */
+      --text:            #1a1a18;
+      --text-2:          #6b6b62;
+      --text-3:          #a8a89e;
+
+      /* Surfaces */
+      --card-bg:         #ffffff;
+      --card-border:     #e8e8e3;
+      --input-bg:        #ffffff;
+      --hover-bg:        #f0f0eb;
+      --active-nav-bg:   #ffffff;
+
+      /* Accents */
+      --yellow:          #f59e0b;
+      --yellow-bg:       #fffbeb;
+      --yellow-border:   rgba(245,158,11,.25);
+      --green:           #22c55e;
+      --red:             #ef4444;
+      --blue:            #3b82f6;
+
+      /* Misc */
+      --radius:          8px;
+      --radius-lg:       10px;
+      --topbar-h:        58px;
+      --shadow-nav:      0 1px 4px rgba(0,0,0,.08), 0 0 0 1px rgba(0,0,0,.05);
+    }
+
+    /* ══════════════════════════════════════════════════════════════════════
+       DARK MODE — Concept 3 Dashboard theme
+    ══════════════════════════════════════════════════════════════════════ */
+    [data-theme="dark"] {
+      --sidebar-bg:      #0a0a0f;
+      --sidebar-border:  rgba(255,255,255,.07);
+      --brand:           #4f9cf9;
+      --main-bg:         #0d0d12;
+      --text:            #e8e8f0;
+      --text-2:          #6b6b80;
+      --text-3:          #444455;
+      --card-bg:         rgba(255,255,255,.04);
+      --card-border:     rgba(255,255,255,.08);
+      --input-bg:        rgba(255,255,255,.05);
+      --hover-bg:        rgba(255,255,255,.05);
+      --active-nav-bg:   rgba(79,156,249,.1);
+      --yellow:          #f59e0b;
+      --yellow-bg:       rgba(245,158,11,.08);
+      --yellow-border:   rgba(245,158,11,.2);
+      --green:           #4ade80;
+      --blue:            #60a5fa;
+      --red:             #f87171;
+      --shadow-nav:      0 1px 4px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.07);
+    }
+
+    [data-theme="dark"] html,
+    [data-theme="dark"] body { background: var(--main-bg); color: var(--text); }
+
+    /* Sidebar gradient tint */
+    [data-theme="dark"] .sidebar { background: linear-gradient(180deg,rgba(79,156,249,.07) 0%,#0a0a0f 100%); }
+    [data-theme="dark"] .sidebar-brand { border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .brand-name { color: #4f9cf9; }
+    [data-theme="dark"] .brand-bell { color: var(--text-2); }
+    [data-theme="dark"] .nav-section-label { color: rgba(255,255,255,.18); }
+    [data-theme="dark"] .nav-item.active { background: rgba(79,156,249,.1); color: #60a5fa; box-shadow: none; border-left: 2px solid #4f9cf9; }
+    [data-theme="dark"] .nav-item { border-left: 2px solid transparent; }
+    [data-theme="dark"] .sidebar-footer { border-top-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .footer-workspace:hover { background: rgba(255,255,255,.05); }
+    [data-theme="dark"] .ws-name { color: var(--text); }
+    [data-theme="dark"] .ws-avatar { background: rgba(79,156,249,.3); }
+
+    /* Topbar */
+    [data-theme="dark"] .topbar { background: #0d0d12; border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .main { background: #0d0d12; }
+    [data-theme="dark"] .main-body { background: #0d0d12; }
+    [data-theme="dark"] .topbar-title { color: var(--text); }
+    [data-theme="dark"] .btn-outline { background: rgba(255,255,255,.05); color: var(--text-2); border-color: rgba(255,255,255,.1); }
+    [data-theme="dark"] .btn-outline:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.15); }
+
+    /* Cards & inputs */
+    [data-theme="dark"] .card { background: var(--card-bg); border-color: rgba(255,255,255,.08); }
+    [data-theme="dark"] .rule-card { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.08); }
+    [data-theme="dark"] .preset-card { background: rgba(255,255,255,.03); border-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .preset-card:hover { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.12); }
+    [data-theme="dark"] .history-item { background: rgba(255,255,255,.03); border-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .stat-card { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .label-pill { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.08); }
+    [data-theme="dark"] .wizard-step { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.08); }
+
+    [data-theme="dark"] input[type=text],
+    [data-theme="dark"] input[type=number],
+    [data-theme="dark"] input[type=password],
+    [data-theme="dark"] textarea,
+    [data-theme="dark"] select { background: var(--input-bg); border-color: rgba(255,255,255,.1); color: var(--text); }
+    [data-theme="dark"] select option { background: #0d0d12; color: var(--text); }
+    [data-theme="dark"] input:focus, [data-theme="dark"] textarea:focus, [data-theme="dark"] select:focus { border-color: rgba(79,156,249,.5); box-shadow: 0 0 0 3px rgba(79,156,249,.1); }
+
+    /* Tabs */
+    [data-theme="dark"] .tabs { border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .tab.active { color: var(--text); border-bottom-color: #4f9cf9; }
+
+    /* Toggle switches */
+    [data-theme="dark"] .toggle-row { border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .toggle-track { background: #2a2a3a; }
+    [data-theme="dark"] .toggle input:checked + .toggle-track { background: #4ade80; }
+
+    /* Buttons compat */
+    [data-theme="dark"] .button { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.1); color: var(--text-2); }
+    [data-theme="dark"] .button:hover { background: rgba(255,255,255,.08); }
+    [data-theme="dark"] .button.primary { background: #2563eb; color: #fff; border-color: #2563eb; }
+    [data-theme="dark"] .button.primary:hover { background: #1d4ed8; }
+    [data-theme="dark"] .button.secondary { background: rgba(255,255,255,.07); color: var(--text); }
+    [data-theme="dark"] .button.ghost { background: transparent; color: var(--text-2); }
+    [data-theme="dark"] .button.danger { background: rgba(239,68,68,.15); color: #f87171; border-color: rgba(239,68,68,.25); }
+    [data-theme="dark"] .link-button { color: var(--text-2); }
+    [data-theme="dark"] .link-button.danger { color: #f87171; }
+    [data-theme="dark"] .btn-primary { background: #2563eb; }
+    [data-theme="dark"] .btn-primary:hover { background: #1d4ed8; }
+    [data-theme="dark"] .btn-ghost { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.1); color: var(--text-2); }
+
+    /* Dashboard panel */
+    [data-theme="dark"] .db-card { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.08); }
+    [data-theme="dark"] .db-stat { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.08); border-bottom: none; }
+    [data-theme="dark"] .db-card-hd { border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .db-sync-btn { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.1); }
+    [data-theme="dark"] .db-sync-btn:hover { background: rgba(255,255,255,.08); }
+    [data-theme="dark"] .db-period-btn { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.1); }
+    [data-theme="dark"] .db-cat-row { border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .db-cat-bar-wrap { background: rgba(255,255,255,.08); }
+    [data-theme="dark"] .db-setting-row { border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .db-field-row { border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .db-field-row input[type="number"] { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.1); }
+    [data-theme="dark"] .db-save-btn { background: #2563eb; }
+    [data-theme="dark"] .db-bar { background: rgba(79,156,249,.7); opacity:.8; }
+    [data-theme="dark"] .db-bar.active { opacity:1; background: #4f9cf9; }
+    [data-theme="dark"] .db-stat-trend.neutral { background: rgba(255,255,255,.07); color: var(--text-2); }
+
+    /* Analytics panel */
+    [data-theme="dark"] .an-header { background: #0d0d12; }
+    [data-theme="dark"] .an-card { background: rgba(255,255,255,.04) !important; border-color: rgba(255,255,255,.08) !important; }
+    [data-theme="dark"] .an-card-hd { border-bottom-color: rgba(255,255,255,.07) !important; }
+    [data-theme="dark"] .an-kpi { background: rgba(255,255,255,.04) !important; border-color: rgba(255,255,255,.08) !important; }
+    [data-theme="dark"] .an-kpi-badge.neutral { background: rgba(255,255,255,.07); color: var(--text-2); }
+    [data-theme="dark"] .an-refresh-btn { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.1); }
+    [data-theme="dark"] .an-sender-row { border-bottom-color: rgba(255,255,255,.07) !important; }
+    [data-theme="dark"] .an-sender-bar-wrap { background: rgba(255,255,255,.08); }
+    [data-theme="dark"] .an-label-row { border-bottom-color: rgba(255,255,255,.07) !important; }
+    [data-theme="dark"] .an-label-count { background: rgba(255,255,255,.07); color: var(--text-2); }
+    [data-theme="dark"] .an-run-row { border-bottom-color: rgba(255,255,255,.07) !important; }
+    [data-theme="dark"] .an-run-source { background: rgba(255,255,255,.07); color: var(--text-3); }
+    [data-theme="dark"] .an-quota-track { background: rgba(255,255,255,.08); }
+    [data-theme="dark"] .an-priority-score.low { background: rgba(255,255,255,.07); }
+    [data-theme="dark"] .an-skeleton { background: linear-gradient(90deg,rgba(255,255,255,.05) 25%,rgba(255,255,255,.09) 50%,rgba(255,255,255,.05) 75%); background-size: 200% 100%; }
+
+    /* Categorization panel */
+    [data-theme="dark"] .cat-bar { background: #0d0d12; border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .cat-tab-row { background: #0d0d12; border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .cat-tab-btn { color: var(--text-2); }
+    [data-theme="dark"] .cat-tab-btn.active { background: #0d0d12; border-color: rgba(255,255,255,.08); border-bottom-color: #0d0d12; color: var(--text); }
+    [data-theme="dark"] .cat-body { background: #0b0b10; }
+    [data-theme="dark"] .cat-col { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.08); }
+    [data-theme="dark"] .cat-col-hd { border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .cat-row { border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .cat-row:hover { background: rgba(255,255,255,.04); }
+    [data-theme="dark"] .cat-extra-col { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.08); }
+    [data-theme="dark"] .cat-extra-hd { border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .cat-adv-card { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.08); }
+    [data-theme="dark"] .cat-adv-row { border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .cat-radio-row { border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .cat-radio-row:hover { background: rgba(255,255,255,.04); }
+    [data-theme="dark"] .cat-add-row { border-top-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .cat-add-row:hover { background: rgba(255,255,255,.04); }
+    [data-theme="dark"] .cat-add-row-plus { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.1); color: var(--text-2); }
+    [data-theme="dark"] .cat-adv-input-row { background: rgba(255,255,255,.03); border-top-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .cat-adv-input-row input { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.1); }
+    [data-theme="dark"] .cat-adv-input-row button { border-color: rgba(255,255,255,.1); color: var(--text-2); }
+    [data-theme="dark"] .cat-adv-input-row button:hover { background: rgba(255,255,255,.06); }
+    [data-theme="dark"] .cat-track { background: #2a2a3a; }
+    [data-theme="dark"] .cat-toggle input:checked + .cat-track { background: #4ade80; }
+    [data-theme="dark"] .cat-bar-save { background: #2563eb; border-color: #2563eb; }
+    [data-theme="dark"] .cat-bar-save:disabled { background: rgba(255,255,255,.08); color: rgba(255,255,255,.2); border-color: transparent; }
+
+    /* Account panel */
+    [data-theme="dark"] .acc-bar { background: #0d0d12; border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .acc-body { background: #0b0b10; }
+    [data-theme="dark"] .acc-hero { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.08); }
+    [data-theme="dark"] .acc-credits-bar { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.08); }
+    [data-theme="dark"] .acc-credits-track { background: rgba(255,255,255,.08); }
+    [data-theme="dark"] .acc-card { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.08); }
+    [data-theme="dark"] .acc-card-hd { border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .acc-row { border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .acc-row-icon { background: rgba(255,255,255,.07); }
+    [data-theme="dark"] .acc-action-btn.ghost { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.1); }
+    [data-theme="dark"] .acc-action-btn.ghost:hover { background: rgba(255,255,255,.08); }
+
+    /* Modals */
+    [data-theme="dark"] .dry-run-overlay { background: rgba(0,0,0,.6); }
+    [data-theme="dark"] .dry-run-modal { background: #0d0d18; border-color: rgba(255,255,255,.1); color: var(--text); box-shadow: 0 8px 40px rgba(0,0,0,.5); }
+    [data-theme="dark"] .dry-run-stats { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.08); }
+    [data-theme="dark"] .dry-run-list { background: rgba(255,255,255,.03); border-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .dry-run-item { border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .dry-run-warning { background: rgba(245,158,11,.1); border-color: rgba(245,158,11,.2); color: #d97706; }
+    [data-theme="dark"] .templates-overlay { background: rgba(0,0,0,.6); }
+    [data-theme="dark"] .templates-modal { background: #0d0d18; border-color: rgba(255,255,255,.1); box-shadow: 0 8px 40px rgba(0,0,0,.5); }
+    [data-theme="dark"] .templates-header h3 { color: var(--text); }
+    [data-theme="dark"] .templates-header button { color: var(--text-2); }
+    [data-theme="dark"] .templates-search { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.1); color: var(--text); }
+    [data-theme="dark"] .template-card { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.08); }
+    [data-theme="dark"] .template-card:hover { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.14); }
+    [data-theme="dark"] .snooze-overlay, [data-theme="dark"] .summary-overlay { background: rgba(0,0,0,.6); }
+    [data-theme="dark"] .snooze-modal, [data-theme="dark"] .summary-modal { background: #0d0d18; border-color: rgba(255,255,255,.1); box-shadow: 0 8px 40px rgba(0,0,0,.5); }
+    [data-theme="dark"] .snooze-item { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.08); }
+    [data-theme="dark"] .snooze-modal h3, [data-theme="dark"] .summary-modal h3 { color: var(--text); }
+    [data-theme="dark"] .summary-participant-chip { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.08); }
+
+    /* Sidebar footer account panel */
+    [data-theme="dark"] .sfp { background: #0a0a0f; border-color: rgba(255,255,255,.1); box-shadow: 0 4px 16px rgba(0,0,0,.4); }
+    [data-theme="dark"] .sfp-head { border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .sfp-email { color: var(--text); }
+    [data-theme="dark"] .sfp-credits { border-bottom-color: rgba(255,255,255,.07); }
+    [data-theme="dark"] .sfp-credits-val { color: var(--text); }
+    [data-theme="dark"] .sfp-btn { border-bottom-color: rgba(255,255,255,.07); color: var(--text); }
+    [data-theme="dark"] .sfp-btn:hover { background: rgba(255,255,255,.05); }
+    [data-theme="dark"] .sfp-btn-icon { background: rgba(255,255,255,.07); }
+
+    /* Banners & notices */
+    [data-theme="dark"] .banner { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.2); }
+    [data-theme="dark"] .banner-title { color: var(--text); }
+    [data-theme="dark"] #storageQuotaWarning { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.2); color: #d97706; }
+    [data-theme="dark"] .latest-undo-row { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.2); }
+    [data-theme="dark"] .latest-undo-row .status { color: #d97706; }
+    [data-theme="dark"] .generated-rules-notice { background: rgba(59,130,246,.1); border-color: rgba(59,130,246,.25); }
+    [data-theme="dark"] #configWarning { background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.2); }
+
+    /* Misc */
+    [data-theme="dark"] .kbd { border-color: rgba(255,255,255,.1); color: var(--text-3); background: rgba(255,255,255,.04); }
+    [data-theme="dark"] #telemetryDisplay { background: rgba(255,255,255,.04) !important; border-color: rgba(255,255,255,.08) !important; }
+    [data-theme="dark"] .quota-indicator { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.08); }
+    [data-theme="dark"] ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); }
+    [data-theme="dark"] ::-webkit-scrollbar-track { background: rgba(255,255,255,.02); }
+
+    /* Theme toggle button */
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      background: transparent;
+      cursor: pointer;
+      font-size: 15px;
+      color: var(--text-2);
+      transition: background .12s, border-color .12s;
+      flex-shrink: 0;
+      font-family: inherit;
+    }
+    .theme-toggle-btn:hover { background: var(--hover-bg); border-color: var(--text-3); }
+
+    html, body {
+      height: 100%;
+      background: var(--sidebar-bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 13px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--brand); text-decoration: none; }
+    button { font-family: var(--font); }
+
+    /* ── App shell ───────────────────────────────────────────────────────── */
+    .app {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ══════════════════════════════════════════════════════════════════════
+       SIDEBAR
+    ══════════════════════════════════════════════════════════════════════ */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--sidebar-border);
+      overflow: hidden;
+    }
+
+    /* Brand row */
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 12px 12px;
+      border-bottom: 1px solid var(--sidebar-border);
+      min-width: 0;
+    }
+    .sidebar-brand .brand-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .brand-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--brand);
+      letter-spacing: -0.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .brand-bell {
+      position: relative;
+      width: 30px;
+      height: 30px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-2);
+      transition: background .12s;
+    }
+    .brand-bell:hover { background: var(--hover-bg); }
+
+    .bell-badge {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 14px;
+      height: 14px;
+      background: var(--brand);
+      border-radius: 50%;
+      font-size: 8px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Bell dropdown */
+    .bell-popup {
+      position: fixed;
+      min-width: 220px;
+      background: var(--card-bg, #fff);
+      border: 1px solid var(--sidebar-border);
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      padding: 14px 16px;
+      z-index: 9999;
+      font-size: 13px;
+      color: var(--text);
+      display: none;
+      white-space: nowrap;
+    }
+    .bell-popup.visible { display: block; }
+    .bell-popup-title {
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--text-2);
+      margin-bottom: 10px;
+    }
+    .bell-popup-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 0; border-bottom: 1px solid var(--sidebar-border);
+    }
+    .bell-popup-row:last-child { border-bottom: none; }
+    .bell-popup-label { color: var(--text); font-size: 13px; }
+    .bell-popup-value {
+      font-weight: 700; font-size: 14px; color: var(--brand);
+    }
+    .bell-popup-loading { color: var(--text-2); font-size: 12px; }
+    [data-theme="dark"] .bell-popup {
+      background: #1a1a2e;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    /* Nav */
+    .sidebar-nav {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 10px 0;
+    }
+
+    .nav-section-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-3);
+      padding: 10px 6px 4px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 10px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: background .1s, color .1s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 1px;
+    }
+
+    .nav-item:hover {
+      background: var(--hover-bg);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      background: var(--active-nav-bg);
+      color: var(--text);
+      font-weight: 600;
+      box-shadow: var(--shadow-nav);
+    }
+
+    .nav-item svg { flex-shrink: 0; }
+    .nav-item.active svg { color: var(--text); }
+
+    /* AI Chat nav item — stands out */
+    .nav-item-chat {
+      background: linear-gradient(135deg, rgba(79,156,249,.12), rgba(124,58,237,.08));
+      border: 1px solid rgba(79,156,249,.2);
+      border-left: 2px solid #4f9cf9 !important;
+      color: #4f9cf9 !important;
+      margin-top: 4px;
+    }
+    .nav-item-chat:hover {
+      background: linear-gradient(135deg, rgba(79,156,249,.2), rgba(124,58,237,.14)) !important;
+      color: #60a5fa !important;
+    }
+    .nav-item-chat.active {
+      background: linear-gradient(135deg, rgba(79,156,249,.22), rgba(124,58,237,.16)) !important;
+      color: #60a5fa !important;
+      box-shadow: none !important;
+    }
+    [data-theme="light"] .nav-item-chat {
+      background: linear-gradient(135deg, rgba(37,99,235,.07), rgba(109,40,217,.05));
+      border-color: rgba(37,99,235,.2);
+      border-left-color: #2563eb !important;
+      color: #2563eb !important;
+    }
+    [data-theme="light"] .nav-item-chat:hover {
+      background: linear-gradient(135deg, rgba(37,99,235,.12), rgba(109,40,217,.08)) !important;
+    }
+    .nav-chat-badge {
+      margin-left: auto;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #4f9cf9, #7c3aed);
+      color: #fff;
+      letter-spacing: .3px;
+      flex-shrink: 0;
+    }
+
+    /* Settings sub-nav */
+    .nav-sub-item {
+      display: flex;
+      align-items: center;
+      padding: 6px 10px 6px 20px;
+      border-radius: var(--radius);
+      font-size: 12.5px;
+      font-weight: 400;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: background .1s, color .1s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 1px;
+    }
+    .nav-sub-item:hover { background: var(--hover-bg); color: var(--text); }
+    .nav-sub-item.active { color: var(--text); font-weight: 600; }
+
+    /* Footer */
+    .sidebar-footer {
+      border-top: 1px solid var(--sidebar-border);
+      padding: 10px;
+    }
+
+    .footer-workspace {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 8px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background .1s;
+    }
+    .footer-workspace:hover { background: var(--hover-bg); }
+
+    .workspace-left { display: flex; align-items: center; gap: 9px; }
+
+    .ws-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: #1a1a18;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .ws-avatar.user-av {
+      border-radius: 50%;
+      background: var(--brand);
+      font-size: 10px;
+    }
+
+    .ws-info { overflow: hidden; }
+    .ws-name { font-size: 12px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ws-sub  { font-size: 10px; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .chevron-icon { color: var(--text-3); flex-shrink: 0; }
+
+    /* ══════════════════════════════════════════════════════════════════════
+       MAIN
+    ══════════════════════════════════════════════════════════════════════ */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--main-bg);
+    }
+
+    /* Top bar */
+    .topbar {
+      height: var(--topbar-h);
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      flex-shrink: 0;
+    }
+
+    .topbar-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* Outlined action button like "Update preferences" */
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text-2);
+      background: #fff;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: background .12s, border-color .12s;
+    }
+    .btn-outline:hover { background: var(--hover-bg); border-color: #d0d0c8; }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 16px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      background: var(--brand);
+      cursor: pointer;
+      font-family: var(--font);
+      transition: background .12s;
+    }
+    .btn-primary:hover { background: #d03a14; }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-2);
+      background: transparent;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: background .12s;
+    }
+    .btn-ghost:hover { background: var(--hover-bg); }
+
+    .btn-link {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-3);
+      cursor: pointer;
+      font-family: var(--font);
+      transition: color .12s;
+    }
+    .btn-link:hover { color: var(--text); }
+    .btn-link.danger { color: var(--red); }
+
+    /* Body area */
+    .main-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px 28px 40px;
+    }
+
+    /* Tabs strip */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 22px;
+    }
+
+    .tab {
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-2);
+      border: none;
+      background: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: color .12s;
+    }
+    .tab.active {
+      color: var(--text);
+      font-weight: 600;
+      border-bottom-color: var(--text);
+    }
+    .tab:hover { color: var(--text); }
+
+    /* ── Panel visibility ─────────────────────────────────────────────── */
+    .panel { display: block; }
+    .panel.hidden { display: none; }
+    .hidden { display: none !important; }
+
+    /* ── Warning / info banner ──────────────────────────────────────────── */
+    .banner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      background: var(--yellow-bg);
+      border: 1px solid var(--yellow-border);
+      border-radius: var(--radius-lg);
+      margin-bottom: 16px;
+    }
+
+    .banner-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(245,158,11,.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--yellow);
+    }
+
+    .banner-body { flex: 1; }
+    .banner-title { font-size: 13px; font-weight: 600; color: var(--text); }
+    .banner-sub   { font-size: 11.5px; color: var(--text-2); margin-top: 1px; }
+
+    .banner-action {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-2);
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    /* Storage quota banner */
+    #storageQuotaWarning {
+      display: none;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      background: var(--yellow-bg);
+      border: 1px solid var(--yellow-border);
+      border-radius: var(--radius-lg);
+      margin-bottom: 16px;
+      font-size: 12px;
+      color: #92691a;
+    }
+
+    /* ── Section card ─────────────────────────────────────────────────── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 12px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .card-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-3);
+      margin-bottom: 3px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .card-sub {
+      font-size: 12px;
+      color: var(--text-2);
+      margin-top: 3px;
+    }
+
+    /* ── Form fields ──────────────────────────────────────────────────── */
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 14px;
+    }
+
+    .field-label {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: var(--text-2);
+    }
+
+    .field input[type=text],
+    .field input[type=number],
+    .field input[type=password],
+    .field textarea,
+    .field select,
+    input[type=text], input[type=number], input[type=password], textarea, select {
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 13px;
+      font-family: var(--font);
+      padding: 8px 12px;
+      width: 100%;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus,
+    input:focus, textarea:focus, select:focus {
+      border-color: #b0b0a8;
+      box-shadow: 0 0 0 3px rgba(0,0,0,.05);
+    }
+
+    .field .hint {
+      font-size: 11px;
+      color: var(--text-3);
+    }
+
+    textarea { resize: vertical; min-height: 80px; }
+
+    select option { background: #fff; color: var(--text); }
+
+    /* Two-col grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 560px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* ── Toggle switch (Fyxer style) ──────────────────────────────────── */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .toggle-row:last-child { border-bottom: none; }
+
+    .toggle-info { flex: 1; padding-right: 16px; }
+    .toggle-title { font-size: 13px; font-weight: 500; color: var(--text); }
+    .toggle-sub   { font-size: 11.5px; color: var(--text-2); margin-top: 2px; }
+
+    .toggle {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: #d4d4cc;
+      border-radius: 11px;
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      left: 3px;
+      top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform .2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    }
+
+    .toggle input:checked + .toggle-track { background: var(--text); }
+    .toggle input:checked + .toggle-track::after { transform: translateX(18px); }
+
+    /* ── Checkbox row ─────────────────────────────────────────────────── */
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .checkbox-row input[type=checkbox] {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--text);
+      margin-top: 1px;
+      flex-shrink: 0;
+    }
+    .checkbox-label { font-size: 13px; color: var(--text); }
+    .checkbox-sub   { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+
+    /* ── Rule cards ───────────────────────────────────────────────────── */
+    .rules-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .rule-card {
+      background: #fafaf8;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .rule-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .rule-heading { font-size: 13px; font-weight: 600; color: var(--text); margin-top: 2px; }
+    .rule-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+
+    /* Color swatches */
+    .color-swatches { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+    .swatch {
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 2px solid transparent; cursor: pointer;
+      transition: transform .1s, border-color .1s;
+      font-size: 8px; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0;
+    }
+    .swatch:hover { transform: scale(1.2); }
+    .swatch.selected { border-color: #333; transform: scale(1.1); }
+
+    /* ── Preset grid ──────────────────────────────────────────────────── */
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .preset-card {
+      background: #fafaf8;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      transition: border-color .12s, background .12s;
+    }
+    .preset-card:hover { border-color: #b0b0a8; background: #f4f4f0; }
+    .preset-card h3 { font-size: 12px; font-weight: 600; color: var(--text); }
+    .preset-label { font-size: 11px; color: var(--blue); font-weight: 600; }
+    .preset-copy  { font-size: 11px; color: var(--text-2); flex: 1; }
+
+    /* ── History ──────────────────────────────────────────────────────── */
+    .history-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+
+    .history-item {
+      background: #fafaf8;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      font-size: 12px;
+    }
+
+    .history-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .history-row span { color: var(--text-3); font-size: 10px; font-weight: 400; }
+    .history-summary { color: var(--text-2); margin-top: 3px; }
+    .history-meta { font-size: 10px; color: var(--text-3); margin-top: 4px; }
+
+    /* ── Analytics ────────────────────────────────────────────────────── */
+    .stat-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: #fafaf8;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 14px;
+      text-align: center;
+    }
+
+    .stat-card-value { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .stat-card-label { font-size: 10px; color: var(--text-2); text-transform: uppercase; letter-spacing: .05em; font-weight: 500; }
+
+    .top-senders-section, .top-labels-section { margin-bottom: 20px; }
+    .top-senders-section h4, .top-labels-section h4 { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+
+    .sender-item { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 12px; }
+    .sender-name { flex-shrink: 0; min-width: 80px; color: var(--text); }
+    .sender-bar { flex: 1; height: 5px; background: var(--hover-bg); border-radius: 3px; overflow: hidden; }
+    .sender-bar-fill { height: 100%; background: var(--text); border-radius: 3px; }
+    .sender-count { color: var(--text-3); font-size: 11px; text-align: right; min-width: 30px; }
+
+    .label-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .label-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: #fafaf8; border: 1px solid var(--card-border);
+      border-radius: 14px; padding: 5px 10px;
+      font-size: 11px; color: var(--text);
+    }
+    .label-pill-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+    .daily-trend-svg { width: 100%; height: 90px; margin-bottom: 16px; }
+
+    .last-runs-table { width: 100%; font-size: 11px; border-collapse: collapse; }
+    .last-runs-table th { text-align: left; font-weight: 600; color: var(--text-2); padding: 8px 0; border-bottom: 1px solid var(--card-border); }
+    .last-runs-table td { padding: 8px 0; border-bottom: 1px solid var(--card-border); color: var(--text); }
+    .last-runs-table tr:last-child td { border-bottom: none; }
+
+    .quota-indicator { background: #fafaf8; border: 1px solid var(--card-border); border-radius: var(--radius); padding: 10px; margin-top: 12px; font-size: 11px; color: var(--text-2); }
+
+    /* ── Generated rules notice ───────────────────────────────────────── */
+    .generated-rules-notice {
+      margin: 0 0 12px;
+      padding: 10px 12px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(59,130,246,.25);
+      background: rgba(59,130,246,.06);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* ── Builder buttons row ──────────────────────────────────────────── */
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+    /* ── Status text ──────────────────────────────────────────────────── */
+    .status { font-size: 12px; color: var(--text-2); }
+
+    /* ── Latest undo row ──────────────────────────────────────────────── */
+    .latest-undo-row {
+      background: var(--yellow-bg);
+      border: 1px solid var(--yellow-border);
+      border-radius: var(--radius);
+      padding: 8px 12px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .latest-undo-row .status { color: #92691a; font-size: 11px; }
+
+    /* ── Wizard steps ─────────────────────────────────────────────────── */
+    .wizard-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: #fafaf8;
+      border-radius: var(--radius);
+      border: 1px solid var(--card-border);
+    }
+
+    /* ── Dry-run modal ────────────────────────────────────────────────── */
+    .dry-run-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,.35); display: flex;
+      align-items: center; justify-content: center;
+      z-index: 1000; padding: 20px;
+    }
+
+    .dry-run-modal {
+      background: #fff; border: 1px solid var(--card-border);
+      border-radius: 12px; max-width: 450px; width: 100%;
+      max-height: 80vh; overflow-y: auto;
+      padding: 22px; box-shadow: 0 8px 40px rgba(0,0,0,.15);
+    }
+
+    .dry-run-modal h3 { font-size: 15px; font-weight: 600; margin-bottom: 14px; color: var(--text); }
+    .dry-run-stats { background: #fafaf8; border: 1px solid var(--card-border); border-radius: var(--radius); padding: 12px; margin-bottom: 12px; font-size: 13px; }
+    .dry-run-warning { background: var(--yellow-bg); border: 1px solid var(--yellow-border); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 12px; font-size: 12px; color: #92691a; }
+    .dry-run-list { background: #fafaf8; border: 1px solid var(--card-border); border-radius: var(--radius); max-height: 280px; overflow-y: auto; margin-bottom: 12px; }
+    .dry-run-item { padding: 10px 12px; border-bottom: 1px solid var(--card-border); font-size: 11px; }
+    .dry-run-item:last-child { border-bottom: none; }
+    .dry-run-item-from { color: var(--blue); font-weight: 600; margin-bottom: 2px; }
+    .dry-run-item-subject { color: var(--text); margin-bottom: 2px; word-break: break-word; }
+    .dry-run-item-time { color: var(--text-3); font-size: 10px; }
+    .dry-run-buttons { display: flex; gap: 8px; margin-top: 12px; }
+    .dry-run-buttons button { flex: 1; }
+
+    /* ── Templates modal ──────────────────────────────────────────────── */
+    .templates-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,.35); display: flex;
+      align-items: center; justify-content: center;
+      z-index: 1000; padding: 20px;
+    }
+
+    .templates-modal {
+      background: #fff; border: 1px solid var(--card-border);
+      border-radius: 12px; max-width: 600px; width: 100%;
+      max-height: 80vh; overflow-y: auto;
+      padding: 22px; box-shadow: 0 8px 40px rgba(0,0,0,.15);
+    }
+
+    .templates-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .templates-header h3 { font-size: 15px; font-weight: 600; margin: 0; color: var(--text); }
+    .templates-header button { background: none; border: none; color: var(--text-2); cursor: pointer; font-size: 17px; font-family: var(--font); }
+    .templates-search { width: 100%; padding: 8px 12px; margin-bottom: 14px; background: #fafaf8; border: 1px solid var(--card-border); border-radius: var(--radius); color: var(--text); font-size: 13px; font-family: var(--font); outline: none; }
+    .templates-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+
+    .template-card { background: #fafaf8; border: 1px solid var(--card-border); border-radius: var(--radius); padding: 12px; cursor: pointer; transition: border-color .12s, background .12s; }
+    .template-card:hover { border-color: #b0b0a8; background: #f4f4f0; }
+    .template-card-category { font-size: 9px; color: var(--blue); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; font-weight: 600; }
+    .template-card-name { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+    .template-card-description { font-size: 10px; color: var(--text-2); margin-bottom: 8px; }
+    .template-card button { width: 100%; padding: 6px 8px; font-size: 11px; font-family: var(--font); }
+
+    /* ── Snooze / Summary modals ──────────────────────────────────────── */
+    .snooze-overlay, .summary-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,.35); display: flex;
+      align-items: center; justify-content: center; z-index: 1000; padding: 20px;
+    }
+
+    .snooze-modal, .summary-modal {
+      background: #fff; border: 1px solid var(--card-border);
+      border-radius: 12px; max-width: 420px; width: 100%;
+      max-height: 80vh; overflow-y: auto;
+      padding: 22px; box-shadow: 0 8px 40px rgba(0,0,0,.15);
+    }
+
+    .snooze-modal h3, .summary-modal h3 { font-size: 15px; font-weight: 600; margin-bottom: 14px; color: var(--text); }
+
+    .snooze-item { background: #fafaf8; border: 1px solid var(--card-border); border-radius: var(--radius); padding: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+    .snooze-item-subject { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .snooze-item-from { font-size: 11px; color: var(--text-2); margin-bottom: 2px; }
+    .snooze-item-time { font-size: 10px; color: var(--text-3); }
+    .snooze-item-buttons { display: flex; gap: 5px; flex-shrink: 0; }
+    .snooze-item-buttons button { padding: 4px 8px; font-size: 10px; }
+
+    /* Priority inbox */
+    .priority-score-high  { background: rgba(239,68,68,.08) !important; color: #ef4444 !important; }
+    .priority-score-medium{ background: rgba(245,158,11,.08) !important; color: #f59e0b !important; }
+    .priority-score-low   { background: rgba(107,107,98,.08) !important; color: var(--text-2) !important; }
+
+    /* Conflict badge */
+    .conflict-badge { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: var(--red); color: #fff; font-size: 11px; font-weight: 700; cursor: help; flex-shrink: 0; }
+
+    /* Rule invalid */
+    .rule-card-invalid { border-color: var(--red); box-shadow: 0 0 0 2px rgba(239,68,68,.15); }
+    .generated-rules-focus { box-shadow: 0 0 0 2px rgba(59,130,246,.25); transition: box-shadow .2s; }
+
+    /* Kbd */
+    .kbd { display: inline-block; padding: 1px 5px; border: 1px solid var(--card-border); border-radius: 4px; font-size: 10px; color: var(--text-3); font-family: monospace; margin-left: 4px; }
+
+    /* Preset strip */
+    .preset-color-strip { height: 3px; border-radius: 2px; margin-bottom: 8px; }
+
+    /* Label chip */
+    .label-chip { display: inline-block; padding: 1px 6px; border-radius: 10px; font-size: 10px; font-weight: 600; margin-right: 4px; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #d4d4cc; border-radius: 3px; }
+
+    /* ── Backward compat aliases for options.js ─────────────────────────── */
+    .button         { display: inline-flex; align-items: center; justify-content: center; padding: 7px 14px; border-radius: var(--radius); font-size: 13px; font-weight: 600; border: 1px solid var(--card-border); cursor: pointer; font-family: var(--font); transition: background .12s; white-space: nowrap; }
+    .button:disabled { opacity: .4; cursor: not-allowed; }
+    .button.primary  { background: var(--brand); color: #fff; border-color: var(--brand); }
+    .button.primary:hover { background: #d03a14; }
+    .button.secondary { background: #fafaf8; color: var(--text); }
+    .button.secondary:hover { background: var(--hover-bg); }
+    .button.ghost    { background: transparent; color: var(--text-2); }
+    .button.ghost:hover { background: var(--hover-bg); }
+    .button.danger   { background: var(--red); color: #fff; border-color: var(--red); }
+
+    .link-button { background: none; border: none; cursor: pointer; font-size: 12px; color: var(--text-2); padding: 4px 0; transition: color .12s; font-family: var(--font); }
+    .link-button:hover { color: var(--text); }
+    .link-button.danger { color: var(--red); }
+
+    .section-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--text-3); margin-bottom: 3px; }
+    h2 { font-size: 14px; font-weight: 600; color: var(--text); margin: 3px 0 10px; }
+    h3 { font-size: 13px; font-weight: 600; color: var(--text); }
+    .copy { color: var(--text-2); font-size: 13px; }
+    .copy.small { font-size: 12px; }
+    .hint { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+    .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+    .field > span { font-size: 11.5px; font-weight: 500; color: var(--text-2); }
+    .builder-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .builder-buttons, .preset-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media(max-width:500px){ .settings-grid { grid-template-columns: 1fr; } }
+    .actions { padding: 0; margin-top: 16px; }
+    .actions .button.primary { width: 100%; padding: 10px; font-size: 14px; }
+    #saveStatus { color: var(--text-2); text-align: center; margin-top: 10px; font-size: 12px; }
+
+    /* Analytics compat */
+    .analytics-tab { background: none; border: none; padding: 10px 12px; cursor: pointer; color: var(--text-2); font-size: 13px; font-weight: 500; border-bottom: 2px solid transparent; transition: all .2s; font-family: var(--font); }
+    .analytics-tab.active { color: var(--text); border-bottom-color: var(--text); font-weight: 600; }
+    .analytics-tab:hover { color: var(--text); }
+
+    /* Summary modal compat */
+    .summary-section { margin-bottom: 14px; }
+    .summary-section h4 { font-size: 12px; font-weight: 600; color: var(--text-2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .05em; }
+    .summary-section p { font-size: 12px; color: var(--text); line-height: 1.5; }
+    .summary-section ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+    .summary-section li { font-size: 12px; color: var(--text); margin-left: 14px; position: relative; }
+    .summary-section li::before { content: '•'; position: absolute; left: -10px; }
+    .summary-participants { display: flex; flex-wrap: wrap; gap: 6px; }
+    .summary-participant-chip { background: #fafaf8; border: 1px solid var(--card-border); border-radius: 14px; padding: 4px 8px; font-size: 10px; color: var(--text); }
+    .sentiment-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+    .sentiment-badge.urgent  { background: rgba(239,68,68,.1); color: var(--red); }
+    .sentiment-badge.friendly{ background: rgba(34,197,94,.1); color: var(--green); }
+    .sentiment-badge.formal  { background: rgba(59,130,246,.1); color: var(--blue); }
+    .sentiment-badge.neutral { background: rgba(107,107,98,.1); color: var(--text-2); }
+    .summary-action-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text); margin-left: 12px; }
+    .summary-action-item input[type=checkbox] { width: 13px; height: 13px; }
+
+    /* Snooze popover */
+    .snooze-popover { min-width: 180px; }
+
+    /* Advanced collapsible */
+    .advanced-section { margin: 12px 0; }
+    .advanced-section summary { outline: none; font-weight: 600; cursor: pointer; padding: 12px 0; user-select: none; }
+    .advanced-section summary::-webkit-details-marker { display: none; }
+    .advanced-section summary::before { content: '▸ '; display: inline-block; margin-right: 6px; transition: transform .2s; font-size: 11px; }
+    .advanced-section[open] summary::before { transform: rotate(90deg); }
+  </style>
+</head>
+<body>
+
+<!-- Hidden header for JS compat -->
+<div style="display:none">
+  <div class="page-header"><div><p class="eyebrow">Gmail Organizer</p><h1>Settings</h1></div><div class="m-bar"><span></span><span></span><span></span><span></span></div></div>
+</div>
+
+<div class="app">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SIDEBAR
+  ════════════════════════════════════════════════════════════ -->
+  <aside class="sidebar">
+
+    <!-- Brand -->
+    <div class="sidebar-brand">
+      <div class="brand-left">
+        <img src="icons/icon-128.png" alt="Gmail Organizer" style="width:24px;height:24px;border-radius:6px;flex-shrink:0;">
+        <span class="brand-name">Gmail Organizer</span>
+      </div>
+      <div class="brand-bell" id="brandBellBtn" title="Notifications" role="button" tabindex="0">
+        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 2a6 6 0 00-6 6v3.5L2.5 13h15L16 11.5V8a6 6 0 00-6-6z"/>
+          <path d="M8 16a2 2 0 004 0"/>
+        </svg>
+        <div class="bell-popup" id="bellPopup">
+          <div class="bell-popup-title">Inbox Status</div>
+          <div class="bell-popup-row">
+            <span class="bell-popup-label">📬 Unread</span>
+            <span class="bell-popup-value" id="bellUnread">—</span>
+          </div>
+          <div class="bell-popup-row">
+            <span class="bell-popup-label">📊 Inbox score</span>
+            <span class="bell-popup-value" id="bellScore">—</span>
+          </div>
+          <div class="bell-popup-row">
+            <span class="bell-popup-label">🏷️ Organized today</span>
+            <span class="bell-popup-value" id="bellOrganized">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="sidebar-nav">
+      <div style="display:flex;flex-direction:column;gap:1px;margin-bottom:4px;">
+        <button class="nav-item active" data-panel="general" data-title="Dashboard">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><rect x="2" y="2" width="7" height="7" rx="1.5"/><rect x="11" y="2" width="7" height="7" rx="1.5"/><rect x="2" y="11" width="7" height="7" rx="1.5"/><rect x="11" y="11" width="7" height="7" rx="1.5"/></svg>
+          Dashboard
+        </button>
+        <button class="nav-item" data-panel="categorization" data-title="Categorization" style="display:none">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="7" height="14" rx="1.5"/><rect x="11" y="3" width="7" height="14" rx="1.5"/></svg>
+          Categorization
+        </button>
+        <button class="nav-item" data-panel="rules" data-title="Rules">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 5h14M5 10h10M7 15h6"/></svg>
+          Rules
+        </button>
+        <button class="nav-item" data-panel="automation" data-title="Automation">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="10" r="7"/><path d="M10 6v4l2.5 2.5"/></svg>
+          Automation
+        </button>
+        <button class="nav-item" data-panel="ai" data-title="AI Assistant">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2l1.8 4.2L16 8l-4.2 1.8L10 14l-1.8-4.2L4 8l4.2-1.8L10 2zM4 13l.9 2.1L7 16l-2.1.9L4 19l-.9-2.1L1 16l2.1-.9L4 13zM15 12l.7 1.6L17 14l-1.3.4L15 16l-.7-1.6L13 14l1.3-.4L15 12z"/></svg>
+          AI Assistant
+        </button>
+        <button class="nav-item nav-item-chat" id="navAiChat" data-title="AI Chat">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          AI Chat
+          <span class="nav-chat-badge">✨ Free</span>
+        </button>
+        <button class="nav-item" data-panel="history" data-title="History" style="display:none">
+          <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10a7 7 0 107 -7"/><path d="M3 4v6h6"/><path d="M10 6v4l2 2"/></svg>
+          History
+        </button>
+      </div>
+
+      <div style="margin-top:6px;display:none;">
+        <p class="nav-section-label">Settings</p>
+        <div style="display:flex;flex-direction:column;gap:1px;">
+          <button class="nav-sub-item" data-panel="general" data-title="General">General</button>
+          <button class="nav-sub-item" data-panel="backup" data-title="Backup" style="display:none">Backup</button>
+          <button class="nav-sub-item" data-panel="advanced" data-title="Advanced" style="display:none">Advanced</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Footer -->
+    <div class="sidebar-footer">
+      <!-- Inline account menu — expands above the footer rows -->
+      <div id="accountPanel" style="display:none;">
+        <style>
+          .sfp { background:#fff; border:1px solid var(--sidebar-border); border-radius:12px; overflow:hidden; margin-bottom:8px; box-shadow:0 4px 16px rgba(0,0,0,.08); }
+          .sfp-head { display:flex; align-items:center; gap:11px; padding:14px 14px 12px; border-bottom:1px solid var(--sidebar-border); }
+          .sfp-av { width:38px; height:38px; border-radius:50%; background:var(--brand); display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; color:#fff; flex-shrink:0; }
+          .sfp-info { flex:1; min-width:0; }
+          .sfp-email { font-size:12px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+          .sfp-badge { display:inline-flex; align-items:center; gap:4px; margin-top:3px; padding:2px 8px; border-radius:99px; font-size:10.5px; font-weight:600; }
+          .sfp-badge.pro  { background:rgba(34,197,94,.13); color:#15803d; }
+          .sfp-badge.free { background:#f0f0eb; color:var(--text-3); }
+          .sfp-badge::before { content:''; display:block; width:6px; height:6px; border-radius:50%; background:currentColor; }
+          .sfp-credits { display:flex; align-items:center; justify-content:space-between; padding:11px 14px; border-bottom:1px solid var(--sidebar-border); }
+          .sfp-credits-label { font-size:11px; font-weight:600; color:var(--text-3); text-transform:uppercase; letter-spacing:.05em; }
+          .sfp-credits-val { font-size:13px; font-weight:700; color:var(--text); }
+          .sfp-credits-val.green { color:#15803d; }
+          .sfp-btn { display:flex; align-items:center; gap:10px; width:100%; padding:11px 14px; background:none; border:none; cursor:pointer; font-family:var(--font); font-size:12.5px; font-weight:500; color:var(--text); transition:background .1s; border-bottom:1px solid var(--sidebar-border); text-decoration:none; }
+          .sfp-btn:last-child { border-bottom:none; }
+          .sfp-btn:hover { background:var(--hover-bg); }
+          .sfp-btn.danger { color:var(--red); }
+          .sfp-btn-icon { width:28px; height:28px; border-radius:8px; background:#f0f0eb; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+          .sfp-btn.danger .sfp-btn-icon { background:rgba(239,68,68,.08); }
+          .sfp-btn-arrow { margin-left:auto; color:var(--text-3); }
+        </style>
+        <div class="sfp">
+          <!-- Head: avatar + email + plan -->
+          <div class="sfp-head">
+            <div class="sfp-av" id="panelAvatar">?</div>
+            <div class="sfp-info">
+              <div class="sfp-email" id="panelEmail">Loading…</div>
+              <div id="panelBadge"></div>
+            </div>
+          </div>
+          <!-- Credits row -->
+          <div class="sfp-credits">
+            <span class="sfp-credits-label">Credits</span>
+            <span class="sfp-credits-val" id="panelCredits">—</span>
+          </div>
+          <!-- View profile -->
+          <button class="sfp-btn" id="panelViewProfileBtn">
+            <span class="sfp-btn-icon">
+              <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 2a6 6 0 110 12A6 6 0 0110 2zm0 14c-4 0-7 1.8-7 3h14c0-1.2-3-3-7-3z"/></svg>
+            </span>
+            View full profile
+            <svg class="sfp-btn-arrow" width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 5l5 5-5 5"/></svg>
+          </button>
+          <!-- Reset sign-in -->
+          <button class="sfp-btn danger" id="panelResetBtn">
+            <span class="sfp-btn-icon">
+              <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4v5h5M16 16v-5h-5"/><path d="M4 9a7 7 0 0113 0M16 11a7 7 0 01-13 0"/></svg>
+            </span>
+            Reset sign-in
+          </button>
+        </div>
+      </div>
+
+      <button id="footerPlanRow" class="footer-workspace" style="width:100%;background:none;border:none;cursor:pointer;text-align:left;padding:0;">
+        <div class="workspace-left">
+          <img src="icons/icon-48.png" alt="Gmail Organizer" style="width:28px;height:28px;border-radius:8px;flex-shrink:0;">
+          <div class="ws-info">
+            <div class="ws-name">Gmail Organizer</div>
+            <div class="ws-sub" id="sidebarPlan">Free</div>
+          </div>
+        </div>
+        <svg class="chevron-icon" width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8l4 4 4-4"/></svg>
+      </button>
+      <button id="footerAccountRow" class="footer-workspace" style="width:100%;background:none;border:none;cursor:pointer;text-align:left;padding:0;margin-top:2px;">
+        <div class="workspace-left">
+          <div class="ws-avatar user-av" id="sidebarAvatar">G</div>
+          <div class="ws-info">
+            <div class="ws-name">Signed in</div>
+            <div class="ws-sub" id="sidebarEmail">Loading…</div>
+          </div>
+        </div>
+        <svg id="accountChevron" class="chevron-icon" width="13" height="13" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 8l4 4 4-4"/></svg>
+      </button>
+    </div>
+
+  </aside>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       MAIN
+  ════════════════════════════════════════════════════════════ -->
+  <div class="main">
+
+    <!-- Top bar -->
+    <div class="topbar">
+      <span class="topbar-title" id="mainTitle">General</span>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button id="themeToggleBtn" class="theme-toggle-btn" title="Toggle dark / light mode">🌙</button>
+        <button id="reloadExtBtn" class="btn-outline" style="font-size:11px;padding:4px 10px;color:#888;" title="Reload extension to apply manifest changes">↺ Reload extension</button>
+        <button id="saveButton" class="btn-outline">Update preferences</button>
+      </div>
+    </div>
+    <!-- reloadExtBtn wired in options.js -->
+
+    <!-- ── PANEL: Categorization ────────────────────────────────────────── -->
+    <div class="panel hidden" id="panel-categorization">
+      <style>
+        #panel-categorization:not(.hidden) { display:flex; flex-direction:column; flex:1; overflow:hidden; padding:0; }
+          .cat-bar { display:flex; align-items:center; justify-content:space-between; padding:0 28px; height:56px; border-bottom:1px solid var(--card-border); background:#fff; flex-shrink:0; }
+          .cat-tab-row { display:flex; gap:4px; padding:14px 28px 0; background:#fff; border-bottom:1px solid var(--card-border); flex-shrink:0; }
+          .cat-tab-btn { padding:7px 20px; border-radius:8px 8px 0 0; border:1px solid transparent; font-size:13px; font-weight:500; font-family:var(--font); background:transparent; color:var(--text-2); cursor:pointer; transition:background .12s,color .12s; margin-bottom:-1px; }
+          .cat-tab-btn.active { background:#fff; color:var(--text); border-color:var(--card-border); border-bottom-color:#fff; }
+          .cat-bar-title { font-size:15px; font-weight:600; color:var(--text); }
+          .cat-bar-save { padding:8px 18px; border-radius:8px; border:1px solid var(--card-border); font-size:13px; font-weight:500; font-family:var(--font); background:var(--brand); color:#fff; cursor:pointer; transition:opacity .15s; }
+          .cat-bar-save:disabled { background:#e8e8e3; color:#a8a89e; border-color:#e8e8e3; cursor:not-allowed; }
+          .cat-bar-save:not(:disabled):hover { opacity:.88; }
+
+          .cat-body { flex:1; overflow-y:auto; padding:20px 28px 40px; background:#fafaf8; }
+
+          .cat-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start; margin-bottom:20px; }
+          .cat-col { background:#fff; border:1px solid var(--card-border); border-radius:10px; overflow:hidden; }
+          .cat-col-hd { padding:14px 18px 12px; border-bottom:1px solid var(--card-border); }
+          .cat-col-title { font-size:13px; font-weight:600; color:var(--text); }
+
+          .cat-row { display:flex; align-items:center; justify-content:space-between; padding:13px 18px; border-bottom:1px solid var(--card-border); transition:background .1s; gap:10px; }
+          .cat-row:last-child { border-bottom:none; }
+          .cat-row:hover { background:#f5f5f1; }
+          .cat-row-left { display:flex; align-items:center; gap:10px; flex:1; min-width:0; }
+          .cat-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+          .cat-row-name { font-size:13px; font-weight:500; color:var(--text); line-height:1.3; }
+          .cat-row-desc { font-size:11.5px; color:var(--text-2); margin-top:1px; }
+          .cat-empty { padding:52px 18px; text-align:center; color:#b0b0a8; font-size:13px; }
+
+          .cat-extra-col { margin-top:16px; background:#fff; border:1px solid var(--card-border); border-radius:10px; overflow:hidden; }
+          .cat-extra-hd { padding:12px 18px; border-bottom:1px solid var(--card-border); font-size:12px; font-weight:600; color:var(--text-2); text-transform:uppercase; letter-spacing:.05em; }
+
+          .cat-toggle { position:relative; display:inline-flex; align-items:center; width:44px; height:26px; flex-shrink:0; cursor:pointer; }
+          .cat-toggle input { opacity:0; width:0; height:0; position:absolute; }
+          .cat-track { position:absolute; inset:0; background:#d4d4cc; border-radius:99px; transition:background .18s; }
+          .cat-track::after { content:''; position:absolute; left:3px; top:3px; width:20px; height:20px; background:#fff; border-radius:50%; transition:transform .18s; box-shadow:0 1px 3px rgba(0,0,0,.22); }
+          .cat-toggle input:checked + .cat-track { background:#1a1a18; }
+          .cat-toggle input:checked + .cat-track::after { transform:translateX(18px); }
+
+          .cat-divider { font-size:11px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:var(--text-2); margin:24px 0 10px; }
+
+          .cat-adv-card { background:#fff; border:1px solid var(--card-border); border-radius:10px; overflow:hidden; margin-bottom:12px; }
+          .cat-adv-row { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 18px; border-bottom:1px solid var(--card-border); }
+          .cat-adv-row:last-child { border-bottom:none; }
+          .cat-adv-row-title { font-size:13.5px; font-weight:500; color:var(--text); margin-bottom:3px; }
+          .cat-adv-row-desc { font-size:12px; color:var(--text-2); line-height:1.5; }
+
+          .cat-radio-row { display:flex; align-items:center; gap:13px; padding:13px 18px; font-size:13px; color:var(--text); cursor:pointer; border-bottom:1px solid var(--card-border); transition:background .1s; }
+          .cat-radio-row:last-child { border-bottom:none; }
+          .cat-radio-row:hover { background:#f5f5f1; }
+          .cat-radio-row input[type="radio"] { width:16px; height:16px; accent-color:#1a1a18; flex-shrink:0; cursor:pointer; }
+
+          .cat-add-row { display:flex; align-items:center; justify-content:space-between; padding:13px 18px; cursor:pointer; border-top:1px solid var(--card-border); transition:background .1s; }
+          .cat-add-row:hover { background:#f5f5f1; }
+          .cat-add-row-label { font-size:13px; font-weight:500; color:var(--text); }
+          .cat-add-row-plus { font-size:12px; font-weight:500; color:var(--text-2); background:#f0f0eb; border:1px solid var(--card-border); border-radius:5px; padding:3px 10px; }
+
+          .cat-adv-input-row { display:flex; align-items:center; gap:8px; padding:8px 18px; border-top:1px solid var(--card-border); background:#fff; }
+          .cat-adv-input-row input { flex:1; padding:7px 10px; border:1px solid var(--card-border); border-radius:6px; font-size:12.5px; font-family:var(--font); background:#fafaf8; color:var(--text); }
+          .cat-adv-input-row button { padding:6px 10px; border:1px solid var(--card-border); border-radius:6px; background:none; cursor:pointer; font-size:13px; color:var(--text-2); font-family:var(--font); }
+          .cat-adv-input-row button:hover { background:#f5f5f1; }
+
+          .cat-toast { margin-top:14px; padding:10px 14px; border-radius:8px; font-size:12.5px; font-weight:500; display:none; }
+          .cat-toast.ok  { display:block; background:rgba(34,197,94,.1); color:#15803d; border:1px solid rgba(34,197,94,.25); }
+          .cat-toast.err { display:block; background:rgba(239,68,68,.1); color:#dc2626; border:1px solid rgba(239,68,68,.25); }
+        </style>
+
+        <div class="cat-bar">
+          <span class="cat-bar-title">Categorization</span>
+          <button id="catSaveBtn" class="cat-bar-save" disabled>Update preferences</button>
+        </div>
+
+        <!-- Tab row -->
+        <div class="cat-tab-row">
+          <button class="cat-tab-btn active" data-cattab="general">General</button>
+          <button class="cat-tab-btn" data-cattab="advanced">Advanced</button>
+        </div>
+
+        <div class="cat-body">
+
+          <!-- ── General tab ── -->
+          <div id="catGenPanel">
+            <div class="cat-grid">
+              <div>
+                <div class="cat-col">
+                  <div class="cat-col-hd"><div class="cat-col-title">Move these out of my Inbox</div></div>
+                  <div id="catMoveOutItems"><div class="cat-empty" id="catMoveOutEmpty">No categories selected</div></div>
+                </div>
+                <div class="cat-extra-col">
+                  <div class="cat-extra-hd">Existing categories</div>
+                  <div class="cat-row">
+                    <div class="cat-row-left"><div><div class="cat-row-name">Respect my categories</div><div class="cat-row-desc">We won't sort emails already labeled</div></div></div>
+                    <label class="cat-toggle"><input type="checkbox" id="catRespectExisting" checked><div class="cat-track"></div></label>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="cat-col">
+                  <div class="cat-col-hd"><div class="cat-col-title">Keep these in my Inbox</div></div>
+                  <div id="catKeepInItems"></div>
+                </div>
+              </div>
+            </div>
+            <div id="catToast" class="cat-toast"></div>
+          </div>
+
+          <!-- ── Advanced tab ── -->
+          <div id="catAdvPanel" style="display:none;">
+
+            <div class="cat-divider">Enable categorization?</div>
+            <div class="cat-adv-card">
+              <div class="cat-adv-row">
+                <div><div class="cat-adv-row-title">Enable</div><div class="cat-adv-row-desc">Turn categorization on or off globally.</div></div>
+                <label class="cat-toggle"><input type="checkbox" id="catEnabled" checked><div class="cat-track"></div></label>
+              </div>
+            </div>
+
+            <div class="cat-divider">Sent email behavior</div>
+            <div class="cat-adv-card">
+              <div class="cat-adv-row">
+                <div><div class="cat-adv-row-title">Archive threads after sending</div><div class="cat-adv-row-desc">Automatically move threads out of your inbox after you reply, so only emails needing your attention remain.</div></div>
+                <label class="cat-toggle"><input type="checkbox" id="catArchiveAfterSend"><div class="cat-track"></div></label>
+              </div>
+            </div>
+
+            <div class="cat-divider">Which emails should filter as marketing?</div>
+            <div class="cat-adv-card">
+              <label class="cat-radio-row"><input type="radio" name="catMarketingLevel" value="obvious"> Just obvious sales outreach</label>
+              <label class="cat-radio-row"><input type="radio" name="catMarketingLevel" value="cold" checked> Cold emails and unknown senders</label>
+              <label class="cat-radio-row"><input type="radio" name="catMarketingLevel" value="newsletters"> Cold emails, unknown senders and newsletters</label>
+              <label class="cat-radio-row"><input type="radio" name="catMarketingLevel" value="anything"> Anything that's not directly useful to my work</label>
+            </div>
+
+            <div class="cat-divider">Alternative emails</div>
+            <div class="cat-adv-card">
+              <div id="catAltEmailsList"></div>
+              <div class="cat-add-row" id="catAddAltEmailBtn">
+                <span class="cat-add-row-label">Add email address</span>
+                <span class="cat-add-row-plus">+ Add</span>
+              </div>
+            </div>
+
+            <div class="cat-divider">Custom rules</div>
+            <div class="cat-adv-card">
+              <div style="padding:12px 18px;font-size:12px;color:var(--text-2);border-bottom:1px solid var(--card-border);">Choose which addresses, domains, or exact subjects go to each category.</div>
+              <div id="catCustomRulesList"></div>
+              <div class="cat-add-row" id="catAddCustomRuleBtn">
+                <span class="cat-add-row-label">Add email, domain, or subject</span>
+                <span class="cat-add-row-plus">+ Add</span>
+              </div>
+            </div>
+
+          </div><!-- /catAdvPanel -->
+
+        </div>
+      </div>
+
+    <!-- ── PANEL: Account / Profile ─────────────────────────────────────── -->
+    <div class="panel hidden" id="panel-account">
+      <style>
+        #panel-account:not(.hidden) { display:flex; flex-direction:column; flex:1; overflow:hidden; padding:0; }
+
+        /* Top bar */
+        .acc-bar { display:flex; align-items:center; justify-content:space-between; padding:0 28px; height:56px; border-bottom:1px solid var(--card-border); background:#fff; flex-shrink:0; }
+        .acc-bar-title { font-size:15px; font-weight:600; color:var(--text); }
+
+        /* Scrollable body */
+        .acc-body { flex:1; overflow-y:auto; padding:32px 40px 48px; background:#fafaf8; }
+        .acc-inner { max-width:520px; margin:0 auto; }
+
+        /* Hero card — avatar + email + plan */
+        .acc-hero { background:#fff; border:1px solid var(--card-border); border-radius:14px; padding:28px 24px 24px; margin-bottom:20px; display:flex; align-items:center; gap:20px; }
+        .acc-avatar { width:56px; height:56px; border-radius:50%; background:var(--brand); display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700; color:#fff; flex-shrink:0; }
+        .acc-hero-info { flex:1; min-width:0; }
+        .acc-hero-email { font-size:15px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:6px; }
+        .acc-badge { display:inline-flex; align-items:center; gap:5px; padding:4px 12px; border-radius:99px; font-size:12px; font-weight:600; }
+        .acc-badge.pro  { background:rgba(34,197,94,.12); color:#15803d; }
+        .acc-badge.free { background:#f0f0eb; color:var(--text-2); }
+        .acc-badge::before { content:''; display:block; width:7px; height:7px; border-radius:50%; background:currentColor; }
+
+        /* Credits bar */
+        .acc-credits-bar { background:#fff; border:1px solid var(--card-border); border-radius:12px; padding:18px 22px; margin-bottom:20px; }
+        .acc-credits-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+        .acc-credits-label { font-size:12px; font-weight:600; color:var(--text-2); text-transform:uppercase; letter-spacing:.05em; }
+        .acc-credits-value { font-size:20px; font-weight:700; color:var(--text); }
+        .acc-credits-value.unlimited { color:#15803d; }
+        .acc-credits-track { height:6px; background:#f0f0eb; border-radius:99px; overflow:hidden; }
+        .acc-credits-fill { height:100%; border-radius:99px; background:var(--brand); transition:width .4s; }
+        .acc-credits-fill.green { background:#22c55e; }
+        .acc-credits-sub { font-size:11.5px; color:var(--text-3); margin-top:8px; }
+
+        /* Info rows card */
+        .acc-card { background:#fff; border:1px solid var(--card-border); border-radius:12px; overflow:hidden; margin-bottom:20px; }
+        .acc-card-hd { padding:14px 22px; border-bottom:1px solid var(--card-border); font-size:11px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:.07em; }
+        .acc-row { display:flex; align-items:center; gap:14px; padding:16px 22px; border-bottom:1px solid var(--card-border); }
+        .acc-row:last-child { border-bottom:none; }
+        .acc-row-icon { width:34px; height:34px; border-radius:9px; background:#f0f0eb; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+        .acc-row-body { flex:1; min-width:0; }
+        .acc-row-title { font-size:13.5px; font-weight:500; color:var(--text); }
+        .acc-row-sub   { font-size:12px; color:var(--text-3); margin-top:2px; }
+        .acc-row-action { flex-shrink:0; }
+
+        /* Action buttons */
+        .acc-action-btn { padding:7px 16px; border-radius:8px; font-size:12.5px; font-weight:500; cursor:pointer; font-family:var(--font); transition:background .12s, opacity .12s; }
+        .acc-action-btn.ghost  { background:#fff; color:var(--text-2); border:1px solid var(--card-border); }
+        .acc-action-btn.ghost:hover  { background:var(--hover-bg); }
+        .acc-action-btn.primary { background:var(--brand); color:#fff; border:none; }
+        .acc-action-btn.primary:hover { opacity:.88; }
+        .acc-action-btn.danger { background:#fff; color:var(--red); border:1px solid rgba(239,68,68,.25); }
+        .acc-action-btn.danger:hover  { background:rgba(239,68,68,.05); }
+      </style>
+
+      <div class="acc-bar">
+        <span class="acc-bar-title">Your profile</span>
+      </div>
+
+      <div class="acc-body">
+        <div class="acc-inner">
+
+          <!-- Hero: avatar + email + plan badge -->
+          <div class="acc-hero">
+            <div class="acc-avatar" id="accAvatar">?</div>
+            <div class="acc-hero-info">
+              <div class="acc-hero-email" id="accEmail">Loading…</div>
+              <div id="accPlanBadge"></div>
+            </div>
+          </div>
+
+          <!-- Credits -->
+          <div class="acc-credits-bar">
+            <div class="acc-credits-row">
+              <span class="acc-credits-label">Credits remaining</span>
+              <span class="acc-credits-value" id="accCredits">—</span>
+            </div>
+            <div class="acc-credits-track"><div class="acc-credits-fill" id="accCreditsFill" style="width:0%"></div></div>
+            <div class="acc-credits-sub" id="accCreditsSub">Credits are used each time the organizer runs</div>
+          </div>
+
+          <!-- Account options -->
+          <div class="acc-card">
+            <div class="acc-card-hd">Account options</div>
+            <div class="acc-row">
+              <div class="acc-row-icon">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 2a6 6 0 110 12A6 6 0 0110 2zm0 14c-4 0-7 1.8-7 3h14c0-1.2-3-3-7-3z"/></svg>
+              </div>
+              <div class="acc-row-body">
+                <div class="acc-row-title">Connected account</div>
+                <div class="acc-row-sub" id="accEmailSub">—</div>
+              </div>
+              <div class="acc-row-action">
+                <button class="acc-action-btn danger" id="accResetBtn">↺ Reset</button>
+              </div>
+            </div>
+            <div class="acc-row">
+              <div class="acc-row-icon">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h16v12a1 1 0 01-1 1H3a1 1 0 01-1-1V4z"/><path d="M2 4l8 7 8-7"/></svg>
+              </div>
+              <div class="acc-row-body">
+                <div class="acc-row-title">Contact support</div>
+                <div class="acc-row-sub">Plan updates, billing, or any question</div>
+              </div>
+              <div class="acc-row-action">
+                <button id="emailSupportBtn" class="acc-action-btn primary">Email us</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Scrollable body -->
+    <div class="main-body page">
+      <!-- Storage warning banner -->
+      <div id="storageQuotaWarning">
+        <div class="banner-icon">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a1 1 0 01.894.553l7 14A1 1 0 0117 18H3a1 1 0 01-.894-1.447l7-14A1 1 0 0110 2zm0 5a1 1 0 00-1 1v3a1 1 0 002 0V8a1 1 0 00-1-1zm0 7a1 1 0 100 2 1 1 0 000-2z"/></svg>
+        </div>
+        <div class="banner-body">
+          <div class="banner-title">Storage warning</div>
+          <div class="banner-sub" id="quotaText"></div>
+        </div>
+      </div>
+
+
+      <!-- ── PANEL: General (Settings) ──────────────────────────────── -->
+      <div class="panel" id="panel-general">
+        <style>
+          /* ── Emitly-inspired Dashboard ─────────────────────────────── */
+          .db-wrap { display:flex; flex-direction:column; gap:20px; }
+
+          /* Config warning */
+          #configWarning { background:#fffbeb; border:1px solid var(--yellow-border); border-radius:var(--radius-lg); padding:14px 18px; }
+          #configWarning .card-title { font-size:14px; margin:2px 0 4px; }
+          #configWarning .card-sub { font-size:12px; color:var(--text-2); }
+
+          /* Welcome row */
+          .db-welcome { display:flex; align-items:center; justify-content:space-between; }
+          .db-welcome-text h2 { font-size:18px; font-weight:700; color:var(--text); margin-bottom:2px; }
+          .db-welcome-text p { font-size:12.5px; color:var(--text-2); }
+          .db-sync-btn { display:flex; align-items:center; gap:6px; padding:7px 14px; border:1px solid var(--card-border); border-radius:8px; background:#fff; font-size:12px; font-weight:500; color:var(--text-2); cursor:pointer; font-family:var(--font); transition:background .12s; }
+          .db-sync-btn:hover { background:var(--hover-bg); }
+          .db-sync-btn svg { flex-shrink:0; }
+
+          /* Stats row — compact colored-number style */
+          .db-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+          .db-stat {
+            background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+            border-radius:12px; padding:18px 20px 14px;
+            display:flex; flex-direction:column; gap:6px; position:relative; overflow:hidden;
+          }
+          .db-stat::after {
+            content:''; position:absolute; bottom:0; left:0; right:0; height:3px; border-radius:0 0 12px 12px;
+          }
+          .db-stat.c-orange::after { background:#e8441a; }
+          .db-stat.c-green::after  { background:#22c55e; }
+          .db-stat.c-blue::after   { background:#3b82f6; }
+          .db-stat.c-purple::after { background:#a855f7; }
+          .db-stat-num {
+            font-size:32px; font-weight:800; line-height:1; letter-spacing:-1px;
+          }
+          .db-stat.c-orange .db-stat-num { color:#e8441a; }
+          .db-stat.c-green  .db-stat-num { color:#22c55e; }
+          .db-stat.c-blue   .db-stat-num { color:#60a5fa; }
+          .db-stat.c-purple .db-stat-num { color:#a855f7; }
+          .db-stat-label {
+            font-size:10px; font-weight:700; color:var(--text-2);
+            text-transform:uppercase; letter-spacing:.06em;
+          }
+          .db-stat-trend { font-size:11px; color:var(--text-3); }
+          .db-stat-trend.up { color:#22c55e; }
+          .db-stat-trend.neutral { background:#f0f0eb; color:var(--text-2); }
+
+          /* Main grid */
+          .db-main { display:grid; grid-template-columns:1fr 340px; gap:16px; align-items:start; }
+
+          /* Activity chart */
+          .db-card { background:#fff; border:1px solid var(--card-border); border-radius:var(--radius-lg); overflow:hidden; }
+          .db-card-hd { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 12px; border-bottom:1px solid var(--card-border); }
+          .db-card-title { font-size:13.5px; font-weight:600; color:var(--text); }
+          .db-card-sub { font-size:11.5px; color:var(--text-2); margin-top:1px; }
+          .db-card-body { padding:20px; }
+          .db-period-btn { display:flex; align-items:center; gap:4px; padding:5px 10px; border:1px solid var(--card-border); border-radius:6px; font-size:11.5px; font-weight:500; color:var(--text-2); background:#fafaf8; cursor:pointer; font-family:var(--font); }
+
+          /* Bar chart */
+          .db-chart { display:flex; align-items:flex-end; gap:8px; height:90px; padding:0 4px; }
+          .db-bar-col { display:flex; flex-direction:column; align-items:center; gap:5px; flex:1; }
+          .db-bar { width:100%; border-radius:4px 4px 0 0; background:var(--brand); opacity:.15; transition:opacity .15s, height .3s; min-height:4px; }
+          .db-bar.active { opacity:1; }
+          .db-bar:hover { opacity:.8; cursor:pointer; }
+          .db-bar-lbl { font-size:10px; color:var(--text-3); font-weight:500; }
+
+          /* Category overview */
+          .db-cat-row { display:flex; align-items:center; gap:10px; padding:11px 20px; border-bottom:1px solid var(--card-border); }
+          .db-cat-row:last-child { border-bottom:none; }
+          .db-cat-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+          .db-cat-name { font-size:12.5px; font-weight:500; color:var(--text); flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+          .db-cat-bar-wrap { width:80px; height:5px; background:#f0f0eb; border-radius:99px; overflow:hidden; flex-shrink:0; }
+          .db-cat-bar-fill { height:100%; border-radius:99px; background:var(--brand); }
+          .db-cat-count { font-size:12px; font-weight:600; color:var(--text-2); min-width:28px; text-align:right; flex-shrink:0; }
+
+          /* Settings card */
+          .db-setting-row { display:flex; align-items:center; justify-content:space-between; padding:13px 20px; border-bottom:1px solid var(--card-border); gap:12px; }
+          .db-setting-row:last-child { border-bottom:none; }
+          .db-setting-label { font-size:13px; font-weight:500; color:var(--text); margin-bottom:1px; }
+          .db-setting-sub { font-size:11.5px; color:var(--text-2); }
+          .db-field-row { display:flex; align-items:center; justify-content:space-between; padding:13px 20px; border-bottom:1px solid var(--card-border); gap:12px; }
+          .db-field-row:last-child { border-bottom:none; }
+          .db-field-row input[type="number"] { width:70px; padding:6px 10px; border:1px solid var(--card-border); border-radius:6px; font-size:13px; font-family:var(--font); background:#fafaf8; color:var(--text); text-align:center; }
+          .db-save-row { padding:16px 20px; }
+          .db-save-btn { width:100%; padding:10px; background:var(--brand); color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:600; font-family:var(--font); cursor:pointer; transition:opacity .15s; }
+          .db-save-btn:hover { opacity:.88; }
+          .db-status { text-align:center; font-size:12px; color:var(--text-2); padding:0 20px 14px; }
+        </style>
+
+        <!-- Hidden inputs kept for JS compatibility -->
+        <section id="configWarning" hidden>
+          <div class="card-title">Setup required — Add your Google OAuth client ID</div>
+          <p class="card-sub">Replace the placeholder in manifest.json, then reload the extension.</p>
+        </section>
+
+        <div class="db-wrap">
+
+          <!-- Welcome row -->
+          <div class="db-welcome">
+            <div class="db-welcome-text">
+              <h2>Welcome back 👋</h2>
+              <p>Here's what's happening with your inbox today</p>
+            </div>
+            <button class="db-sync-btn" id="dbSyncBtn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6"/><path d="M2.5 22v-6h6"/><path d="M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/></svg>
+              Run organizer
+            </button>
+          </div>
+
+          <!-- Stats row -->
+          <div class="db-stats">
+            <div class="db-stat c-orange">
+              <div class="db-stat-num" id="dbStatProcessed">—</div>
+              <div class="db-stat-label">Organized</div>
+              <div class="db-stat-trend" id="dbStatProcessedTrend">All time</div>
+            </div>
+            <div class="db-stat c-green">
+              <div class="db-stat-num" id="dbStatSorted">—</div>
+              <div class="db-stat-label">This week</div>
+              <div class="db-stat-trend up" id="dbStatSortedTrend">7 days</div>
+            </div>
+            <div class="db-stat c-blue">
+              <div class="db-stat-num" id="dbStatRules">—</div>
+              <div class="db-stat-label">Rules active</div>
+              <div class="db-stat-trend" id="dbStatRulesTrend">Total</div>
+            </div>
+            <div class="db-stat c-purple">
+              <div class="db-stat-num" id="dbStatTime">—</div>
+              <div class="db-stat-label">Time saved</div>
+              <div class="db-stat-trend up">↑ Est.</div>
+            </div>
+          </div>
+
+          <!-- Main grid: chart + right column -->
+          <div class="db-main">
+
+            <!-- Left: Activity chart + Category overview -->
+            <div style="display:flex;flex-direction:column;gap:16px;">
+
+              <!-- Activity chart -->
+              <div class="db-card">
+                <div class="db-card-hd">
+                  <div>
+                    <div class="db-card-title">Email Activity</div>
+                    <div class="db-card-sub">Emails organized over the last 7 days</div>
+                  </div>
+                  <button class="db-period-btn">Week ▾</button>
+                </div>
+                <div class="db-card-body">
+                  <div class="db-chart" id="dbActivityChart">
+                    <!-- Rendered by JS -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Top labels -->
+              <div class="db-card">
+                <div class="db-card-hd">
+                  <div class="db-card-title">Top labels applied</div>
+                  <a href="#" style="font-size:12px;color:var(--brand);text-decoration:none;" data-goto-panel="rules" data-goto-title="Rules">View rules →</a>
+                </div>
+                <div id="dbCatOverview">
+                  <div class="db-cat-row" style="justify-content:center;color:var(--text-3);font-size:12px;">Loading…</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Right: Quick settings -->
+            <div style="display:flex;flex-direction:column;gap:16px;">
+
+              <!-- Automation toggles -->
+              <div class="db-card">
+                <div class="db-card-hd">
+                  <div class="db-card-title">Automation</div>
+                </div>
+                <div class="db-setting-row">
+                  <div>
+                    <div class="db-setting-label">Auto-run organizer</div>
+                    <div class="db-setting-sub">Organize inbox on a schedule</div>
+                  </div>
+                  <label class="toggle"><input id="autoRunEnabled" type="checkbox"><div class="toggle-track"></div></label>
+                </div>
+                <div class="db-setting-row">
+                  <div>
+                    <div class="db-setting-label">Archive after labeling</div>
+                    <div class="db-setting-sub">Move sorted emails out of inbox</div>
+                  </div>
+                  <label class="toggle"><input id="archiveMatches" type="checkbox"><div class="toggle-track"></div></label>
+                </div>
+                <div class="db-setting-row" id="dbGoToScheduleRow" style="cursor:pointer;">
+                  <div>
+                    <div class="db-setting-label">Auto-empty trash</div>
+                    <div class="db-setting-sub">Configure in Schedule settings →</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Run settings -->
+              <div class="db-card">
+                <div class="db-card-hd">
+                  <div class="db-card-title">Run settings</div>
+                </div>
+                <div class="db-field-row">
+                  <div>
+                    <div class="db-setting-label">Max threads per run</div>
+                    <div class="db-setting-sub">Emails processed at once</div>
+                  </div>
+                  <input id="maxThreadsPerRun" type="number" min="1" max="500">
+                </div>
+                <div class="db-save-row">
+                  <button class="db-save-btn" data-action="save">Save settings</button>
+                  <p id="saveStatus" class="db-status" style="margin-top:8px;padding:0;">Ready.</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div><!-- /db-wrap -->
+
+        <!-- dashboard wired in options.js -->
+      </div>
+
+      <!-- ── PANEL: Rules ────────────────────────────────────────────── -->
+      <div class="panel hidden" id="panel-rules">
+        <div class="tabs"><button class="tab active">General</button></div>
+
+        <section class="card" id="wizardCard" style="display:none">
+          <div class="card-label">Setup wizard</div>
+          <h2 class="card-title">Get started in 3 steps</h2>
+          <div style="margin:14px 0;display:flex;flex-direction:column;gap:8px;">
+            <div class="wizard-step" data-step="1">
+              <div style="width:24px;height:24px;border-radius:50%;background:#3b82f6;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">1</div>
+              <div><div style="font-weight:600;font-size:13px;">Choose your categories</div><div style="font-size:11px;color:var(--text-2);">Click "Use recommended presets" to add 10 smart rules</div></div>
+              <span style="margin-left:auto;color:var(--green);font-size:16px;" id="step1Check">○</span>
+            </div>
+            <div class="wizard-step" data-step="2">
+              <div style="width:24px;height:24px;border-radius:50%;background:#f59e0b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">2</div>
+              <div><div style="font-weight:600;font-size:13px;">Run Preview</div><div style="font-size:11px;color:var(--text-2);">Open the popup and click Preview to see matched emails</div></div>
+              <span style="margin-left:auto;color:var(--green);font-size:16px;" id="step2Check">○</span>
+            </div>
+            <div class="wizard-step" data-step="3">
+              <div style="width:24px;height:24px;border-radius:50%;background:#22c55e;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">3</div>
+              <div><div style="font-weight:600;font-size:13px;">Organize your inbox</div><div style="font-size:11px;color:var(--text-2);">Apply changes and optionally enable auto-run</div></div>
+              <span style="margin-left:auto;color:var(--green);font-size:16px;" id="step3Check">○</span>
+            </div>
+          </div>
+          <button id="startWizardBtn" class="button primary" type="button" style="width:100%">Start with recommended presets →</button>
+        </section>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-label">Quick start</div>
+              <h2 class="card-title">Pick starter rules, then preview</h2>
+              <p class="card-sub">Choose presets → run Preview → apply when matches look right.</p>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button id="loadRecommendedButton" class="button primary" type="button">Use recommended presets</button>
+            <button id="markOnboardingButton" class="link-button" type="button">Mark setup complete</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-label">Natural Language</div>
+              <h2 class="card-title">Describe a rule in plain English</h2>
+            </div>
+          </div>
+          <div class="field">
+            <span>Rule description</span>
+            <textarea id="nlRuleText" rows="3" placeholder="e.g., Label receipts from amazon and apple as Receipts/Shopping, then archive them"></textarea>
+          </div>
+          <div class="btn-row">
+            <button id="nlParseBtn" class="button secondary" type="button">Parse rule</button>
+          </div>
+          <div id="nlStatus" class="status" style="margin-top:10px;"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-label">Rules</div>
+              <h2 class="card-title">Choose what should happen</h2>
+              <p class="card-sub" style="margin-top:2px;">Rule names must be unique. Labels cannot be empty.</p>
+            </div>
+            <div class="btn-row">
+              <button id="addRuleButton" class="button secondary" type="button">Add rule</button>
+              <button id="browseTemplatesBtn" class="button ghost" type="button">Templates</button>
+              <button id="clearRulesButton" class="button ghost" type="button">Clear all</button>
+            </div>
+          </div>
+          <div id="presetsList" class="preset-grid"></div>
+          <p id="generatedRulesNotice" class="generated-rules-notice" hidden></p>
+          <div id="rulesList" class="rules-list"></div>
+        </div>
+
+        <div class="actions">
+          <button class="button primary" data-action="save">Save settings</button>
+        </div>
+        <p class="status" style="text-align:center;margin-top:10px;font-size:12px;">Changes saved automatically.</p>
+      </div>
+
+      <!-- ── PANEL: Automation ───────────────────────────────────────── -->
+      <div class="panel hidden" id="panel-automation">
+        <div class="tabs"><button class="tab active">General</button></div>
+
+        <div class="card">
+          <div class="card-label">Automation</div>
+          <h2 class="card-title">Auto-run scheduling</h2>
+          <div class="grid-2" style="margin-top:14px;">
+            <div class="field">
+              <span>Run every</span>
+              <select id="autoRunIntervalMinutes">
+                <option value="15">15 minutes</option>
+                <option value="30">30 minutes</option>
+                <option value="60">1 hour</option>
+                <option value="120">2 hours</option>
+                <option value="180">3 hours</option>
+                <option value="360">6 hours</option>
+                <option value="720">12 hours</option>
+                <option value="1440">24 hours</option>
+              </select>
+            </div>
+          </div>
+          <p id="scheduleStatus" class="status" style="margin-top:4px;">Auto-run is off.</p>
+          <p id="timezoneHint" style="font-size:11px;color:var(--text-3);margin-top:4px;"></p>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Trash cleanup</div>
+          <h2 class="card-title">Auto-empty trash</h2>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;margin-bottom:14px;">
+            <div>
+              <div class="db-setting-label" style="font-size:13px;font-weight:600;">Enable auto-empty trash</div>
+              <div class="db-setting-sub" style="font-size:11px;color:var(--text-2);">Automatically delete old trash on a schedule</div>
+            </div>
+            <label class="toggle"><input id="autoEmptyTrashEnabled" type="checkbox"><div class="toggle-track"></div></label>
+          </div>
+          <div class="grid-2" id="trashIntervalFields">
+            <div class="field">
+              <span>Empty every</span>
+              <select id="autoEmptyTrashIntervalMinutes">
+                <option value="1440">Daily</option>
+                <option value="10080">Weekly</option>
+                <option value="20160">Every 2 weeks</option>
+                <option value="43200">Monthly</option>
+              </select>
+            </div>
+            <div class="field">
+              <span>Delete trash older than</span>
+              <select id="autoEmptyTrashOlderThanDays">
+                <option value="0">Everything in trash</option>
+                <option value="7">7 days old</option>
+                <option value="14">14 days old</option>
+                <option value="30" selected>30 days old</option>
+              </select>
+            </div>
+          </div>
+          <p id="trashScheduleStatus" class="status" style="margin-top:4px;">Auto-empty trash is off.</p>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <h2 class="card-title">Daily digest notification</h2>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;margin-bottom:4px;">
+            <div>
+              <div class="db-setting-label" style="font-size:13px;font-weight:600;">Enable daily digest</div>
+              <div class="db-setting-sub" style="font-size:11px;color:var(--text-2);">Chrome notification at 8am with your inbox summary (organized count, unsubscribes, unread)</div>
+            </div>
+            <label class="toggle"><input id="dailyDigestEnabled" type="checkbox" checked><div class="toggle-track"></div></label>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="button primary" data-action="save">Save settings</button>
+        </div>
+      </div>
+
+      <!-- ── PANEL: AI Assistant ────────────────────────────────────── -->
+      <div class="panel hidden" id="panel-ai">
+        <style>
+          /* ── AI Chat tab ─────────────────────────────────────────────── */
+          .ai-chat-wrap { display:flex; flex-direction:column; height:520px; }
+          .ai-chat-messages {
+            flex:1; overflow-y:auto; padding:14px 16px; display:flex;
+            flex-direction:column; gap:10px;
+            scrollbar-width:thin; scrollbar-color:rgba(0,0,0,.15) transparent;
+          }
+          .ai-msg { display:flex; flex-direction:column; max-width:88%; gap:2px; }
+          .ai-msg.bot { align-self:flex-start; }
+          .ai-msg.user { align-self:flex-end; }
+          .ai-msg-label { font-size:9px; font-weight:700; letter-spacing:.5px; color:#4f9cf9; margin-bottom:2px; text-transform:uppercase; }
+          .ai-bubble {
+            padding:9px 13px; border-radius:14px; font-size:12px; line-height:1.55;
+          }
+          .ai-msg.bot  .ai-bubble { background:var(--card-bg); border:1px solid var(--card-border); color:var(--text); border-radius:4px 14px 14px 14px; }
+          .ai-msg.user .ai-bubble { background:#2563eb; color:#fff; border-radius:14px 4px 14px 14px; }
+          .ai-rule-card {
+            background:rgba(79,156,249,.07); border:1px solid rgba(79,156,249,.2);
+            border-radius:10px; padding:10px 12px; margin-top:6px; font-size:11px;
+          }
+          [data-theme="light"] .ai-rule-card { background:rgba(37,99,235,.06); border-color:rgba(37,99,235,.18); }
+          .ai-rule-card-title { font-size:12px; font-weight:700; color:var(--text); display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+          .ai-rule-card-detail { color:var(--text-2); line-height:1.5; }
+          .ai-rule-add-btn {
+            padding:3px 11px; border-radius:6px; border:none;
+            background:#2563eb; color:#fff; font-size:10px; font-weight:700;
+            cursor:pointer; white-space:nowrap; font-family:var(--font);
+          }
+          .ai-rule-add-btn:hover { background:#1d4ed8; }
+          .ai-suggestions-row { display:flex; flex-wrap:wrap; gap:5px; margin-top:4px; }
+          .ai-sug-chip {
+            font-size:10px; padding:4px 11px; border-radius:20px; cursor:pointer;
+            border:1px solid rgba(79,156,249,.3); color:#60a5fa;
+            background:rgba(79,156,249,.08); transition:background .12s;
+            font-family:var(--font);
+          }
+          [data-theme="light"] .ai-sug-chip { border-color:rgba(37,99,235,.25); color:#2563eb; background:rgba(37,99,235,.06); }
+          .ai-sug-chip:hover { background:rgba(79,156,249,.15); }
+          [data-theme="light"] .ai-sug-chip:hover { background:rgba(37,99,235,.12); }
+          .ai-chat-input-row {
+            padding:10px 14px; border-top:1px solid var(--card-border);
+            display:flex; align-items:center; gap:8px; flex-shrink:0;
+          }
+          .ai-chat-input {
+            flex:1; background:var(--input-bg); border:1px solid var(--card-border);
+            border-radius:22px; padding:8px 14px; font-size:12px; color:var(--text);
+            outline:none; font-family:var(--font); resize:none; line-height:1.4;
+          }
+          .ai-chat-input:focus { border-color:rgba(79,156,249,.5); box-shadow:0 0 0 3px rgba(79,156,249,.1); }
+          .ai-chat-send-btn {
+            width:34px; height:34px; border-radius:50%; border:none;
+            background:#2563eb; color:#fff; font-size:15px; cursor:pointer;
+            display:flex; align-items:center; justify-content:center; flex-shrink:0;
+            transition:background .12s;
+          }
+          .ai-chat-send-btn:hover { background:#1d4ed8; }
+          .ai-chat-send-btn:disabled { background:rgba(255,255,255,.1); cursor:not-allowed; }
+          [data-theme="light"] .ai-chat-send-btn:disabled { background:#e5e7eb; }
+          .ai-chat-empty {
+            flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+            gap:12px; padding:32px; text-align:center;
+          }
+          .ai-chat-empty-icon { font-size:36px; }
+          .ai-chat-empty-title { font-size:14px; font-weight:700; color:var(--text); }
+          .ai-chat-empty-sub { font-size:12px; color:var(--text-2); line-height:1.6; max-width:280px; }
+          .ai-chat-starters { display:flex; flex-wrap:wrap; gap:7px; justify-content:center; }
+          .ai-chat-starter {
+            font-size:11px; padding:6px 14px; border-radius:20px; cursor:pointer;
+            border:1px solid var(--card-border); color:var(--text-2);
+            background:var(--card-bg); transition:all .12s; font-family:var(--font);
+          }
+          .ai-chat-starter:hover { border-color:rgba(79,156,249,.4); color:#60a5fa; background:rgba(79,156,249,.06); }
+          [data-theme="light"] .ai-chat-starter:hover { border-color:rgba(37,99,235,.3); color:#2563eb; background:rgba(37,99,235,.05); }
+          .ai-chat-thinking { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text-2); padding:6px 0; }
+          .ai-chat-thinking-dots span { display:inline-block; animation:ai-dot .8s ease-in-out infinite; }
+          .ai-chat-thinking-dots span:nth-child(2) { animation-delay:.15s; }
+          .ai-chat-thinking-dots span:nth-child(3) { animation-delay:.3s; }
+          @keyframes ai-dot { 0%,80%,100%{opacity:.2;transform:scale(.8)} 40%{opacity:1;transform:scale(1)} }
+          .ai-no-key-banner {
+            margin:14px 16px; padding:10px 14px; border-radius:10px;
+            background:var(--yellow-bg); border:1px solid var(--yellow-border);
+            font-size:11px; color:var(--text-2); line-height:1.5;
+          }
+          .ai-no-key-banner a { color:var(--blue); }
+        </style>
+
+        <div id="ai-tab-general">
+
+        <div class="card">
+          <div class="card-label">AI assistant</div>
+          <h2 class="card-title">Turn plain-language instructions into rules</h2>
+          <div class="grid-2" style="margin-top:14px;">
+            <div class="field">
+              <span>AI provider</span>
+              <select id="aiProvider">
+                <option value="local">Built-in generator</option>
+                <option value="gemini">Gemini Flash API</option>
+              </select>
+            </div>
+            <div class="field">
+              <span>Gemini model</span>
+              <input id="geminiModel" type="text" placeholder="gemini-2.5-flash-lite">
+            </div>
+          </div>
+          <div class="field">
+            <span>Gemini API key</span>
+            <input id="geminiApiKey" type="password" placeholder="AIza...">
+            <small class="hint">Stored locally on this browser only. Not exported with your setup.</small>
+          </div>
+          <div class="field">
+            <span>AI instructions</span>
+            <textarea id="aiInstructions" rows="5" placeholder="Example: Keep work and banking visible, archive newsletters and app updates, trash obvious promotions, archive shopping receipts."></textarea>
+            <small id="aiInstructionsHint" class="hint">Use the built-in generator for fast local suggestions, or switch to Gemini Flash for API-powered rule generation.</small>
+          </div>
+          <div class="btn-row">
+            <button id="generateAiRulesButton" class="button secondary" type="button">Generate rules</button>
+            <button id="appendAiRulesButton" class="button ghost" type="button">Merge with current</button>
+          </div>
+          <div id="aiSuggestionStatus" class="status" style="margin-top:10px;">Type your instructions, then generate suggestions.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Smart Suggestions</div>
+          <h2 class="card-title">Let AI scan your inbox</h2>
+          <button id="suggestionsScanbtn" class="button secondary" type="button" style="width:100%;margin-bottom:12px;">Scan my inbox</button>
+          <div id="suggestionsContainer" style="display:none;">
+            <div id="suggestionsList" style="display:flex;flex-direction:column;gap:10px;"></div>
+          </div>
+          <div id="suggestionsLoading" style="display:none;text-align:center;padding:20px;color:var(--text-2);">Scanning…</div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Daily routine</div>
+          <h2 class="card-title">Instructions to follow after setup</h2>
+          <div class="field">
+            <span>Daily check routine</span>
+            <textarea id="dailyRoutineInstructions" rows="5" placeholder="Write the daily workflow this setup should follow."></textarea>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="button primary" data-action="save">Save settings</button>
+        </div>
+        </div><!-- end #ai-tab-general -->
+
+      </div>
+
+      <!-- ── PANEL: AI Chat ─────────────────────────────────────────── -->
+      <div class="panel hidden ai-chat-wrap" id="panel-ai-chat">
+
+        <!-- ── NO-KEY SETUP SCREEN (shown when no API key) ─────────── -->
+        <div id="aiChatSetup">
+          <style>
+            .ai-setup-wrap {
+              display:flex; flex-direction:column; align-items:center;
+              justify-content:center; padding:32px 24px; gap:0; text-align:center;
+              min-height:460px;
+            }
+            .ai-setup-glow {
+              width:64px; height:64px; border-radius:18px; margin-bottom:20px;
+              background:linear-gradient(135deg,#4f9cf9,#7c3aed);
+              display:flex; align-items:center; justify-content:center;
+              font-size:28px;
+              box-shadow:0 0 32px rgba(79,156,249,.35);
+            }
+            .ai-setup-title { font-size:18px; font-weight:800; color:var(--text); margin-bottom:6px; }
+            .ai-setup-sub { font-size:12px; color:var(--text-2); line-height:1.6; margin-bottom:24px; max-width:320px; }
+            .ai-setup-steps {
+              display:flex; flex-direction:column; gap:10px;
+              width:100%; max-width:360px; margin-bottom:24px; text-align:left;
+            }
+            .ai-setup-step {
+              display:flex; align-items:flex-start; gap:12px;
+              background:var(--card-bg); border:1px solid var(--card-border);
+              border-radius:10px; padding:12px 14px;
+            }
+            .ai-setup-step-num {
+              width:22px; height:22px; border-radius:50%; flex-shrink:0;
+              background:linear-gradient(135deg,#4f9cf9,#7c3aed);
+              color:#fff; font-size:11px; font-weight:800;
+              display:flex; align-items:center; justify-content:center;
+            }
+            .ai-setup-step-text { font-size:12px; color:var(--text); line-height:1.5; }
+            .ai-setup-step-text strong { color:var(--text); }
+            .ai-setup-step-text a { color:#60a5fa; text-decoration:none; }
+            [data-theme="light"] .ai-setup-step-text a { color:#2563eb; }
+            .ai-setup-step-text a:hover { text-decoration:underline; }
+            .ai-setup-key-row {
+              display:flex; gap:8px; width:100%; max-width:360px; margin-bottom:10px;
+            }
+            .ai-setup-key-input {
+              flex:1; background:var(--input-bg); border:1px solid var(--card-border);
+              border-radius:10px; padding:10px 14px; font-size:12px; color:var(--text);
+              outline:none; font-family:var(--font);
+            }
+            .ai-setup-key-input:focus { border-color:rgba(79,156,249,.5); box-shadow:0 0 0 3px rgba(79,156,249,.1); }
+            .ai-setup-save-btn {
+              padding:10px 18px; border-radius:10px; border:none;
+              background:linear-gradient(135deg,#2563eb,#7c3aed); color:#fff;
+              font-size:12px; font-weight:700; cursor:pointer; font-family:var(--font);
+              white-space:nowrap; transition:opacity .15s;
+            }
+            .ai-setup-save-btn:hover { opacity:.9; }
+            .ai-setup-save-btn:disabled { opacity:.5; cursor:not-allowed; }
+            .ai-setup-free-note {
+              font-size:10px; color:var(--text-3); display:flex; align-items:center; gap:5px;
+            }
+          </style>
+          <div class="ai-setup-wrap">
+
+            <!-- One-click actions — two modes -->
+            <div style="display:flex;gap:10px;width:100%;margin-bottom:6px;">
+
+              <!-- Local mode -->
+              <div style="flex:1;display:flex;flex-direction:column;gap:5px;">
+                <button id="btnAutoOrganize" style="
+                  background:linear-gradient(135deg,#4f8ef7,#7c3aed);
+                  color:#fff; border:none; border-radius:12px;
+                  padding:12px 10px; font-size:13px; font-weight:700;
+                  cursor:pointer; width:100%; display:flex;
+                  align-items:center; justify-content:center; gap:6px;
+                  box-shadow:0 4px 14px rgba(79,142,247,.3);
+                  transition:opacity .2s;
+                ">✨ Auto-organize</button>
+                <div style="font-size:10px;color:var(--text-3);text-align:center;line-height:1.5;">
+                  Uses built-in smart labels<br>
+                  <strong style="color:var(--green,#22c55e);">✓ No API key needed</strong>
+                </div>
+              </div>
+
+              <!-- AI mode -->
+              <div style="flex:1;display:flex;flex-direction:column;gap:5px;">
+                <button id="btnAiOrganize" style="
+                  background:linear-gradient(135deg,#0ea472,#0891b2);
+                  color:#fff; border:none; border-radius:12px;
+                  padding:12px 10px; font-size:13px; font-weight:700;
+                  cursor:pointer; width:100%; display:flex;
+                  align-items:center; justify-content:center; gap:6px;
+                  box-shadow:0 4px 14px rgba(14,164,114,.3);
+                  transition:opacity .2s;
+                ">🤖 Organize with AI</button>
+                <div style="font-size:10px;color:var(--text-3);text-align:center;line-height:1.5;">
+                  Uses Gemini for deeper analysis<br>
+                  <strong style="color:var(--yellow,#f59e0b);">⚡ Requires Gemini key</strong>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Inline progress/results — shown during and after a run -->
+            <div id="autoOrganizeResults" style="display:none;width:100%;background:var(--bg-2,#1e1e2e);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:13px;line-height:1.7;color:var(--text);max-height:320px;overflow-y:auto;"></div>
+
+            <div style="width:100%;border-top:1px solid var(--border);margin-bottom:20px;"></div>
+
+            <div class="ai-setup-glow">✨</div>
+            <div class="ai-setup-title">Optional: Enable AI Chat</div>
+            <div class="ai-setup-sub">Add a free Gemini API key to chat with AI in plain English. No credit card needed, 1,500 requests/day free.</div>
+
+            <div class="ai-setup-steps">
+              <div class="ai-setup-step">
+                <div class="ai-setup-step-num">1</div>
+                <div class="ai-setup-step-text">
+                  <a href="https://aistudio.google.com/app/apikey" target="_blank"><strong>Open Google AI Studio →</strong></a><br>
+                  Sign in with Google, click <strong>"Create API key"</strong>
+                </div>
+              </div>
+              <div class="ai-setup-step">
+                <div class="ai-setup-step-num">2</div>
+                <div class="ai-setup-step-text">
+                  Copy the key (starts with <strong>AIza…</strong>) and paste it below
+                </div>
+              </div>
+              <div class="ai-setup-step">
+                <div class="ai-setup-step-num">3</div>
+                <div class="ai-setup-step-text">
+                  Click <strong>Save &amp; Start Chatting</strong> — that's it!
+                </div>
+              </div>
+            </div>
+
+            <div class="ai-setup-key-row">
+              <input class="ai-setup-key-input" id="aiSetupKeyInput"
+                type="password" placeholder="Paste your key here (AIza…)" autocomplete="off">
+              <button class="ai-setup-save-btn" id="aiSetupSaveBtn">Save &amp; Chat</button>
+            </div>
+            <div class="ai-setup-free-note">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Stored locally in your browser only · completely free
+            </div>
+          </div>
+        </div>
+
+        <!-- ── CHAT SCREEN (shown when key exists) ──────────────────── -->
+        <div id="aiChatScreen" class="hidden" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+          <!-- Messages area -->
+          <div class="ai-chat-messages" id="aiChatMessages">
+            <!-- Ready empty state -->
+            <div class="ai-chat-empty" id="aiChatEmpty">
+              <div class="ai-chat-empty-icon">✨</div>
+              <div class="ai-chat-empty-title">AI Inbox Assistant</div>
+              <div class="ai-chat-empty-sub">Let AI scan your inbox and automatically create rules, labels, and organize everything — or ask in plain English.</div>
+
+              <div style="font-size:11px;color:var(--text-3);margin-bottom:8px;font-weight:600;">Ask me anything:</div>
+              <div class="ai-chat-starters">
+                <button class="ai-chat-starter">Archive newsletters</button>
+                <button class="ai-chat-starter">Label GitHub notifications</button>
+                <button class="ai-chat-starter">Move Slack emails to a folder</button>
+                <button class="ai-chat-starter">Trash promotional emails</button>
+                <button class="ai-chat-starter">Organize shopping emails</button>
+                <button class="ai-chat-starter">Sort by sender automatically</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Input row -->
+          <div class="ai-chat-input-row">
+            <textarea class="ai-chat-input" id="aiChatInput" rows="1"
+              placeholder="Ask me to create a rule… (e.g. 'Archive all LinkedIn emails')"></textarea>
+            <button class="ai-chat-send-btn" id="aiChatSendBtn" title="Send">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+        </div>
+
+      </div><!-- end #panel-ai-chat -->
+
+      <!-- ── PANEL: Analytics / Dashboard ──────────────────────────── -->
+      <div class="panel hidden" id="panel-analytics">
+        <style>
+          /* ── Analytics Panel — Modern 2025 Design ───────────────────── */
+          .an-wrap { display:flex; flex-direction:column; gap:20px; }
+
+          /* Header */
+          .an-header { display:flex; align-items:center; justify-content:space-between; }
+          .an-header-left h2 { font-size:18px; font-weight:700; color:var(--text); margin:0 0 2px; }
+          .an-header-left p  { font-size:12px; color:var(--text-2); margin:0; }
+          .an-refresh-btn {
+            display:inline-flex; align-items:center; gap:6px;
+            padding:7px 14px; border:1px solid var(--card-border);
+            border-radius:8px; background:#fff; font-size:12px;
+            font-weight:500; color:var(--text-2); cursor:pointer;
+            font-family:var(--font); transition:all .15s;
+          }
+          .an-refresh-btn:hover { background:var(--hover-bg); border-color:#ccc; color:var(--text); }
+          .an-refresh-btn.spinning svg { animation:spin .7s linear infinite; }
+          @keyframes spin { to { transform:rotate(360deg); } }
+
+          /* KPI tiles */
+          .an-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+          .an-kpi {
+            background:#fff; border:1px solid var(--card-border);
+            border-radius:12px; padding:18px 20px; position:relative; overflow:hidden;
+          }
+          .an-kpi::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:3px;
+            border-radius:12px 12px 0 0;
+          }
+          .an-kpi.kpi-orange::before { background:linear-gradient(90deg,#e8441a,#f97316); }
+          .an-kpi.kpi-green::before  { background:linear-gradient(90deg,#22c55e,#4ade80); }
+          .an-kpi.kpi-blue::before   { background:linear-gradient(90deg,#3b82f6,#60a5fa); }
+          .an-kpi.kpi-purple::before { background:linear-gradient(90deg,#8b5cf6,#a78bfa); }
+          .an-kpi-icon {
+            width:34px; height:34px; border-radius:9px; display:flex; align-items:center;
+            justify-content:center; margin-bottom:12px;
+          }
+          .an-kpi.kpi-orange .an-kpi-icon { background:rgba(232,68,26,.08); color:#e8441a; }
+          .an-kpi.kpi-green  .an-kpi-icon { background:rgba(34,197,94,.08);  color:#16a34a; }
+          .an-kpi.kpi-blue   .an-kpi-icon { background:rgba(59,130,246,.08); color:#2563eb; }
+          .an-kpi.kpi-purple .an-kpi-icon { background:rgba(139,92,246,.08); color:#7c3aed; }
+          .an-kpi-label { font-size:11px; font-weight:500; color:var(--text-2); margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em; }
+          .an-kpi-value { font-size:28px; font-weight:700; color:var(--text); line-height:1; margin-bottom:8px; }
+          .an-kpi-badge {
+            display:inline-flex; align-items:center; gap:3px;
+            font-size:11px; font-weight:500; padding:2px 8px; border-radius:99px;
+          }
+          .an-kpi-badge.good { background:rgba(34,197,94,.1); color:#15803d; }
+          .an-kpi-badge.neutral { background:#f4f4f0; color:var(--text-2); }
+
+          /* Two-column main grid */
+          .an-main { display:grid; grid-template-columns:1fr 300px; gap:16px; align-items:start; }
+
+          /* Cards */
+          .an-card { background:#fff; border:1px solid var(--card-border); border-radius:12px; overflow:hidden; }
+          .an-card-hd { display:flex; align-items:center; justify-content:space-between; padding:16px 20px 14px; border-bottom:1px solid var(--card-border); }
+          .an-card-title { font-size:13px; font-weight:600; color:var(--text); }
+          .an-card-sub { font-size:11px; color:var(--text-2); margin-top:2px; }
+          .an-card-body { padding:16px 20px; }
+
+          /* Trend chart */
+          .an-trend-svg { width:100%; height:100px; display:block; }
+
+          /* Top senders */
+          .an-sender-row { display:flex; align-items:center; gap:10px; padding:10px 20px; border-bottom:1px solid var(--card-border); }
+          .an-sender-row:last-child { border-bottom:none; }
+          .an-sender-avatar {
+            width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#e8441a22,#e8441a44);
+            color:#e8441a; font-size:12px; font-weight:700; display:flex; align-items:center;
+            justify-content:center; flex-shrink:0; text-transform:uppercase;
+          }
+          .an-sender-info { flex:1; min-width:0; }
+          .an-sender-name { font-size:12.5px; font-weight:500; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+          .an-sender-bar-wrap { width:60px; height:4px; background:#f0f0eb; border-radius:99px; overflow:hidden; flex-shrink:0; }
+          .an-sender-bar-fill { height:100%; border-radius:99px; background:linear-gradient(90deg,#e8441a,#f97316); }
+          .an-sender-count { font-size:12px; font-weight:600; color:var(--text-2); min-width:22px; text-align:right; flex-shrink:0; }
+
+          /* Top labels */
+          .an-label-list { display:flex; flex-direction:column; gap:0; }
+          .an-label-row { display:flex; align-items:center; gap:10px; padding:10px 20px; border-bottom:1px solid var(--card-border); }
+          .an-label-row:last-child { border-bottom:none; }
+          .an-label-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+          .an-label-name { font-size:12px; font-weight:500; color:var(--text); flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+          .an-label-count { font-size:11.5px; font-weight:600; background:#f4f4f0; color:var(--text-2); padding:2px 7px; border-radius:99px; flex-shrink:0; }
+
+          /* Last runs */
+          .an-run-list { display:flex; flex-direction:column; gap:0; }
+          .an-run-row { display:flex; align-items:center; gap:10px; padding:10px 20px; border-bottom:1px solid var(--card-border); }
+          .an-run-row:last-child { border-bottom:none; }
+          .an-run-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+          .an-run-dot.ok  { background:#22c55e; }
+          .an-run-dot.err { background:#ef4444; }
+          .an-run-time { font-size:11.5px; color:var(--text-2); flex:1; }
+          .an-run-matched { font-size:12px; font-weight:600; color:var(--text); }
+          .an-run-source { font-size:10.5px; color:var(--text-3); background:#f4f4f0; padding:2px 6px; border-radius:5px; }
+
+          /* Quota bar */
+          .an-quota { padding:14px 20px; }
+          .an-quota-label { display:flex; justify-content:space-between; font-size:11.5px; color:var(--text-2); margin-bottom:6px; }
+          .an-quota-track { height:5px; background:#f0f0eb; border-radius:99px; overflow:hidden; }
+          .an-quota-fill { height:100%; background:linear-gradient(90deg,#22c55e,#4ade80); border-radius:99px; transition:width .4s; }
+          .an-quota-fill.warn { background:linear-gradient(90deg,#f59e0b,#fbbf24); }
+          .an-quota-fill.danger { background:linear-gradient(90deg,#ef4444,#f87171); }
+
+          /* Priority inbox */
+          .an-priority-item { display:flex; align-items:center; gap:12px; padding:11px 0; border-bottom:1px solid var(--card-border); }
+          .an-priority-item:last-child { border-bottom:none; }
+          .an-priority-score { width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0; }
+          .an-priority-score.high   { background:rgba(232,68,26,.1);  color:#e8441a; }
+          .an-priority-score.medium { background:rgba(245,158,11,.1); color:#d97706; }
+          .an-priority-score.low    { background:#f4f4f0; color:var(--text-3); }
+          .an-priority-info { flex:1; min-width:0; }
+          .an-priority-subject { font-size:12.5px; font-weight:500; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+          .an-priority-from { font-size:11px; color:var(--text-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+          /* Loading skeleton */
+          .an-skeleton { background:linear-gradient(90deg,#f4f4f0 25%,#eee 50%,#f4f4f0 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:6px; }
+          @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        </style>
+
+        <div class="an-wrap" id="analyticsWrap">
+
+          <!-- Header -->
+          <div class="an-header">
+            <div class="an-header-left">
+              <h2>Inbox Overview</h2>
+              <p id="analyticsLastUpdated">Loading your stats…</p>
+            </div>
+            <button class="an-refresh-btn" id="analyticsRefreshBtn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6"/><path d="M2.5 22v-6h6"/><path d="M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/></svg>
+              Refresh
+            </button>
+          </div>
+
+          <!-- KPI tiles -->
+          <div class="an-kpis" id="analyticsStatCards">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Main two-column grid -->
+          <div class="an-main">
+
+            <!-- Left column -->
+            <div style="display:flex;flex-direction:column;gap:16px;">
+
+              <!-- Trend chart -->
+              <div class="an-card">
+                <div class="an-card-hd">
+                  <div>
+                    <div class="an-card-title">Daily Activity</div>
+                    <div class="an-card-sub">Emails organized — last 30 days</div>
+                  </div>
+                </div>
+                <div class="an-card-body" style="padding-bottom:12px;">
+                  <svg id="analyticsTrendChart" class="an-trend-svg"></svg>
+                </div>
+              </div>
+
+              <!-- Top senders -->
+              <div class="an-card">
+                <div class="an-card-hd">
+                  <div>
+                    <div class="an-card-title">Top Senders</div>
+                    <div class="an-card-sub">Most frequent senders in organized emails</div>
+                  </div>
+                </div>
+                <div id="analyticsSenders">
+                  <div style="padding:20px;color:var(--text-2);font-size:12px;text-align:center;">Loading…</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Right column -->
+            <div style="display:flex;flex-direction:column;gap:16px;">
+
+              <!-- Top labels -->
+              <div class="an-card">
+                <div class="an-card-hd">
+                  <div class="an-card-title">Top Labels</div>
+                </div>
+                <div class="an-label-list" id="analyticsLabels"></div>
+              </div>
+
+              <!-- Last runs -->
+              <div class="an-card">
+                <div class="an-card-hd">
+                  <div class="an-card-title">Recent Runs</div>
+                </div>
+                <div class="an-run-list" id="analyticsLastRuns">
+                  <div style="padding:14px 20px;color:var(--text-2);font-size:12px;">No runs yet.</div>
+                </div>
+              </div>
+
+              <!-- Quota -->
+              <div class="an-card">
+                <div class="an-card-hd">
+                  <div class="an-card-title">API Quota</div>
+                </div>
+                <div class="an-quota" id="analyticsQuota">
+                  <div class="an-quota-label"><span>Usage today</span><span id="an-quota-pct">—</span></div>
+                  <div class="an-quota-track"><div class="an-quota-fill" id="an-quota-bar" style="width:0%"></div></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Priority Inbox -->
+          <div class="an-card">
+            <div class="an-card-hd">
+              <div>
+                <div class="an-card-title">Priority Inbox</div>
+                <div class="an-card-sub">Messages ranked by importance</div>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <button id="priorityResetLearningBtn" class="button ghost" type="button" style="font-size:11px;padding:5px 10px;">Reset learning</button>
+                <button id="priorityScanBtn" class="button secondary" type="button" style="font-size:11px;padding:5px 12px;">Scan inbox</button>
+              </div>
+            </div>
+            <div id="priorityContent" style="display:none;padding:4px 20px 8px;"><div id="priorityList" style="display:flex;flex-direction:column;"></div></div>
+            <div id="priorityLoading" style="display:none;text-align:center;padding:20px;color:var(--text-2);font-size:12px;">Analyzing inbox…</div>
+            <div id="priorityEmpty" style="padding:20px;color:var(--text-2);font-size:12px;text-align:center;">Click "Scan inbox" to rank your emails by importance.</div>
+          </div>
+
+        </div><!-- /an-wrap -->
+
+        <!-- Hidden loading state (kept for JS compatibility) -->
+        <div id="analyticsContent" style="display:none;"></div>
+        <div id="analyticsLoading" style="display:none;"></div>
+      </div>
+
+      <!-- ── PANEL: History ─────────────────────────────────────────── -->
+      <div class="panel hidden" id="panel-history">
+        <div class="tabs"><button class="tab active">Recent runs</button></div>
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-label">History</div>
+              <h2 class="card-title">Recent organization runs</h2>
+            </div>
+            <button id="clearHistoryButton" class="button ghost" type="button">Clear</button>
+          </div>
+          <ul id="historyList" class="history-list"></ul>
+        </div>
+      </div>
+
+      <!-- ── PANEL: Backup ──────────────────────────────────────────── -->
+      <div class="panel hidden" id="panel-backup">
+        <div class="tabs"><button class="tab active">General</button></div>
+        <div class="card">
+          <div class="card-label">Backup</div>
+          <h2 class="card-title">Export or import your setup</h2>
+          <p class="card-sub" style="margin-bottom:16px;">Backup files include rules and automation settings.</p>
+          <div class="btn-row">
+            <button id="exportSettingsButton" class="button secondary" type="button">Export setup</button>
+            <button id="importSettingsButton" class="button ghost" type="button">Import setup</button>
+          </div>
+          <input id="importFileInput" type="file" accept="application/json" hidden>
+        </div>
+      </div>
+
+      <!-- ── PANEL: Advanced ────────────────────────────────────────── -->
+      <div class="panel hidden" id="panel-advanced">
+        <div class="tabs"><button class="tab active">Feature flags</button></div>
+
+        <div class="card">
+          <div class="card-label">Feature flags</div>
+          <h2 class="card-title">Experimental features</h2>
+          <div style="display:flex;flex-direction:column;">
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-title">Batch Gmail API calls</div><div class="toggle-sub">Groups multiple label changes into fewer API requests.</div></div>
+              <label class="toggle"><input id="ffBatchModify" type="checkbox"><div class="toggle-track"></div></label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-title">Track Gmail API quota usage</div><div class="toggle-sub">Monitor API unit consumption to avoid hitting limits.</div></div>
+              <label class="toggle"><input id="ffQuotaTracking" type="checkbox"><div class="toggle-track"></div></label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-title">Cache Gmail label IDs</div><div class="toggle-sub">Reduces API calls by caching label lookups.</div></div>
+              <label class="toggle"><input id="ffCacheLabels" type="checkbox"><div class="toggle-track"></div></label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-title">Debounced auto-run</div><div class="toggle-sub">Optimizes auto-run timing. Requires tabs permission.</div></div>
+              <label class="toggle"><input id="ffDebouncedAutoRun" type="checkbox"><div class="toggle-track"></div></label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-title">Auto-resume after quota recovery</div><div class="toggle-sub">Automatically resumes organizing when quota resets.</div></div>
+              <label class="toggle"><input id="ffAutoResume" type="checkbox"><div class="toggle-track"></div></label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-title">Strict minimum interval enforcement</div><div class="toggle-sub">Prevents auto-run from running too frequently.</div></div>
+              <label class="toggle"><input id="ffStrictMinInterval" type="checkbox"><div class="toggle-track"></div></label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-title">Incremental sync for labels</div><div class="toggle-sub">Syncs only changed labels instead of all labels.</div></div>
+              <label class="toggle"><input id="ffIncrementalSync" type="checkbox"><div class="toggle-track"></div></label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-title">Email snooze feature</div><div class="toggle-sub">Snooze threads and have them reappear at a later time.</div></div>
+              <label class="toggle"><input id="ffSnooze" type="checkbox"><div class="toggle-track"></div></label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-title">AI thread summarization</div><div class="toggle-sub">Generates summaries of email conversations using AI.</div></div>
+              <label class="toggle"><input id="ffThreadSummary" type="checkbox"><div class="toggle-track"></div></label>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info"><div class="toggle-title">Priority inbox scoring</div><div class="toggle-sub">Ranks emails by importance and learns from feedback.</div></div>
+              <label class="toggle"><input id="ffPriorityInbox" type="checkbox"><div class="toggle-track"></div></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-label">Privacy &amp; Diagnostics</div>
+          <h2 class="card-title">Error reporting &amp; telemetry</h2>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Send anonymous error reports</div>
+              <div class="toggle-sub">Only error types and status codes — no emails or personal data.</div>
+            </div>
+            <label class="toggle"><input id="errorTelemetryEnabled" type="checkbox"><div class="toggle-track"></div></label>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:14px;">
+            <button id="viewTelemetryBtn" class="button ghost" style="font-size:12px;flex:1;">View telemetry buffer</button>
+            <button id="clearTelemetryBtn" class="button ghost" style="font-size:12px;flex:1;">Clear</button>
+          </div>
+          <pre id="telemetryDisplay" style="display:none;background:#fafaf8;border:1px solid var(--card-border);border-radius:var(--radius);padding:10px;font-size:10px;max-height:180px;overflow-y:auto;color:var(--text-2);margin-top:10px;"></pre>
+        </div>
+
+        <div class="actions">
+          <button class="button primary" data-action="save">Save settings</button>
+        </div>
+      </div>
+
+    </div><!-- /main-body -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- Rule template -->
+<template id="ruleTemplate">
+  <article class="rule-card">
+    <div class="rule-top">
+      <div><p class="section-label">Rule</p><h3 class="rule-heading">New rule</h3></div>
+      <button class="link-button danger remove-rule-button" type="button">Remove</button>
+    </div>
+    <div class="rule-grid">
+      <label class="field"><span>Rule name</span><input class="rule-name" type="text" placeholder="e.g. GitHub updates"></label>
+      <label class="field"><span>Gmail label</span><input class="rule-label" type="text" placeholder="e.g. Work/GitHub"></label>
+    </div>
+    <label class="field" style="margin-bottom:10px">
+      <span>Action</span>
+      <select class="rule-action">
+        <option value="label">Label only</option>
+        <option value="archive">Label and archive</option>
+        <option value="trash">Label and trash</option>
+      </select>
+      <small class="hint">Action applied after labeling.</small>
+    </label>
+    <div class="rule-grid">
+      <label class="field"><span>Sender domains</span><input class="rule-from-domains" type="text" placeholder="github.com, stripe.com"><small class="hint">Comma-separated.</small></label>
+      <label class="field"><span>Sender text</span><input class="rule-from-includes" type="text" placeholder="noreply@github.com"><small class="hint">Matches the From line.</small></label>
+    </div>
+    <label class="field">
+      <span>Subject keywords</span>
+      <input class="rule-subject-includes" type="text" placeholder="invoice, newsletter, digest">
+      <small class="hint">Comma-separated phrases.</small>
+    </label>
+    <label class="field" style="margin-bottom:8px">
+      <span>Additional conditions</span>
+      <label style="display:flex;align-items:center;gap:8px;font-weight:400;cursor:pointer;margin-top:4px">
+        <input type="checkbox" class="rule-has-attachment" style="width:16px;height:16px;flex-shrink:0;">
+        <span>📎 Only match emails <strong>with attachments</strong></span>
+      </label>
+    </label>
+    <label class="field" style="margin-bottom:10px">
+      <span>Label color in Gmail sidebar</span>
+      <div class="color-swatches rule-color-picker">
+        <button type="button" class="swatch" data-color="" style="background:#d4d4cc" title="No color">✕</button>
+        <button type="button" class="swatch" data-color="#4a86e8" style="background:#4a86e8" title="Blue"></button>
+        <button type="button" class="swatch" data-color="#6d9eeb" style="background:#6d9eeb" title="Light blue"></button>
+        <button type="button" class="swatch" data-color="#fb4c2f" style="background:#fb4c2f" title="Red"></button>
+        <button type="button" class="swatch" data-color="#e66550" style="background:#e66550" title="Salmon"></button>
+        <button type="button" class="swatch" data-color="#16a765" style="background:#16a765" title="Green"></button>
+        <button type="button" class="swatch" data-color="#43d692" style="background:#43d692" title="Mint"></button>
+        <button type="button" class="swatch" data-color="#fad165" style="background:#fad165" title="Yellow"></button>
+        <button type="button" class="swatch" data-color="#ffad47" style="background:#ffad47" title="Orange"></button>
+        <button type="button" class="swatch" data-color="#f2c960" style="background:#f2c960" title="Gold"></button>
+        <button type="button" class="swatch" data-color="#a479e2" style="background:#a479e2" title="Purple"></button>
+        <button type="button" class="swatch" data-color="#b694e8" style="background:#b694e8" title="Lavender"></button>
+        <button type="button" class="swatch" data-color="#f691b3" style="background:#f691b3" title="Pink"></button>
+        <button type="button" class="swatch" data-color="#999999" style="background:#999999" title="Gray"></button>
+      </div>
+      <input type="hidden" class="rule-color" value="">
+    </label>
+  </article>
+</template>
+
+<!-- Dry-run modal -->
+<div id="dryRunOverlay" class="dry-run-overlay" style="display:none;">
+  <div class="dry-run-modal">
+    <h3>Preview matches</h3>
+    <div id="dryRunStats" class="dry-run-stats"></div>
+    <div id="dryRunWarning" style="display:none;" class="dry-run-warning"></div>
+    <div id="dryRunList" class="dry-run-list"></div>
+    <div class="dry-run-buttons">
+      <button id="dryRunSaveBtn" class="button primary">Save rule</button>
+      <button id="dryRunCancelBtn" class="button ghost">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Templates modal -->
+<div id="templatesOverlay" class="templates-overlay" style="display:none;">
+  <div class="templates-modal">
+    <div class="templates-header">
+      <h3>Browse Templates</h3>
+      <button id="templatesCloseBtn" type="button">✕</button>
+    </div>
+    <input id="templatesSearch" class="templates-search" type="text" placeholder="Search templates…">
+    <div id="templatesList" class="templates-list"></div>
+  </div>
+</div>
+
+<script type="module" src="options.js"></script>
+</body>
+</html>

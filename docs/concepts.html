@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gmail Organizer — Design Concepts Preview</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #000; transition: background .3s; }
+
+/* ══ THEME TOGGLE BUTTON ══ */
+.theme-btn {
+  margin-left: auto;
+  background: #1e1e1e; color: #ccc; border: 1px solid #444;
+  padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all .2s;
+  white-space: nowrap;
+}
+.theme-btn:hover { border-color: #888; color: #fff; }
+body.light .theme-btn { background: #f0f0f0; color: #333; border-color: #ccc; }
+body.light .theme-btn:hover { border-color: #888; }
+
+/* ══ LIGHT MODE — GLOBAL ══ */
+body.light { background: #f0f2f5; }
+body.light .jumpnav { background: #fff; border-bottom-color: #e0e0e0; }
+body.light .jumpnav .jlabel { color: #aaa; }
+body.light .jumpnav a { color: #555; border-color: #ddd; }
+body.light .jumpnav a:hover { color: #111; background: #f5f5f5; border-color: #bbb; }
+body.light .sec-divide { background: #e0e0e0; }
+
+/* ── C1 LIGHT ── */
+body.light #c1 { background: #ffffff; color: #111827; }
+body.light .cbanner.b1 { background: #f8f9ff; color: #4285F4; border-bottom-color: #e8ecf8; }
+body.light .cbanner.b1 span { color: #9ca3af; }
+body.light .c1-mbar { opacity: 1; }
+body.light .c1-topnav { background: #ffffff; border-bottom-color: #e5e7eb; }
+body.light .c1-topnav .nav-links a { color: #6b7280; }
+body.light .c1-topnav .nav-links a:hover { color: #111827; }
+body.light .c1-logo { color: #111827; }
+body.light .c1-hero { background: #f9fafb; border-bottom-color: #e5e7eb; }
+body.light .c1-eyebrow { background: #f0fdf4; border-color: #bbf7d0; color: #16a34a; }
+body.light .c1-hero h1 { color: #111827; }
+body.light .c1-hero h1 em { color: #4285F4; }
+body.light .c1-hero p { color: #6b7280; }
+body.light .c1-btn-ghost { color: #6b7280; border-color: #d1d5db; }
+body.light .c1-stats { border-top-color: #e5e7eb; }
+body.light .c1-stat-n { color: #111827; }
+body.light .c1-stat-l { color: #9ca3af; }
+body.light .c1-section { border-bottom-color: #e5e7eb; }
+body.light .c1-section h2 { color: #111827; }
+body.light .c1-section-sub { color: #9ca3af; }
+body.light .c1-card { background: #ffffff; border-color: #e5e7eb; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+body.light .c1-card h3 { color: #111827; }
+body.light .c1-card p { color: #6b7280; }
+body.light .c1-step { border-right-color: #e5e7eb; }
+body.light .c1-step-num { color: #e5e7eb; }
+body.light .c1-step h3 { color: #111827; }
+body.light .c1-step p { color: #6b7280; }
+body.light .c1-table th { background: #f9fafb; color: #9ca3af; border-bottom-color: #e5e7eb; }
+body.light .c1-table td { border-bottom-color: #f3f4f6; color: #9ca3af; }
+body.light .c1-table tr td:first-child { color: #374151; }
+body.light .c1-table .ours td { background: rgba(66,133,244,0.04); }
+body.light .c1-plan { background: #f9fafb; border-color: #e5e7eb; }
+body.light .c1-plan.featured { border-color: #4285F4; background: #eff6ff; }
+body.light .c1-plan-price { color: #111827; }
+body.light .c1-plan-sub { color: #9ca3af; }
+body.light .c1-plan-features li { color: #6b7280; }
+body.light .c1-faq-q { border-bottom-color: #e5e7eb; }
+body.light .c1-faq-q h3 { color: #111827; }
+body.light .c1-faq-q p { color: #6b7280; }
+body.light .c1-cta { background: #f9fafb; border-top-color: #e5e7eb; }
+body.light .c1-cta h2 { color: #111827; }
+body.light .c1-cta p { color: #6b7280; }
+body.light .c1-footer { background: #f3f4f6; border-top-color: #e5e7eb; }
+body.light .c1-footer p { color: #9ca3af; }
+body.light .c1-footer-links a { color: #6b7280; }
+
+/* ── C2 LIGHT ── */
+body.light #c2 { background: #f5f7ff; color: #1e293b; }
+body.light .cbanner.b2 { background: #eef1ff; color: #6366f1; border-bottom-color: #dde3ff; }
+body.light .cbanner.b2 span { color: #94a3b8; }
+body.light .c2-topnav { background: rgba(245,247,255,0.98); border-bottom-color: rgba(99,102,241,0.15); }
+body.light .c2-topnav .nav-links a { color: #64748b; }
+body.light .c2-logo { color: #1e293b; }
+body.light .c2-hero { background: radial-gradient(ellipse 800px 500px at 70% -10%,rgba(99,102,241,0.1) 0%,transparent 70%), #f5f7ff; border-bottom-color: rgba(99,102,241,0.12); }
+body.light .c2-badge { background: linear-gradient(135deg,rgba(99,102,241,0.1),rgba(66,133,244,0.07)); border-color: rgba(99,102,241,0.25); color: #6366f1; }
+body.light .c2-hero h1 { color: #1e293b; }
+body.light .c2-hero h1 em { background: linear-gradient(135deg,#4285F4,#6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+body.light .c2-hero p { color: #64748b; }
+body.light .c2-btn-ghost { color: #64748b; border-color: rgba(100,116,139,0.25); }
+body.light .c2-stats { border-top-color: rgba(99,102,241,0.12); }
+body.light .c2-stat-n { background: linear-gradient(135deg,#1e293b,#6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+body.light .c2-stat-l { color: #94a3b8; }
+body.light .c2-section { border-bottom-color: rgba(99,102,241,0.08); background: #f5f7ff; }
+body.light .c2-section h2 { color: #1e293b; }
+body.light .c2-section-sub { color: #94a3b8; }
+body.light .c2-card { background: #ffffff; border-color: rgba(99,102,241,0.12); box-shadow: 0 2px 8px rgba(99,102,241,0.06); }
+body.light .c2-card:hover { border-color: rgba(66,133,244,0.4); box-shadow: 0 4px 20px rgba(66,133,244,0.12); }
+body.light .c2-card h3 { color: #1e293b; }
+body.light .c2-card p { color: #64748b; }
+body.light .c2-step { background: linear-gradient(145deg,rgba(99,102,241,0.06),rgba(66,133,244,0.03)); border-color: rgba(99,102,241,0.15); }
+body.light .c2-step h3 { color: #1e293b; }
+body.light .c2-step p { color: #64748b; }
+body.light .c2-table th { background: rgba(99,102,241,0.04); color: #94a3b8; border-bottom-color: rgba(99,102,241,0.1); }
+body.light .c2-table td { border-bottom-color: rgba(99,102,241,0.06); color: #94a3b8; }
+body.light .c2-table tr td:first-child { color: #475569; }
+body.light .c2-plan { background: #ffffff; border-color: rgba(99,102,241,0.12); box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+body.light .c2-plan.featured { background: linear-gradient(145deg,#eff6ff,#f5f3ff); border-color: rgba(66,133,244,0.4); box-shadow: 0 4px 20px rgba(66,133,244,0.12); }
+body.light .c2-plan-price { background: linear-gradient(135deg,#1e293b,#6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+body.light .c2-plan-sub { color: #94a3b8; }
+body.light .c2-plan-features li { color: #64748b; }
+body.light .c2-faq-q { border-bottom-color: rgba(99,102,241,0.1); }
+body.light .c2-faq-q h3 { color: #1e293b; }
+body.light .c2-faq-q p { color: #64748b; }
+body.light .c2-cta { background: radial-gradient(ellipse 600px 300px at 50% 50%,rgba(99,102,241,0.08) 0%,transparent 70%), #f5f7ff; border-top-color: rgba(99,102,241,0.1); }
+body.light .c2-cta h2 { background: linear-gradient(135deg,#1e293b,#6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+body.light .c2-cta p { color: #64748b; }
+body.light .c2-footer { background: #eef1ff; border-top-color: rgba(99,102,241,0.1); }
+body.light .c2-footer p { color: #94a3b8; }
+body.light .c2-footer-links a { color: #64748b; }
+
+/* ── C3 LIGHT ── */
+body.light #c3 { background: #f8faff; color: #0f172a; }
+body.light .cbanner.b3 { background: #f1f5ff; color: #475569; border-bottom-color: #e2e8f0; }
+body.light .cbanner.b3 span { color: #94a3b8; }
+body.light .c3-topnav { background: rgba(248,250,255,0.9); border-bottom-color: rgba(0,0,0,0.08); }
+body.light .c3-topnav .nav-links a { color: #64748b; }
+body.light .c3-logo { color: #0f172a; }
+body.light .c3-btn { background: rgba(66,133,244,0.1); color: #4285F4; border-color: rgba(66,133,244,0.25); }
+body.light .c3-hero-wrap { background: #f8faff; }
+body.light .c3-orb { opacity: 0.1; }
+body.light .c3-hero { border-bottom-color: rgba(0,0,0,0.07); background-image: radial-gradient(rgba(0,0,0,0.04) 1px, transparent 1px); }
+body.light .c3-pill { background: rgba(255,255,255,0.9); border-color: rgba(0,0,0,0.1); color: #64748b; backdrop-filter: blur(8px); }
+body.light .c3-hero h1 { color: #0f172a; }
+body.light .c3-hero h1 em { background: linear-gradient(135deg,#4285F4,#34A853,#FBBC05); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+body.light .c3-hero p { color: #64748b; }
+body.light .c3-btn-ghost { background: rgba(255,255,255,0.8); color: #64748b; border-color: rgba(0,0,0,0.1); }
+body.light .c3-btn-primary { background: rgba(66,133,244,0.12); color: #4285F4; border-color: rgba(66,133,244,0.3); box-shadow: 0 0 20px rgba(66,133,244,0.1); }
+body.light .c3-stats { border-top-color: rgba(0,0,0,0.07); }
+body.light .c3-stat-n { color: #0f172a; }
+body.light .c3-stat-l { color: #94a3b8; }
+body.light .c3-section { border-bottom-color: rgba(0,0,0,0.06); background-image: radial-gradient(rgba(0,0,0,0.02) 1px, transparent 1px); background-color: #f8faff; }
+body.light .c3-section h2 { color: #0f172a; }
+body.light .c3-section-sub { color: #94a3b8; }
+body.light .c3-overline { color: #94a3b8; }
+body.light .c3-card { background: rgba(255,255,255,0.85); border-color: rgba(0,0,0,0.08); box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+body.light .c3-glow-r { border-color: rgba(234,67,53,0.2); box-shadow: 0 2px 12px rgba(234,67,53,0.08); }
+body.light .c3-glow-g { border-color: rgba(52,168,83,0.2); box-shadow: 0 2px 12px rgba(52,168,83,0.08); }
+body.light .c3-glow-b { border-color: rgba(66,133,244,0.2); box-shadow: 0 2px 12px rgba(66,133,244,0.08); }
+body.light .c3-glow-y { border-color: rgba(251,188,5,0.2); box-shadow: 0 2px 12px rgba(251,188,5,0.08); }
+body.light .c3-card h3 { color: #0f172a; }
+body.light .c3-card p { color: #64748b; }
+body.light .c3-step { background: rgba(255,255,255,0.7); border-color: rgba(0,0,0,0.07); }
+body.light .c3-step-num { color: rgba(0,0,0,0.06); }
+body.light .c3-step h3 { color: #0f172a; }
+body.light .c3-step p { color: #64748b; }
+body.light .c3-table th { background: rgba(255,255,255,0.6); color: #94a3b8; border-bottom-color: rgba(0,0,0,0.07); }
+body.light .c3-table td { border-bottom-color: rgba(0,0,0,0.04); color: #94a3b8; }
+body.light .c3-table tr td:first-child { color: #334155; }
+body.light .c3-table .ours { background: rgba(66,133,244,0.04); }
+body.light .c3-table .ours td:first-child { color: #4285F4; }
+body.light .c3-check { color: #16a34a; }
+body.light .c3-cross { color: #cbd5e1; }
+body.light .c3-partial { color: #ca8a04; }
+body.light .c3-plan { background: rgba(255,255,255,0.85); border-color: rgba(0,0,0,0.08); box-shadow: 0 2px 12px rgba(0,0,0,0.05); }
+body.light .c3-plan.featured { border-color: rgba(66,133,244,0.35); box-shadow: 0 4px 24px rgba(66,133,244,0.1); background: rgba(239,246,255,0.9); }
+body.light .c3-plan-name { color: #94a3b8; }
+body.light .c3-plan-price { color: #0f172a; }
+body.light .c3-plan-sub { color: #94a3b8; }
+body.light .c3-plan-features li { color: #64748b; }
+body.light .c3-faq-q { border-bottom-color: rgba(0,0,0,0.07); }
+body.light .c3-faq-q h3 { color: #0f172a; }
+body.light .c3-faq-q p { color: #64748b; }
+body.light .c3-cta { background: rgba(248,250,255,0.95); border-top-color: rgba(0,0,0,0.06); }
+body.light .c3-cta h2 { background: linear-gradient(135deg,#4285F4,#34A853,#FBBC05); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+body.light .c3-cta p { color: #64748b; }
+body.light .c3-footer { background: #f1f5ff; border-top-color: rgba(0,0,0,0.06); }
+body.light .c3-footer p { color: #94a3b8; }
+body.light .c3-footer-links a { color: #64748b; }
+
+/* ── STICKY JUMP NAV ── */
+.jumpnav {
+  position: sticky; top: 0; z-index: 9999;
+  background: #111; border-bottom: 2px solid #222;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 24px; flex-wrap: wrap;
+}
+.jumpnav .jlabel { color: #555; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-right: 4px; }
+.jumpnav a {
+  color: #999; text-decoration: none; padding: 6px 16px;
+  border-radius: 20px; font-size: 12px; font-weight: 700;
+  border: 1px solid #333; transition: all .2s;
+}
+.jumpnav a:hover { color: #fff; border-color: #666; background: #222; }
+
+/* ── CONCEPT BANNER ── */
+.cbanner {
+  text-align: center; padding: 18px;
+  font-size: 11px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════════════════
+   CONCEPT 1 — DARK TERMINAL
+══════════════════════════════════════════════════════ */
+#c1 { background: #0d1117; color: #f0f6fc; }
+.cbanner.b1 { background: #090d13; color: #4285F4; border-bottom: 1px solid #161b22; }
+.cbanner.b1 span { color: #8b949e; }
+
+.c1-mbar { height: 3px; background: linear-gradient(to right,#EA4335 25%,#FBBC05 25%,#FBBC05 50%,#34A853 50%,#34A853 75%,#4285F4 75%); }
+
+.c1-topnav {
+  background: #161b22; border-bottom: 1px solid #21262d;
+  display: flex; align-items: center; padding: 0 48px; height: 56px; gap: 32px;
+}
+.c1-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; }
+.c1-logo-icon { width: 28px; height: 28px; border-radius: 6px; background: linear-gradient(135deg,#EA4335,#4285F4); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.c1-topnav .nav-links { display: flex; gap: 24px; margin-left: auto; }
+.c1-topnav .nav-links a { color: #8b949e; font-size: 13px; text-decoration: none; }
+.c1-topnav .nav-links a:hover { color: #f0f6fc; }
+.c1-btn { background: #4285F4; color: #fff; border: none; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.c1-btn-ghost { background: transparent; color: #8b949e; border: 1px solid #30363d; padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.c1-btn-primary { background: #4285F4; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; }
+
+.c1-hero { padding: 72px 48px 56px; border-bottom: 1px solid #21262d; }
+.c1-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: #161b22; border: 1px solid #21262d; padding: 4px 12px; border-radius: 20px; margin-bottom: 22px; font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #34A853; text-transform: uppercase; }
+.c1-eyebrow::before { content: '●'; font-size: 8px; }
+.c1-hero h1 { font-size: 42px; font-weight: 800; line-height: 1.15; max-width: 640px; margin-bottom: 18px; }
+.c1-hero h1 em { font-style: normal; color: #4285F4; }
+.c1-hero p { font-size: 16px; color: #8b949e; max-width: 500px; line-height: 1.7; margin-bottom: 28px; }
+.c1-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; }
+.c1-stats { display: flex; gap: 48px; padding-top: 36px; border-top: 1px solid #21262d; }
+.c1-stat-n { font-size: 26px; font-weight: 800; }
+.c1-stat-l { font-size: 12px; color: #8b949e; margin-top: 2px; }
+
+.c1-section { padding: 48px 48px; border-bottom: 1px solid #21262d; }
+.c1-overline { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #4285F4; margin-bottom: 8px; }
+.c1-section h2 { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+.c1-section-sub { color: #8b949e; font-size: 14px; margin-bottom: 28px; }
+
+.c1-grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.c1-grid4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+.c1-card { background: #161b22; border: 1px solid #21262d; border-radius: 10px; padding: 18px; border-left: 3px solid; }
+.c1-card-r { border-left-color: #EA4335; }
+.c1-card-y { border-left-color: #FBBC05; }
+.c1-card-g { border-left-color: #34A853; }
+.c1-card-b { border-left-color: #4285F4; }
+.c1-card-icon { font-size: 20px; margin-bottom: 10px; }
+.c1-card h3 { font-size: 13px; font-weight: 700; margin-bottom: 5px; }
+.c1-card p { font-size: 12px; color: #8b949e; line-height: 1.6; }
+
+/* Steps */
+.c1-steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 0; }
+.c1-step { padding: 28px 24px; border-right: 1px solid #21262d; }
+.c1-step:last-child { border-right: none; }
+.c1-step-num { font-size: 32px; font-weight: 900; color: #21262d; margin-bottom: 12px; }
+.c1-step h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.c1-step p { font-size: 12px; color: #8b949e; line-height: 1.6; }
+
+/* Table */
+.c1-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.c1-table th { background: #161b22; padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #8b949e; border-bottom: 1px solid #21262d; }
+.c1-table td { padding: 11px 16px; border-bottom: 1px solid #1a1f27; color: #8b949e; }
+.c1-table tr td:first-child { color: #f0f6fc; font-weight: 600; }
+.c1-table .ours td:first-child { color: #4285F4; }
+.c1-table .ours td { background: rgba(66,133,244,0.05); }
+.c1-check { color: #34A853; font-weight: 700; }
+.c1-cross { color: #484f58; }
+.c1-partial { color: #FBBC05; }
+
+/* Pricing */
+.c1-pricing { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; max-width: 600px; }
+.c1-plan { background: #161b22; border: 1px solid #21262d; border-radius: 10px; padding: 24px; }
+.c1-plan.featured { border-color: #4285F4; }
+.c1-plan-name { font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #8b949e; margin-bottom: 8px; }
+.c1-plan-price { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+.c1-plan-sub { font-size: 12px; color: #8b949e; margin-bottom: 16px; }
+.c1-plan-features { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.c1-plan-features li { font-size: 12px; color: #8b949e; display: flex; gap: 8px; }
+.c1-plan-features li::before { content: '✓'; color: #34A853; flex-shrink: 0; }
+
+/* FAQ */
+.c1-faq { display: flex; flex-direction: column; gap: 0; }
+.c1-faq-q { padding: 18px 0; border-bottom: 1px solid #21262d; }
+.c1-faq-q h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.c1-faq-q p { font-size: 13px; color: #8b949e; line-height: 1.7; }
+
+/* CTA bar */
+.c1-cta { background: #161b22; border-top: 1px solid #21262d; padding: 56px 48px; text-align: center; }
+.c1-cta h2 { font-size: 30px; font-weight: 800; margin-bottom: 12px; }
+.c1-cta p { color: #8b949e; font-size: 15px; margin-bottom: 28px; }
+
+/* Footer */
+.c1-footer { background: #0d1117; border-top: 1px solid #21262d; padding: 28px 48px; display: flex; justify-content: space-between; align-items: center; }
+.c1-footer p { font-size: 12px; color: #484f58; }
+.c1-footer-links { display: flex; gap: 20px; }
+.c1-footer-links a { font-size: 12px; color: #8b949e; text-decoration: none; }
+
+
+/* ══════════════════════════════════════════════════════
+   CONCEPT 2 — DARK GRADIENT
+══════════════════════════════════════════════════════ */
+#c2 { background: #080d14; color: #e8f0fe; }
+.cbanner.b2 { background: #060b12; color: #818cf8; border-bottom: 1px solid #0f1825; }
+.cbanner.b2 span { color: #334155; }
+
+.c2-mbar { height: 3px; background: linear-gradient(to right,#EA4335,#FBBC05,#34A853,#4285F4); }
+
+.c2-topnav { background: rgba(8,13,20,0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(66,133,244,0.15); display: flex; align-items: center; padding: 0 48px; height: 56px; gap: 32px; }
+.c2-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; }
+.c2-logo-icon { width: 28px; height: 28px; border-radius: 6px; background: linear-gradient(135deg,#EA4335,#4285F4); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.c2-topnav .nav-links { display: flex; gap: 24px; margin-left: auto; }
+.c2-topnav .nav-links a { color: #64748b; font-size: 13px; text-decoration: none; }
+.c2-btn { background: linear-gradient(135deg,#4285F4,#6366f1); color: #fff; border: none; padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.c2-btn-ghost { background: transparent; color: #94a3b8; border: 1px solid rgba(148,163,184,0.2); padding: 10px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.c2-btn-primary { background: linear-gradient(135deg,#4285F4,#6366f1); color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 0 24px rgba(66,133,244,0.35); }
+
+.c2-hero { padding: 72px 48px 56px; background: radial-gradient(ellipse 800px 500px at 70% -10%,rgba(99,102,241,0.18) 0%,transparent 70%), radial-gradient(ellipse 500px 350px at 5% 90%,rgba(66,133,244,0.1) 0%,transparent 60%), #080d14; border-bottom: 1px solid rgba(66,133,244,0.1); }
+.c2-badge { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg,rgba(66,133,244,0.15),rgba(99,102,241,0.1)); border: 1px solid rgba(66,133,244,0.3); padding: 5px 14px; border-radius: 20px; margin-bottom: 22px; font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #818cf8; text-transform: uppercase; }
+.c2-hero h1 { font-size: 44px; font-weight: 800; line-height: 1.15; max-width: 640px; margin-bottom: 18px; }
+.c2-hero h1 em { font-style: normal; background: linear-gradient(135deg,#4285F4,#818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.c2-hero p { font-size: 16px; color: #64748b; max-width: 500px; line-height: 1.7; margin-bottom: 28px; }
+.c2-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; }
+.c2-stats { display: flex; gap: 48px; padding-top: 36px; border-top: 1px solid rgba(66,133,244,0.12); }
+.c2-stat-n { font-size: 26px; font-weight: 800; background: linear-gradient(135deg,#e8f0fe,#818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.c2-stat-l { font-size: 12px; color: #475569; margin-top: 2px; }
+
+.c2-section { padding: 48px 48px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.c2-overline { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; background: linear-gradient(90deg,#4285F4,#818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+.c2-section h2 { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+.c2-section-sub { color: #475569; font-size: 14px; margin-bottom: 28px; }
+
+.c2-grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.c2-grid4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+.c2-card { background: linear-gradient(145deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 20px; transition: border-color .2s, box-shadow .2s; }
+.c2-card:hover { border-color: rgba(66,133,244,0.3); box-shadow: 0 0 16px rgba(66,133,244,0.1); }
+.c2-card-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; margin-bottom: 12px; }
+.c2-icon-r { background: linear-gradient(135deg,#EA4335,#f87171); }
+.c2-icon-y { background: linear-gradient(135deg,#FBBC05,#fcd34d); }
+.c2-icon-g { background: linear-gradient(135deg,#34A853,#4ade80); }
+.c2-icon-b { background: linear-gradient(135deg,#4285F4,#818cf8); }
+.c2-card h3 { font-size: 13px; font-weight: 700; margin-bottom: 5px; color: #e8f0fe; }
+.c2-card p { font-size: 12px; color: #475569; line-height: 1.6; }
+
+.c2-steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.c2-step { background: linear-gradient(145deg,rgba(66,133,244,0.07),rgba(99,102,241,0.04)); border: 1px solid rgba(66,133,244,0.15); border-radius: 14px; padding: 24px; }
+.c2-step-num { font-size: 36px; font-weight: 900; background: linear-gradient(135deg,#4285F4,#818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+.c2-step h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: #e8f0fe; }
+.c2-step p { font-size: 12px; color: #475569; line-height: 1.6; }
+
+.c2-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.c2-table th { background: rgba(255,255,255,0.03); padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #475569; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.c2-table td { padding: 11px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); color: #475569; }
+.c2-table tr td:first-child { color: #94a3b8; font-weight: 600; }
+.c2-table .ours td { background: rgba(66,133,244,0.05); }
+.c2-table .ours td:first-child { background: linear-gradient(90deg,#4285F4,#818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.c2-check { color: #34A853; font-weight: 700; }
+.c2-cross { color: #1e293b; }
+.c2-partial { color: #FBBC05; }
+
+.c2-pricing { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; max-width: 600px; }
+.c2-plan { background: linear-gradient(145deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01)); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 24px; }
+.c2-plan.featured { border-color: rgba(66,133,244,0.4); background: linear-gradient(145deg,rgba(66,133,244,0.1),rgba(99,102,241,0.05)); box-shadow: 0 0 30px rgba(66,133,244,0.15); }
+.c2-plan-name { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #475569; margin-bottom: 8px; }
+.c2-plan-price { font-size: 32px; font-weight: 800; background: linear-gradient(135deg,#e8f0fe,#818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; }
+.c2-plan-sub { font-size: 12px; color: #475569; margin-bottom: 16px; }
+.c2-plan-features { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.c2-plan-features li { font-size: 12px; color: #64748b; display: flex; gap: 8px; }
+.c2-plan-features li::before { content: '✓'; color: #34A853; flex-shrink: 0; }
+
+.c2-faq { display: flex; flex-direction: column; gap: 0; }
+.c2-faq-q { padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.c2-faq-q h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: #e8f0fe; }
+.c2-faq-q p { font-size: 13px; color: #475569; line-height: 1.7; }
+
+.c2-cta { background: radial-gradient(ellipse 700px 400px at 50% 50%,rgba(99,102,241,0.15) 0%,transparent 70%), #080d14; border-top: 1px solid rgba(66,133,244,0.1); padding: 56px 48px; text-align: center; }
+.c2-cta h2 { font-size: 30px; font-weight: 800; background: linear-gradient(135deg,#e8f0fe,#818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; }
+.c2-cta p { color: #475569; font-size: 15px; margin-bottom: 28px; }
+
+.c2-footer { background: #060b12; border-top: 1px solid rgba(255,255,255,0.05); padding: 28px 48px; display: flex; justify-content: space-between; align-items: center; }
+.c2-footer p { font-size: 12px; color: #1e293b; }
+.c2-footer-links { display: flex; gap: 20px; }
+.c2-footer-links a { font-size: 12px; color: #334155; text-decoration: none; }
+
+
+/* ══════════════════════════════════════════════════════
+   CONCEPT 3 — GLASSMORPHISM
+══════════════════════════════════════════════════════ */
+#c3 { background: #060a10; color: #e2e8f0; position: relative; }
+.cbanner.b3 { background: #040710; color: rgba(226,232,240,0.5); border-bottom: 1px solid rgba(255,255,255,0.05); }
+.cbanner.b3 span { color: rgba(226,232,240,0.25); }
+
+.c3-mbar { height: 3px; background: linear-gradient(to right,#EA4335 25%,#FBBC05 25%,#FBBC05 50%,#34A853 50%,#34A853 75%,#4285F4 75%); position: relative; z-index: 1; }
+
+.c3-topnav { background: rgba(6,10,16,0.7); backdrop-filter: blur(24px); border-bottom: 1px solid rgba(255,255,255,0.07); display: flex; align-items: center; padding: 0 48px; height: 56px; gap: 32px; position: relative; z-index: 2; }
+.c3-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; }
+.c3-logo-icon { width: 28px; height: 28px; border-radius: 6px; background: linear-gradient(135deg,#EA4335,#4285F4); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.c3-topnav .nav-links { display: flex; gap: 24px; margin-left: auto; }
+.c3-topnav .nav-links a { color: rgba(226,232,240,0.4); font-size: 13px; text-decoration: none; }
+.c3-btn { background: rgba(66,133,244,0.2); color: #93c5fd; border: 1px solid rgba(66,133,244,0.35); padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; backdrop-filter: blur(8px); }
+.c3-btn-ghost { background: rgba(255,255,255,0.05); backdrop-filter: blur(8px); color: rgba(226,232,240,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 10px 22px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.c3-btn-primary { background: rgba(66,133,244,0.2); backdrop-filter: blur(12px); color: #93c5fd; border: 1px solid rgba(66,133,244,0.4); padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 0 30px rgba(66,133,244,0.2), inset 0 1px 0 rgba(255,255,255,0.1); }
+
+/* orb layer only behind hero */
+.c3-hero-wrap { position: relative; overflow: hidden; }
+.c3-orbs { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+.c3-orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.22; }
+.c3-o1 { width: 380px; height: 380px; background: #EA4335; top: -120px; left: -100px; }
+.c3-o2 { width: 320px; height: 320px; background: #4285F4; top: 30px; right: 5%; }
+.c3-o3 { width: 260px; height: 260px; background: #34A853; bottom: -60px; left: 32%; }
+.c3-o4 { width: 220px; height: 220px; background: #FBBC05; bottom: -40px; right: 18%; }
+
+.c3-hero { padding: 72px 48px 56px; position: relative; z-index: 1;
+  background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.c3-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.12); padding: 5px 14px; border-radius: 20px; margin-bottom: 22px; font-size: 11px; font-weight: 700; letter-spacing: 2px; color: rgba(226,232,240,0.6); text-transform: uppercase; }
+.c3-hero h1 { font-size: 44px; font-weight: 800; line-height: 1.15; max-width: 640px; margin-bottom: 18px; }
+.c3-hero h1 em { font-style: normal; background: linear-gradient(135deg,#93c5fd,#86efac,#fde68a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.c3-hero p { font-size: 16px; color: rgba(226,232,240,0.45); max-width: 500px; line-height: 1.7; margin-bottom: 28px; }
+.c3-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; }
+.c3-stats { display: flex; gap: 48px; padding-top: 36px; border-top: 1px solid rgba(255,255,255,0.07); }
+.c3-stat-n { font-size: 26px; font-weight: 800; color: #e2e8f0; }
+.c3-stat-l { font-size: 12px; color: rgba(226,232,240,0.3); margin-top: 2px; }
+
+.c3-section { padding: 48px 48px; border-bottom: 1px solid rgba(255,255,255,0.04); position: relative; z-index: 1;
+  background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.c3-overline { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: rgba(226,232,240,0.25); margin-bottom: 8px; }
+.c3-section h2 { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+.c3-section-sub { color: rgba(226,232,240,0.35); font-size: 14px; margin-bottom: 28px; }
+
+.c3-grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.c3-grid4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+.c3-card { background: rgba(255,255,255,0.04); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; }
+.c3-card-icon { font-size: 22px; margin-bottom: 12px; filter: drop-shadow(0 0 6px rgba(255,255,255,0.25)); }
+.c3-card h3 { font-size: 13px; font-weight: 700; margin-bottom: 5px; color: rgba(226,232,240,0.85); }
+.c3-card p { font-size: 12px; color: rgba(226,232,240,0.35); line-height: 1.6; }
+.c3-glow-r { box-shadow: 0 0 20px rgba(234,67,53,0.1); border-color: rgba(234,67,53,0.2); }
+.c3-glow-g { box-shadow: 0 0 20px rgba(52,168,83,0.1); border-color: rgba(52,168,83,0.2); }
+.c3-glow-b { box-shadow: 0 0 20px rgba(66,133,244,0.1); border-color: rgba(66,133,244,0.2); }
+.c3-glow-y { box-shadow: 0 0 20px rgba(251,188,5,0.1); border-color: rgba(251,188,5,0.2); }
+
+.c3-steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.c3-step { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 24px; }
+.c3-step-num { font-size: 36px; font-weight: 900; color: rgba(226,232,240,0.08); margin-bottom: 10px; }
+.c3-step h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: rgba(226,232,240,0.8); }
+.c3-step p { font-size: 12px; color: rgba(226,232,240,0.35); line-height: 1.6; }
+
+.c3-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.c3-table th { background: rgba(255,255,255,0.02); padding: 12px 16px; text-align: left; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: rgba(226,232,240,0.25); border-bottom: 1px solid rgba(255,255,255,0.05); }
+.c3-table td { padding: 11px 16px; border-bottom: 1px solid rgba(255,255,255,0.03); color: rgba(226,232,240,0.3); }
+.c3-table tr td:first-child { color: rgba(226,232,240,0.6); font-weight: 600; }
+.c3-table .ours { background: rgba(66,133,244,0.05); }
+.c3-table .ours td:first-child { color: #93c5fd; }
+.c3-check { color: #86efac; font-weight: 700; }
+.c3-cross { color: rgba(226,232,240,0.12); }
+.c3-partial { color: #fde68a; }
+
+.c3-pricing { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; max-width: 600px; }
+.c3-plan { background: rgba(255,255,255,0.04); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 24px; }
+.c3-plan.featured { border-color: rgba(66,133,244,0.35); box-shadow: 0 0 40px rgba(66,133,244,0.12); }
+.c3-plan-name { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(226,232,240,0.3); margin-bottom: 8px; }
+.c3-plan-price { font-size: 32px; font-weight: 800; color: rgba(226,232,240,0.9); margin-bottom: 4px; }
+.c3-plan-sub { font-size: 12px; color: rgba(226,232,240,0.3); margin-bottom: 16px; }
+.c3-plan-features { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.c3-plan-features li { font-size: 12px; color: rgba(226,232,240,0.4); display: flex; gap: 8px; }
+.c3-plan-features li::before { content: '✓'; color: #86efac; flex-shrink: 0; }
+
+.c3-faq { display: flex; flex-direction: column; gap: 0; }
+.c3-faq-q { padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.c3-faq-q h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: rgba(226,232,240,0.8); }
+.c3-faq-q p { font-size: 13px; color: rgba(226,232,240,0.35); line-height: 1.7; }
+
+.c3-cta { position: relative; z-index: 1; border-top: 1px solid rgba(255,255,255,0.05); padding: 56px 48px; text-align: center; background: rgba(6,10,16,0.9); backdrop-filter: blur(12px); }
+.c3-cta h2 { font-size: 30px; font-weight: 800; background: linear-gradient(135deg,#93c5fd,#86efac,#fde68a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; }
+.c3-cta p { color: rgba(226,232,240,0.35); font-size: 15px; margin-bottom: 28px; }
+
+.c3-footer { background: rgba(4,7,16,0.9); border-top: 1px solid rgba(255,255,255,0.04); padding: 28px 48px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1; }
+.c3-footer p { font-size: 12px; color: rgba(226,232,240,0.15); }
+.c3-footer-links { display: flex; gap: 20px; }
+.c3-footer-links a { font-size: 12px; color: rgba(226,232,240,0.25); text-decoration: none; }
+
+/* ── section divider ── */
+.sec-divide { height: 6px; background: #000; }
+</style>
+</head>
+<body>
+
+<!-- Jump nav -->
+<div class="jumpnav">
+  <span class="jlabel">Jump to →</span>
+  <a href="#c1">① Dark Terminal</a>
+  <a href="#c2">② Dark Gradient</a>
+  <a href="#c3">③ Glassmorphism</a>
+  <button class="theme-btn" id="themeToggle" onclick="toggleTheme()">☀️ Light Mode</button>
+</div>
+
+<script>
+  function toggleTheme() {
+    const isLight = document.body.classList.toggle('light');
+    const btn = document.getElementById('themeToggle');
+    btn.textContent = isLight ? '🌙 Dark Mode' : '☀️ Light Mode';
+    try { localStorage.setItem('conceptTheme', isLight ? 'light' : 'dark'); } catch(e) {}
+  }
+  // Restore last preference
+  try {
+    if (localStorage.getItem('conceptTheme') === 'light') {
+      document.body.classList.add('light');
+      document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('themeToggle');
+        if (btn) btn.textContent = '🌙 Dark Mode';
+      });
+    }
+  } catch(e) {}
+</script>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONCEPT 1 — DARK TERMINAL
+═══════════════════════════════════════════════════════════ -->
+<div id="c1">
+  <div class="cbanner b1">CONCEPT 1 — <span>DARK TERMINAL · Exact extension UI · Developer feel · Clean &amp; precise</span></div>
+  <div class="c1-mbar"></div>
+
+  <!-- Nav -->
+  <div class="c1-topnav">
+    <div class="c1-logo"><div class="c1-logo-icon">✉️</div>Gmail Organizer</div>
+    <div class="nav-links">
+      <a href="#">Features</a><a href="#">Pricing</a><a href="#">Changelog</a><a href="#">Privacy</a>
+    </div>
+    <button class="c1-btn">Add to Chrome — Free</button>
+  </div>
+
+  <!-- Hero -->
+  <div class="c1-hero">
+    <div class="c1-eyebrow">v2.0 · 12 features shipped</div>
+    <h1>Your inbox. Your rules.<br><em>Organized automatically.</em></h1>
+    <p>AI-powered rules, verified unsubscribe, bulk actions, and a priority score — all running inside Gmail. Your data never leaves your browser.</p>
+    <div class="c1-btns">
+      <button class="c1-btn-primary">🧩 Add to Chrome</button>
+      <button class="c1-btn-ghost">View on Chrome Web Store →</button>
+    </div>
+    <div class="c1-stats">
+      <div><div class="c1-stat-n">100%</div><div class="c1-stat-l">Private — local only</div></div>
+      <div><div class="c1-stat-n">Free</div><div class="c1-stat-l">20 credits to start</div></div>
+      <div><div class="c1-stat-n">7-day</div><div class="c1-stat-l">Unsubscribe verification</div></div>
+      <div><div class="c1-stat-n">v2.0</div><div class="c1-stat-l">Latest release</div></div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="c1-section">
+    <div class="c1-overline">Features</div>
+    <h2>Everything your inbox needs</h2>
+    <p class="c1-section-sub">No new email app. No cloud sync. Works inside Gmail right now.</p>
+    <div class="c1-grid3">
+      <div class="c1-card c1-card-b"><div class="c1-card-icon">🤖</div><h3>AI Rule Generation</h3><p>Describe a rule in plain English. Gemini writes it. Every labeling decision has a "why" button.</p></div>
+      <div class="c1-card c1-card-g"><div class="c1-card-icon">✅</div><h3>Verified Unsubscribe</h3><p>Mailto auto-sent via Gmail API. 7-day alarm confirms the sender actually stopped.</p></div>
+      <div class="c1-card c1-card-r"><div class="c1-card-icon">☠️</div><h3>Sender Black Hole</h3><p>Block + unsubscribe + auto-trash all future emails. Retroactive — trashes old ones too.</p></div>
+      <div class="c1-card c1-card-y"><div class="c1-card-icon">⚡</div><h3>Bulk Action Tool</h3><p>Search any Gmail query, preview matches, then label / archive / trash everything in one click.</p></div>
+      <div class="c1-card c1-card-b"><div class="c1-card-icon">📖</div><h3>Read Later Queue</h3><p>Newsletters auto-archived to Reading/Saved. One-click popup button to access your queue.</p></div>
+      <div class="c1-card c1-card-g"><div class="c1-card-icon">🎯</div><h3>Priority Score</h3><p>Inbox importance scoring with per-factor breakdown. Click the arc to see what's hurting you.</p></div>
+      <div class="c1-card c1-card-r"><div class="c1-card-icon">🔔</div><h3>Daily Digest</h3><p>Chrome notification every morning at 8am — organized count, unsubscribes, unread inbox.</p></div>
+      <div class="c1-card c1-card-y"><div class="c1-card-icon">📎</div><h3>Attachment Rules</h3><p>Rules can require <code style="font-size:11px;background:#0d1117;padding:1px 4px;border-radius:3px;">has:attachment</code> — e.g. "From boss AND has attachment".</p></div>
+      <div class="c1-card c1-card-b"><div class="c1-card-icon">🔁</div><h3>Follow-Up Tracker</h3><p>Scans sent mail for unanswered threads. Surfaces them automatically for reply.</p></div>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="c1-section">
+    <div class="c1-overline">How it works</div>
+    <h2>Up and running in 3 steps</h2>
+    <p class="c1-section-sub">No account, no subscription required to get started.</p>
+    <div class="c1-steps">
+      <div class="c1-step"><div class="c1-step-num">01</div><h3>Install the extension</h3><p>Add Gmail Organizer from the Chrome Web Store. Grant Gmail permissions — everything stays on-device.</p></div>
+      <div class="c1-step"><div class="c1-step-num">02</div><h3>Create or generate rules</h3><p>Write rules manually or type a description and let Gemini generate the logic. Preview before applying.</p></div>
+      <div class="c1-step"><div class="c1-step-num">03</div><h3>Run or auto-schedule</h3><p>Hit Run Now, or enable auto-run to organize in the background. Undo is always one click away.</p></div>
+    </div>
+  </div>
+
+  <!-- Comparison table -->
+  <div class="c1-section">
+    <div class="c1-overline">Comparison</div>
+    <h2>How we stack up</h2>
+    <p class="c1-section-sub">Beating competitors on privacy, price, and transparency.</p>
+    <table class="c1-table">
+      <thead><tr><th>Feature</th><th>Gmail Organizer</th><th>Clean Email</th><th>SaneBox</th><th>Superhuman</th></tr></thead>
+      <tbody>
+        <tr class="ours"><td>Price</td><td><span class="c1-check">Free to start</span></td><td>$10/mo</td><td>$7–36/mo</td><td>$30/mo</td></tr>
+        <tr><td>Local processing</td><td><span class="c1-check">✓ Yes</span></td><td><span class="c1-cross">✗</span></td><td><span class="c1-cross">✗</span></td><td><span class="c1-cross">✗</span></td></tr>
+        <tr><td>Preview before apply</td><td><span class="c1-check">✓ Yes</span></td><td><span class="c1-cross">✗</span></td><td><span class="c1-cross">✗</span></td><td><span class="c1-cross">✗</span></td></tr>
+        <tr><td>AI explains decisions</td><td><span class="c1-check">✓ Yes</span></td><td><span class="c1-cross">✗</span></td><td><span class="c1-cross">✗</span></td><td><span class="c1-cross">✗</span></td></tr>
+        <tr><td>Verified unsubscribe</td><td><span class="c1-check">✓ 7-day check</span></td><td><span class="c1-partial">~80%</span></td><td><span class="c1-partial">~75%</span></td><td><span class="c1-cross">✗</span></td></tr>
+        <tr><td>Works inside Gmail</td><td><span class="c1-check">✓ Yes</span></td><td><span class="c1-cross">New UI</span></td><td><span class="c1-check">✓</span></td><td><span class="c1-cross">New UI</span></td></tr>
+        <tr><td>Retroactive labeling</td><td><span class="c1-check">✓ Yes</span></td><td><span class="c1-check">✓</span></td><td><span class="c1-cross">✗</span></td><td><span class="c1-cross">✗</span></td></tr>
+        <tr><td>Export / import rules</td><td><span class="c1-check">✓ Yes</span></td><td><span class="c1-cross">✗</span></td><td><span class="c1-cross">✗</span></td><td><span class="c1-cross">✗</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pricing -->
+  <div class="c1-section">
+    <div class="c1-overline">Pricing</div>
+    <h2>Start free, upgrade when ready</h2>
+    <p class="c1-section-sub">20 credits included — no credit card needed.</p>
+    <div class="c1-pricing">
+      <div class="c1-plan">
+        <div class="c1-plan-name">Starter</div>
+        <div class="c1-plan-price">Free</div>
+        <div class="c1-plan-sub">20 credits included</div>
+        <ul class="c1-plan-features">
+          <li>AI rule generation (uses credits)</li>
+          <li>Manual rules — unlimited</li>
+          <li>Bulk action, unsubscribe, black hole</li>
+          <li>Priority inbox &amp; daily digest</li>
+          <li>All local — no data sent to cloud</li>
+        </ul>
+      </div>
+      <div class="c1-plan featured">
+        <div class="c1-plan-name">Pro</div>
+        <div class="c1-plan-price">$4.99<span style="font-size:14px;font-weight:400;color:#8b949e">/mo</span></div>
+        <div class="c1-plan-sub">Unlimited AI credits</div>
+        <ul class="c1-plan-features">
+          <li>Everything in Starter</li>
+          <li>Unlimited AI rule generation</li>
+          <li>Thread summarization</li>
+          <li>Priority support</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="c1-section">
+    <div class="c1-overline">FAQ</div>
+    <h2>Common questions</h2>
+    <p class="c1-section-sub"></p>
+    <div class="c1-faq">
+      <div class="c1-faq-q"><h3>Does Gmail Organizer read all my emails?</h3><p>No. The extension only reads the metadata needed to match your rules (sender, subject, labels). Email bodies are only accessed when you explicitly trigger AI summarization — and only the selected thread is sent to Gemini.</p></div>
+      <div class="c1-faq-q"><h3>What are credits used for?</h3><p>Credits are consumed by AI-powered features like rule generation and thread summarization. Manual rules, unsubscribe, bulk actions, and the priority score are all free and unlimited.</p></div>
+      <div class="c1-faq-q"><h3>Will unsubscribe actually work?</h3><p>Yes. The extension sends the unsubscribe request directly via Gmail API (no clipboard, no pop-up). Seven days later it checks whether the sender sent you anything new — and marks the result as confirmed or failed.</p></div>
+      <div class="c1-faq-q"><h3>Can I undo a run?</h3><p>Yes. Every run stores a snapshot. Hit Undo in the popup to reverse the last labeling batch instantly.</p></div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="c1-cta">
+    <h2>Take back your inbox today</h2>
+    <p>Free to install. No account needed. Works in your existing Gmail.</p>
+    <button class="c1-btn-primary" style="font-size:15px;padding:14px 32px;">🧩 Add to Chrome — It's Free</button>
+  </div>
+
+  <!-- Footer -->
+  <div class="c1-footer">
+    <p>© 2026 Gmail Organizer · Not affiliated with Google</p>
+    <div class="c1-footer-links"><a href="#">Privacy</a><a href="#">Changelog</a><a href="#">Chrome Web Store</a></div>
+  </div>
+</div>
+
+<div class="sec-divide"></div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONCEPT 2 — DARK GRADIENT
+═══════════════════════════════════════════════════════════ -->
+<div id="c2">
+  <div class="cbanner b2">CONCEPT 2 — <span>DARK GRADIENT · Indigo-purple glow · Modern &amp; vibrant</span></div>
+  <div class="c2-mbar"></div>
+
+  <!-- Nav -->
+  <div class="c2-topnav">
+    <div class="c2-logo"><div class="c2-logo-icon">✉️</div>Gmail Organizer</div>
+    <div class="nav-links">
+      <a href="#">Features</a><a href="#">Pricing</a><a href="#">Changelog</a><a href="#">Privacy</a>
+    </div>
+    <button class="c2-btn">Add to Chrome — Free</button>
+  </div>
+
+  <!-- Hero -->
+  <div class="c2-hero">
+    <div class="c2-badge">✨ v2.0 · 12 features shipped</div>
+    <h1>Your inbox. Your rules.<br><em>Organized automatically.</em></h1>
+    <p>AI-powered rules, verified unsubscribe, bulk actions, and a priority score — all running inside Gmail. Your data never leaves your browser.</p>
+    <div class="c2-btns">
+      <button class="c2-btn-primary">🧩 Add to Chrome</button>
+      <button class="c2-btn-ghost">View on Chrome Web Store →</button>
+    </div>
+    <div class="c2-stats">
+      <div><div class="c2-stat-n">100%</div><div class="c2-stat-l">Private — local only</div></div>
+      <div><div class="c2-stat-n">Free</div><div class="c2-stat-l">20 credits to start</div></div>
+      <div><div class="c2-stat-n">7-day</div><div class="c2-stat-l">Unsubscribe verification</div></div>
+      <div><div class="c2-stat-n">v2.0</div><div class="c2-stat-l">Latest release</div></div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="c2-section">
+    <div class="c2-overline">Features</div>
+    <h2>Everything your inbox needs</h2>
+    <p class="c2-section-sub">No new email app. No cloud sync. Works inside Gmail right now.</p>
+    <div class="c2-grid3">
+      <div class="c2-card"><div class="c2-card-icon c2-icon-b">🤖</div><h3>AI Rule Generation</h3><p>Describe a rule in plain English. Gemini writes it. Every labeling decision has a "why" button.</p></div>
+      <div class="c2-card"><div class="c2-card-icon c2-icon-g">✅</div><h3>Verified Unsubscribe</h3><p>Mailto auto-sent via Gmail API. 7-day alarm confirms the sender actually stopped.</p></div>
+      <div class="c2-card"><div class="c2-card-icon c2-icon-r">☠️</div><h3>Sender Black Hole</h3><p>Block + unsubscribe + auto-trash all future emails. Retroactive — trashes old ones too.</p></div>
+      <div class="c2-card"><div class="c2-card-icon c2-icon-y">⚡</div><h3>Bulk Action Tool</h3><p>Search any Gmail query, preview matches, then label / archive / trash everything in one click.</p></div>
+      <div class="c2-card"><div class="c2-card-icon c2-icon-b">📖</div><h3>Read Later Queue</h3><p>Newsletters auto-archived to Reading/Saved. One-click popup button to access your queue.</p></div>
+      <div class="c2-card"><div class="c2-card-icon c2-icon-g">🎯</div><h3>Priority Score</h3><p>Inbox importance scoring with per-factor breakdown. Click the arc to see what's hurting you.</p></div>
+      <div class="c2-card"><div class="c2-card-icon c2-icon-r">🔔</div><h3>Daily Digest</h3><p>Chrome notification every morning at 8am — organized count, unsubscribes, unread inbox.</p></div>
+      <div class="c2-card"><div class="c2-card-icon c2-icon-y">📎</div><h3>Attachment Rules</h3><p>Rules can require has:attachment — e.g. "From boss AND has attachment".</p></div>
+      <div class="c2-card"><div class="c2-card-icon c2-icon-b">🔁</div><h3>Follow-Up Tracker</h3><p>Scans sent mail for unanswered threads. Surfaces them automatically for reply.</p></div>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="c2-section">
+    <div class="c2-overline">How it works</div>
+    <h2>Up and running in 3 steps</h2>
+    <p class="c2-section-sub">No account, no subscription required to get started.</p>
+    <div class="c2-steps">
+      <div class="c2-step"><div class="c2-step-num">01</div><h3>Install the extension</h3><p>Add Gmail Organizer from the Chrome Web Store. Grant Gmail permissions — everything stays on-device.</p></div>
+      <div class="c2-step"><div class="c2-step-num">02</div><h3>Create or generate rules</h3><p>Write rules manually or type a description and let Gemini generate the logic. Preview before applying.</p></div>
+      <div class="c2-step"><div class="c2-step-num">03</div><h3>Run or auto-schedule</h3><p>Hit Run Now, or enable auto-run to organize in the background. Undo is always one click away.</p></div>
+    </div>
+  </div>
+
+  <!-- Comparison table -->
+  <div class="c2-section">
+    <div class="c2-overline">Comparison</div>
+    <h2>How we stack up</h2>
+    <p class="c2-section-sub">Beating competitors on privacy, price, and transparency.</p>
+    <table class="c2-table">
+      <thead><tr><th>Feature</th><th>Gmail Organizer</th><th>Clean Email</th><th>SaneBox</th><th>Superhuman</th></tr></thead>
+      <tbody>
+        <tr class="ours"><td>Price</td><td><span class="c2-check">Free to start</span></td><td>$10/mo</td><td>$7–36/mo</td><td>$30/mo</td></tr>
+        <tr><td>Local processing</td><td><span class="c2-check">✓ Yes</span></td><td><span class="c2-cross">✗</span></td><td><span class="c2-cross">✗</span></td><td><span class="c2-cross">✗</span></td></tr>
+        <tr><td>Preview before apply</td><td><span class="c2-check">✓ Yes</span></td><td><span class="c2-cross">✗</span></td><td><span class="c2-cross">✗</span></td><td><span class="c2-cross">✗</span></td></tr>
+        <tr><td>AI explains decisions</td><td><span class="c2-check">✓ Yes</span></td><td><span class="c2-cross">✗</span></td><td><span class="c2-cross">✗</span></td><td><span class="c2-cross">✗</span></td></tr>
+        <tr><td>Verified unsubscribe</td><td><span class="c2-check">✓ 7-day check</span></td><td><span class="c2-partial">~80%</span></td><td><span class="c2-partial">~75%</span></td><td><span class="c2-cross">✗</span></td></tr>
+        <tr><td>Works inside Gmail</td><td><span class="c2-check">✓ Yes</span></td><td><span class="c2-cross">New UI</span></td><td><span class="c2-check">✓</span></td><td><span class="c2-cross">New UI</span></td></tr>
+        <tr><td>Retroactive labeling</td><td><span class="c2-check">✓ Yes</span></td><td><span class="c2-check">✓</span></td><td><span class="c2-cross">✗</span></td><td><span class="c2-cross">✗</span></td></tr>
+        <tr><td>Export / import rules</td><td><span class="c2-check">✓ Yes</span></td><td><span class="c2-cross">✗</span></td><td><span class="c2-cross">✗</span></td><td><span class="c2-cross">✗</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pricing -->
+  <div class="c2-section">
+    <div class="c2-overline">Pricing</div>
+    <h2>Start free, upgrade when ready</h2>
+    <p class="c2-section-sub">20 credits included — no credit card needed.</p>
+    <div class="c2-pricing">
+      <div class="c2-plan">
+        <div class="c2-plan-name">Starter</div>
+        <div class="c2-plan-price">Free</div>
+        <div class="c2-plan-sub">20 credits included</div>
+        <ul class="c2-plan-features">
+          <li>AI rule generation (uses credits)</li>
+          <li>Manual rules — unlimited</li>
+          <li>Bulk action, unsubscribe, black hole</li>
+          <li>Priority inbox &amp; daily digest</li>
+          <li>All local — no data sent to cloud</li>
+        </ul>
+      </div>
+      <div class="c2-plan featured">
+        <div class="c2-plan-name">Pro</div>
+        <div class="c2-plan-price">$4.99<span style="font-size:14px;font-weight:400;color:#475569">/mo</span></div>
+        <div class="c2-plan-sub">Unlimited AI credits</div>
+        <ul class="c2-plan-features">
+          <li>Everything in Starter</li>
+          <li>Unlimited AI rule generation</li>
+          <li>Thread summarization</li>
+          <li>Priority support</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="c2-section">
+    <div class="c2-overline">FAQ</div>
+    <h2>Common questions</h2>
+    <p class="c2-section-sub"></p>
+    <div class="c2-faq">
+      <div class="c2-faq-q"><h3>Does Gmail Organizer read all my emails?</h3><p>No. The extension only reads the metadata needed to match your rules (sender, subject, labels). Email bodies are only accessed when you explicitly trigger AI summarization.</p></div>
+      <div class="c2-faq-q"><h3>What are credits used for?</h3><p>Credits are consumed by AI-powered features like rule generation and thread summarization. Manual rules, unsubscribe, bulk actions, and the priority score are all free and unlimited.</p></div>
+      <div class="c2-faq-q"><h3>Will unsubscribe actually work?</h3><p>Yes. The extension sends the request directly via Gmail API. Seven days later it checks whether the sender sent you anything new — and marks the result confirmed or failed.</p></div>
+      <div class="c2-faq-q"><h3>Can I undo a run?</h3><p>Yes. Every run stores a snapshot. Hit Undo in the popup to reverse the last labeling batch instantly.</p></div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="c2-cta">
+    <h2>Take back your inbox today</h2>
+    <p>Free to install. No account needed. Works in your existing Gmail.</p>
+    <button class="c2-btn-primary" style="font-size:15px;padding:14px 32px;">🧩 Add to Chrome — It's Free</button>
+  </div>
+
+  <!-- Footer -->
+  <div class="c2-footer">
+    <p>© 2026 Gmail Organizer · Not affiliated with Google</p>
+    <div class="c2-footer-links"><a href="#">Privacy</a><a href="#">Changelog</a><a href="#">Chrome Web Store</a></div>
+  </div>
+</div>
+
+<div class="sec-divide"></div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONCEPT 3 — GLASSMORPHISM
+═══════════════════════════════════════════════════════════ -->
+<div id="c3">
+  <div class="cbanner b3">CONCEPT 3 — <span>GLASSMORPHISM · Frosted glass + floating orbs · Ultra-dark &amp; premium feel</span></div>
+  <div class="c3-mbar"></div>
+
+  <!-- Nav -->
+  <div class="c3-topnav">
+    <div class="c3-logo"><div class="c3-logo-icon">✉️</div>Gmail Organizer</div>
+    <div class="nav-links">
+      <a href="#">Features</a><a href="#">Pricing</a><a href="#">Changelog</a><a href="#">Privacy</a>
+    </div>
+    <button class="c3-btn">Add to Chrome — Free</button>
+  </div>
+
+  <!-- Hero with orbs -->
+  <div class="c3-hero-wrap">
+    <div class="c3-orbs">
+      <div class="c3-orb c3-o1"></div>
+      <div class="c3-orb c3-o2"></div>
+      <div class="c3-orb c3-o3"></div>
+      <div class="c3-orb c3-o4"></div>
+    </div>
+    <div class="c3-hero">
+      <div class="c3-pill">✨ v2.0 · 12 features shipped</div>
+      <h1>Your inbox. Your rules.<br><em>Organized automatically.</em></h1>
+      <p>AI-powered rules, verified unsubscribe, bulk actions, and a priority score — all running inside Gmail. Your data never leaves your browser.</p>
+      <div class="c3-btns">
+        <button class="c3-btn-primary">🧩 Add to Chrome</button>
+        <button class="c3-btn-ghost">View on Chrome Web Store →</button>
+      </div>
+      <div class="c3-stats">
+        <div><div class="c3-stat-n">100%</div><div class="c3-stat-l">Private — local only</div></div>
+        <div><div class="c3-stat-n">Free</div><div class="c3-stat-l">20 credits to start</div></div>
+        <div><div class="c3-stat-n">7-day</div><div class="c3-stat-l">Unsubscribe verification</div></div>
+        <div><div class="c3-stat-n">v2.0</div><div class="c3-stat-l">Latest release</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="c3-section">
+    <div class="c3-overline">Features</div>
+    <h2>Everything your inbox needs</h2>
+    <p class="c3-section-sub">No new email app. No cloud sync. Works inside Gmail right now.</p>
+    <div class="c3-grid3">
+      <div class="c3-card c3-glow-b"><div class="c3-card-icon">🤖</div><h3>AI Rule Generation</h3><p>Describe a rule in plain English. Gemini writes it. Every labeling decision has a "why" button.</p></div>
+      <div class="c3-card c3-glow-g"><div class="c3-card-icon">✅</div><h3>Verified Unsubscribe</h3><p>Mailto auto-sent via Gmail API. 7-day alarm confirms the sender actually stopped.</p></div>
+      <div class="c3-card c3-glow-r"><div class="c3-card-icon">☠️</div><h3>Sender Black Hole</h3><p>Block + unsubscribe + auto-trash all future emails. Retroactive — trashes old ones too.</p></div>
+      <div class="c3-card c3-glow-y"><div class="c3-card-icon">⚡</div><h3>Bulk Action Tool</h3><p>Search any Gmail query, preview matches, then label / archive / trash everything in one click.</p></div>
+      <div class="c3-card c3-glow-b"><div class="c3-card-icon">📖</div><h3>Read Later Queue</h3><p>Newsletters auto-archived to Reading/Saved. One-click popup button to access your queue.</p></div>
+      <div class="c3-card c3-glow-g"><div class="c3-card-icon">🎯</div><h3>Priority Score</h3><p>Inbox importance scoring with per-factor breakdown. Click the arc to see what's hurting you.</p></div>
+      <div class="c3-card c3-glow-r"><div class="c3-card-icon">🔔</div><h3>Daily Digest</h3><p>Chrome notification every morning at 8am — organized count, unsubscribes, unread inbox.</p></div>
+      <div class="c3-card c3-glow-y"><div class="c3-card-icon">📎</div><h3>Attachment Rules</h3><p>Rules can require has:attachment — e.g. "From boss AND has attachment".</p></div>
+      <div class="c3-card c3-glow-b"><div class="c3-card-icon">🔁</div><h3>Follow-Up Tracker</h3><p>Scans sent mail for unanswered threads. Surfaces them automatically for reply.</p></div>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="c3-section">
+    <div class="c3-overline">How it works</div>
+    <h2>Up and running in 3 steps</h2>
+    <p class="c3-section-sub">No account, no subscription required to get started.</p>
+    <div class="c3-steps">
+      <div class="c3-step"><div class="c3-step-num">01</div><h3>Install the extension</h3><p>Add Gmail Organizer from the Chrome Web Store. Grant Gmail permissions — everything stays on-device.</p></div>
+      <div class="c3-step"><div class="c3-step-num">02</div><h3>Create or generate rules</h3><p>Write rules manually or type a description and let Gemini generate the logic. Preview before applying.</p></div>
+      <div class="c3-step"><div class="c3-step-num">03</div><h3>Run or auto-schedule</h3><p>Hit Run Now, or enable auto-run to organize in the background. Undo is always one click away.</p></div>
+    </div>
+  </div>
+
+  <!-- Comparison table -->
+  <div class="c3-section">
+    <div class="c3-overline">Comparison</div>
+    <h2>How we stack up</h2>
+    <p class="c3-section-sub">Beating competitors on privacy, price, and transparency.</p>
+    <table class="c3-table">
+      <thead><tr><th>Feature</th><th>Gmail Organizer</th><th>Clean Email</th><th>SaneBox</th><th>Superhuman</th></tr></thead>
+      <tbody>
+        <tr class="ours"><td>Price</td><td><span class="c3-check">Free to start</span></td><td>$10/mo</td><td>$7–36/mo</td><td>$30/mo</td></tr>
+        <tr><td>Local processing</td><td><span class="c3-check">✓ Yes</span></td><td><span class="c3-cross">✗</span></td><td><span class="c3-cross">✗</span></td><td><span class="c3-cross">✗</span></td></tr>
+        <tr><td>Preview before apply</td><td><span class="c3-check">✓ Yes</span></td><td><span class="c3-cross">✗</span></td><td><span class="c3-cross">✗</span></td><td><span class="c3-cross">✗</span></td></tr>
+        <tr><td>AI explains decisions</td><td><span class="c3-check">✓ Yes</span></td><td><span class="c3-cross">✗</span></td><td><span class="c3-cross">✗</span></td><td><span class="c3-cross">✗</span></td></tr>
+        <tr><td>Verified unsubscribe</td><td><span class="c3-check">✓ 7-day check</span></td><td><span class="c3-partial">~80%</span></td><td><span class="c3-partial">~75%</span></td><td><span class="c3-cross">✗</span></td></tr>
+        <tr><td>Works inside Gmail</td><td><span class="c3-check">✓ Yes</span></td><td><span class="c3-cross">New UI</span></td><td><span class="c3-check">✓</span></td><td><span class="c3-cross">New UI</span></td></tr>
+        <tr><td>Retroactive labeling</td><td><span class="c3-check">✓ Yes</span></td><td><span class="c3-check">✓</span></td><td><span class="c3-cross">✗</span></td><td><span class="c3-cross">✗</span></td></tr>
+        <tr><td>Export / import rules</td><td><span class="c3-check">✓ Yes</span></td><td><span class="c3-cross">✗</span></td><td><span class="c3-cross">✗</span></td><td><span class="c3-cross">✗</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pricing -->
+  <div class="c3-section">
+    <div class="c3-overline">Pricing</div>
+    <h2>Start free, upgrade when ready</h2>
+    <p class="c3-section-sub">20 credits included — no credit card needed.</p>
+    <div class="c3-pricing">
+      <div class="c3-plan">
+        <div class="c3-plan-name">Starter</div>
+        <div class="c3-plan-price">Free</div>
+        <div class="c3-plan-sub">20 credits included</div>
+        <ul class="c3-plan-features">
+          <li>AI rule generation (uses credits)</li>
+          <li>Manual rules — unlimited</li>
+          <li>Bulk action, unsubscribe, black hole</li>
+          <li>Priority inbox &amp; daily digest</li>
+          <li>All local — no data sent to cloud</li>
+        </ul>
+      </div>
+      <div class="c3-plan featured">
+        <div class="c3-plan-name">Pro</div>
+        <div class="c3-plan-price">$4.99<span style="font-size:14px;font-weight:400;color:rgba(226,232,240,0.3)">/mo</span></div>
+        <div class="c3-plan-sub">Unlimited AI credits</div>
+        <ul class="c3-plan-features">
+          <li>Everything in Starter</li>
+          <li>Unlimited AI rule generation</li>
+          <li>Thread summarization</li>
+          <li>Priority support</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="c3-section">
+    <div class="c3-overline">FAQ</div>
+    <h2>Common questions</h2>
+    <p class="c3-section-sub"></p>
+    <div class="c3-faq">
+      <div class="c3-faq-q"><h3>Does Gmail Organizer read all my emails?</h3><p>No. The extension only reads the metadata needed to match your rules (sender, subject, labels). Email bodies are only accessed when you explicitly trigger AI summarization.</p></div>
+      <div class="c3-faq-q"><h3>What are credits used for?</h3><p>Credits are consumed by AI-powered features like rule generation and thread summarization. Manual rules, unsubscribe, bulk actions, and the priority score are all free and unlimited.</p></div>
+      <div class="c3-faq-q"><h3>Will unsubscribe actually work?</h3><p>Yes. The extension sends the request directly via Gmail API. Seven days later it checks whether the sender sent you anything new — and marks the result confirmed or failed.</p></div>
+      <div class="c3-faq-q"><h3>Can I undo a run?</h3><p>Yes. Every run stores a snapshot. Hit Undo in the popup to reverse the last labeling batch instantly.</p></div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="c3-cta">
+    <h2>Take back your inbox today</h2>
+    <p>Free to install. No account needed. Works in your existing Gmail.</p>
+    <button class="c3-btn-primary" style="font-size:15px;padding:14px 32px;">🧩 Add to Chrome — It's Free</button>
+  </div>
+
+  <!-- Footer -->
+  <div class="c3-footer">
+    <p>© 2026 Gmail Organizer · Not affiliated with Google</p>
+    <div class="c3-footer-links"><a href="#">Privacy</a><a href="#">Changelog</a><a href="#">Chrome Web Store</a></div>
+  </div>
+</div>
+
+</body>
+</html>

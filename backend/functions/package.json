@@ -1,0 +1,20 @@
+{
+  "name": "gmail-organizer-functions",
+  "description": "Firebase Cloud Functions for Gmail Organizer",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "deploy": "firebase deploy --only functions",
+    "build": "echo 'No build step needed'"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "main": "src/index.js",
+  "dependencies": {
+    "firebase-admin": "^12.0.0",
+    "firebase-functions": "^5.0.0",
+    "stripe": "^14.0.0",
+    "cors": "^2.8.5"
+  },
+  "private": true
+}

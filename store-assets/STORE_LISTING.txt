@@ -1,0 +1,50 @@
+=== CHROME WEB STORE LISTING ===
+
+TITLE (max 45 chars):
+Gmail Organizer – AI Inbox Manager
+
+SHORT DESCRIPTION (max 132 chars):
+Auto-organize Gmail with smart rules, AI summaries, labels, snooze & priority inbox. Save hours every week.
+
+DETAILED DESCRIPTION:
+Gmail Organizer automatically sorts your inbox using smart rules and AI — so you spend less time managing email and more time doing real work.
+
+✨ KEY FEATURES
+
+🗂️ Smart Auto-Organization
+Create rules to label, archive, and sort emails automatically. Choose from 10+ presets (newsletters, receipts, banking, GitHub, etc.) or describe rules in plain English and let AI generate them.
+
+🤖 AI Rule Generation
+Just type: "Label emails from my bank as Finance/Banking and archive them" — and Gmail Organizer creates the rule instantly.
+
+📊 Inbox Analytics Dashboard
+See your inbox health score, top senders, label usage, daily activity trends, and time saved — all in one clean dashboard.
+
+🏷️ Smart Categorization
+Uses Gmail's native category system (To Respond, FYI, Marketing, etc.) to keep important emails front and center and move noise out of your inbox.
+
+⏰ Snooze & Follow-ups
+Snooze emails to reappear later. Automatically surface emails that need a follow-up reply.
+
+🧠 Thread Summaries
+Get AI-powered summaries of long email threads so you can catch up in seconds.
+
+🔍 Duplicate & Unsubscribe Detection
+Find and remove duplicate emails. Spot and unsubscribe from mailing lists you no longer need.
+
+⚡ Priority Inbox
+An intelligent priority score puts your most important emails at the top — learning from your behavior over time.
+
+🔒 PRIVACY FIRST
+- Only requests the permissions it needs
+- Your email data never leaves your browser for processing
+- No third-party email scanning
+- View our full privacy policy: https://soufianeodf.github.io/gmail-organizer-privacy/
+
+---
+CATEGORY: Productivity
+LANGUAGE: English
+PRICING: Free (with premium features available)
+
+KEYWORDS:
+gmail organizer, gmail labels, inbox zero, email management, gmail rules, email organizer, inbox cleaner, gmail productivity, email automation, smart inbox

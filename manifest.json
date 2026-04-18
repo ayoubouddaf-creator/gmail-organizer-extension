@@ -1,0 +1,49 @@
+{
+  "manifest_version": 3,
+  "name": "Gmail Organizer",
+  "version": "2.0.0",
+  "description": "Organize Gmail with labels, AI rules, analytics, unsubscribe, snooze, thread summaries, and priority inbox.",
+  "minimum_chrome_version": "116",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "permissions": [
+    "alarms",
+    "identity",
+    "storage",
+    "notifications",
+    "tabs"
+  ],
+  "optional_permissions": [],
+  "host_permissions": [
+    "https://gmail.googleapis.com/*",
+    "https://generativelanguage.googleapis.com/*",
+    "https://us-central1-organizer-f5aa8.cloudfunctions.net/*",
+    "https://oauth2.googleapis.com/*"
+  ],
+  "oauth2": {
+    "client_id": "34301180642-iuj5chd8qej1kuefdhvbk41hc5a63pj5.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/gmail.modify"
+    ]
+  },
+  "action": {
+    "default_title": "Gmail Organizer",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "options_page": "options.html",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; base-uri 'self'; form-action 'self'; connect-src 'self' https://gmail.googleapis.com https://generativelanguage.googleapis.com https://us-central1-organizer-f5aa8.cloudfunctions.net https://oauth2.googleapis.com"
+  }
+}

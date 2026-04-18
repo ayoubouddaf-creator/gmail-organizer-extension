@@ -1,0 +1,229 @@
+<\!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Gmail Organizer – Promo Tile 440x280</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 440px; height: 280px; overflow: hidden; background: #0f1923; }
+
+  .tile {
+    width: 440px;
+    height: 280px;
+    background: linear-gradient(135deg, #0f1923 0%, #0d2a42 45%, #1a3a5c 100%);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Google Sans', Roboto, sans-serif;
+  }
+
+  /* Decorative background circles */
+  .bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .bc1 {
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(26,115,232,.18) 0%, transparent 70%);
+    top: -80px; right: -60px;
+  }
+  .bc2 {
+    width: 240px; height: 240px;
+    background: radial-gradient(circle, rgba(0,188,212,.12) 0%, transparent 70%);
+    bottom: -60px; left: -40px;
+  }
+  .bc3 {
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(26,115,232,.1) 0%, transparent 70%);
+    bottom: 20px; right: 30px;
+  }
+
+  /* Grid lines for subtle depth */
+  .grid-lines {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(26,115,232,.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26,115,232,.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  /* Content */
+  .content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    text-align: center;
+    padding: 0 32px;
+  }
+
+  /* Logo + icon row */
+  .logo-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .logo-icon {
+    width: 52px;
+    height: 52px;
+    background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    box-shadow: 0 4px 20px rgba(26,115,232,.5), 0 0 0 1px rgba(255,255,255,.08);
+  }
+
+  /* Headline */
+  .headline {
+    font-size: 32px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 12px rgba(0,0,0,.4);
+  }
+  .headline span {
+    background: linear-gradient(90deg, #4fc3f7 0%, #1a73e8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Subtitle */
+  .subtitle {
+    font-size: 14px;
+    color: rgba(255,255,255,.72);
+    font-weight: 400;
+    letter-spacing: .2px;
+    margin-bottom: 18px;
+    line-height: 1.4;
+  }
+
+  /* Feature pills */
+  .pills {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: nowrap;
+  }
+  .pill {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,.9);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    letter-spacing: .2px;
+    backdrop-filter: blur(4px);
+  }
+  .pill .pill-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4fc3f7;
+  }
+  .pill:nth-child(2) .pill-dot { background: #34a853; }
+  .pill:nth-child(3) .pill-dot { background: #fbbc04; }
+
+  /* Chrome badge */
+  .chrome-badge {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(26,115,232,.25);
+    border: 1px solid rgba(26,115,232,.45);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #8ab4f8;
+    letter-spacing: .3px;
+  }
+  .chrome-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: conic-gradient(#ea4335 0deg 120deg, #fbbc04 120deg 240deg, #34a853 240deg 360deg);
+    position: relative;
+    flex-shrink: 0;
+  }
+  .chrome-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #1a73e8;
+    border: 1.5px solid #0d2a42;
+  }
+
+  /* Decorative top-right corner glow */
+  .corner-glow {
+    position: absolute;
+    top: 0; right: 0;
+    width: 200px; height: 140px;
+    background: linear-gradient(225deg, rgba(79,195,247,.2) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* Bottom accent line */
+  .accent-line {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 0%, #1a73e8 30%, #4fc3f7 60%, transparent 100%);
+  }
+</style>
+</head>
+<body>
+<div class="tile">
+  <div class="grid-lines"></div>
+  <div class="bg-circle bc1"></div>
+  <div class="bg-circle bc2"></div>
+  <div class="bg-circle bc3"></div>
+  <div class="corner-glow"></div>
+
+  <div class="content">
+    <div class="logo-row">
+      <div class="logo-icon">📧</div>
+    </div>
+
+    <div class="headline"><span>Gmail Organizer</span></div>
+
+    <div class="subtitle">Clean inbox. Smart rules. Zero effort.</div>
+
+    <div class="pills">
+      <div class="pill"><span class="pill-dot"></span>AI Rules</div>
+      <div class="pill"><span class="pill-dot"></span>Auto Labels</div>
+      <div class="pill"><span class="pill-dot"></span>Analytics</div>
+    </div>
+
+    <div class="chrome-badge">
+      <div class="chrome-icon"></div>
+      Chrome Extension
+    </div>
+  </div>
+
+  <div class="accent-line"></div>
+</div>
+</body>
+</html>

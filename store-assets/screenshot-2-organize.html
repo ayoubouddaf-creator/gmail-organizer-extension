@@ -1,0 +1,256 @@
+<\!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>Gmail Organizer – Organizing in Progress</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1280px; height: 800px; overflow: hidden; font-family: 'Google Sans', Roboto, sans-serif; background: #f6f8fc; display: flex; }
+
+  /* Sidebar */
+  .sidebar { width: 256px; height: 800px; background: #f6f8fc; padding: 8px 0; flex-shrink: 0; }
+  .compose-btn { background: #fff; border: none; box-shadow: 0 1px 3px rgba(0,0,0,.2); border-radius: 16px; padding: 14px 20px 14px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: #202124; width: calc(100% - 32px); margin: 8px 16px 16px; }
+  .nav-item { display: flex; align-items: center; gap: 14px; padding: 0 16px 0 24px; height: 32px; border-radius: 0 16px 16px 0; margin-right: 16px; cursor: pointer; font-size: 14px; color: #202124; }
+  .nav-item.active { background: #d3e3fd; font-weight: 600; }
+  .nav-item .icon { font-size: 17px; width: 22px; text-align: center; }
+  .nav-item .label { flex: 1; }
+  .nav-item .count { font-size: 12px; }
+  .divider { height: 1px; background: #e0e0e0; margin: 8px 16px; }
+  .section-title { font-size: 11px; font-weight: 600; color: #444746; padding: 8px 24px 4px; letter-spacing: .8px; text-transform: uppercase; }
+  .label-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  /* Main */
+  .main { flex: 1; display: flex; flex-direction: column; gap: 0; }
+
+  /* Top bar with animation */
+  .run-banner { background: linear-gradient(90deg, #1a73e8 0%, #0d47a1 100%); color: #fff; padding: 0 24px; height: 56px; display: flex; align-items: center; gap: 16px; position: relative; overflow: hidden; }
+  .run-banner::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.07) 50%, transparent 100%); animation: shimmer 2s infinite; }
+  @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+  .spinner { width: 22px; height: 22px; border: 3px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .run-text h3 { font-size: 14px; font-weight: 600; }
+  .run-text p { font-size: 12px; opacity: .85; }
+  .run-stats { margin-left: auto; display: flex; gap: 20px; }
+  .stat { text-align: center; }
+  .stat-val { font-size: 18px; font-weight: 700; line-height: 1; }
+  .stat-lbl { font-size: 10px; opacity: .8; margin-top: 2px; }
+  .stop-btn { background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.4); color: #fff; border-radius: 8px; padding: 6px 14px; font-size: 12px; font-weight: 600; cursor: pointer; margin-left: 16px; }
+
+  /* Progress bar */
+  .progress-wrap { background: #1558b0; height: 4px; }
+  .progress-bar { background: #8ab4f8; height: 4px; width: 47%; transition: width 0.3s; }
+
+  /* Content area */
+  .content { flex: 1; display: flex; gap: 0; overflow: hidden; }
+
+  /* Thread feed */
+  .thread-feed { flex: 1; overflow-y: auto; background: #fff; border-right: 1px solid #e0e0e0; }
+  .feed-header { padding: 12px 16px; background: #f8f9fa; border-bottom: 1px solid #e0e0e0; font-size: 12px; color: #5f6368; display: flex; align-items: center; gap: 8px; font-weight: 500; }
+  .feed-header .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #34a853; animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
+
+  .thread-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid #f1f3f4; font-size: 13px; animation: slideIn 0.3s ease-out; }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+  .thread-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .thread-info { flex: 1; min-width: 0; }
+  .thread-sender { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .thread-subject { font-size: 12px; color: #5f6368; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .action-badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; white-space: nowrap; display: flex; align-items: center; gap: 4px; }
+  .action-label { background: #e8f0fe; color: #1a73e8; }
+  .action-archive { background: #e6f4ea; color: #137333; }
+  .action-skip { background: #f1f3f4; color: #5f6368; }
+  .label-pill { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; margin-left: 4px; }
+
+  /* Right panel */
+  .right-panel { width: 320px; background: #f8f9fa; padding: 16px; overflow-y: auto; }
+  .panel-section { margin-bottom: 18px; }
+  .panel-title { font-size: 11px; font-weight: 700; color: #5f6368; letter-spacing: .7px; text-transform: uppercase; margin-bottom: 10px; }
+  .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .kpi-card { background: #fff; border-radius: 10px; padding: 10px 12px; border: 1px solid #e0e0e0; }
+  .kpi-val { font-size: 20px; font-weight: 700; color: #202124; }
+  .kpi-lbl { font-size: 11px; color: #5f6368; margin-top: 2px; }
+  .kpi-delta { font-size: 10px; color: #34a853; font-weight: 600; }
+
+  .rule-progress { background: #fff; border-radius: 10px; padding: 10px 12px; border: 1px solid #e0e0e0; margin-bottom: 8px; }
+  .rp-header { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .rp-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .rp-name { font-size: 12px; font-weight: 600; flex: 1; }
+  .rp-count { font-size: 12px; font-weight: 700; color: #1a73e8; }
+  .rp-bar-wrap { background: #e8f0fe; border-radius: 4px; height: 4px; }
+  .rp-bar { background: #1a73e8; border-radius: 4px; height: 4px; }
+
+  .log-entry { font-size: 11px; color: #5f6368; padding: 3px 0; border-bottom: 1px solid #f1f3f4; display: flex; gap: 6px; }
+  .log-time { color: #9aa0a6; flex-shrink: 0; }
+  .log-ok { color: #34a853; font-weight: 600; }
+  .log-info { color: #1a73e8; }
+</style>
+</head>
+<body>
+
+<\!-- Sidebar -->
+<div class="sidebar">
+  <button class="compose-btn">✏️ &nbsp;Compose</button>
+  <div class="nav-item active"><span class="icon">📥</span><span class="label">Inbox</span><span class="count">234</span></div>
+  <div class="nav-item"><span class="icon">⭐</span><span class="label">Starred</span></div>
+  <div class="nav-item"><span class="icon">🕐</span><span class="label">Snoozed</span><span class="count">3</span></div>
+  <div class="nav-item"><span class="icon">📤</span><span class="label">Sent</span></div>
+  <div class="nav-item"><span class="icon">📝</span><span class="label">Drafts</span><span class="count">5</span></div>
+  <div class="divider"></div>
+  <div class="section-title">Labels</div>
+  <div class="nav-item"><span class="label-dot" style="background:#1a73e8;margin-left:4px"></span><span class="label" style="margin-left:8px">Finance / Banking</span></div>
+  <div class="nav-item"><span class="label-dot" style="background:#34a853;margin-left:4px"></span><span class="label" style="margin-left:8px">GitHub Dev</span></div>
+  <div class="nav-item"><span class="label-dot" style="background:#ea4335;margin-left:4px"></span><span class="label" style="margin-left:8px">Newsletters</span></div>
+  <div class="nav-item"><span class="label-dot" style="background:#fbbc04;margin-left:4px"></span><span class="label" style="margin-left:8px">Shopping</span></div>
+  <div class="nav-item"><span class="label-dot" style="background:#a142f4;margin-left:4px"></span><span class="label" style="margin-left:8px">Social</span></div>
+  <div class="nav-item"><span class="label-dot" style="background:#f28b2c;margin-left:4px"></span><span class="label" style="margin-left:8px">Promotions</span></div>
+</div>
+
+<\!-- Main -->
+<div class="main">
+  <\!-- Run banner -->
+  <div class="run-banner">
+    <div class="spinner"></div>
+    <div class="run-text">
+      <h3>Organizing Inbox…</h3>
+      <p>Scanning threads and applying rules</p>
+    </div>
+    <div class="run-stats">
+      <div class="stat"><div class="stat-val">234</div><div class="stat-lbl">Scanned</div></div>
+      <div class="stat"><div class="stat-val">500</div><div class="stat-lbl">Total</div></div>
+      <div class="stat"><div class="stat-val">89</div><div class="stat-lbl">Labeled</div></div>
+      <div class="stat"><div class="stat-val">23</div><div class="stat-lbl">Archived</div></div>
+    </div>
+    <button class="stop-btn">■ Stop</button>
+  </div>
+  <div class="progress-wrap"><div class="progress-bar"></div></div>
+
+  <div class="content">
+    <\!-- Live feed -->
+    <div class="thread-feed">
+      <div class="feed-header">
+        <div class="live-dot"></div>
+        Live match stream — threads being processed in real time
+      </div>
+
+      <div class="thread-row">
+        <div class="thread-avatar" style="background:#1a73e8">C</div>
+        <div class="thread-info"><div class="thread-sender">Chase Bank</div><div class="thread-subject">Your statement is ready for account ••4821</div></div>
+        <div class="action-badge action-label">🏷 Labeled</div>
+        <div class="label-pill" style="background:#e8f0fe;color:#1a73e8">Finance</div>
+      </div>
+      <div class="thread-row">
+        <div class="thread-avatar" style="background:#24292e">G</div>
+        <div class="thread-info"><div class="thread-sender">GitHub</div><div class="thread-subject">[octocat/hello-world] PR #42: Add new feature merged</div></div>
+        <div class="action-badge action-label">🏷 Labeled</div>
+        <div class="label-pill" style="background:#e6f4ea;color:#137333">GitHub Dev</div>
+      </div>
+      <div class="thread-row">
+        <div class="thread-avatar" style="background:#ea4335">M</div>
+        <div class="thread-info"><div class="thread-sender">Morning Brew</div><div class="thread-subject">Today's tech and finance roundup — December 17</div></div>
+        <div class="action-badge action-archive">📦 Archived</div>
+        <div class="label-pill" style="background:#fce8e6;color:#c5221f">Newsletter</div>
+      </div>
+      <div class="thread-row">
+        <div class="thread-avatar" style="background:#fbbc04">A</div>
+        <div class="thread-info"><div class="thread-sender">Amazon</div><div class="thread-subject">Your order #114-783452 has shipped — arrives Thursday</div></div>
+        <div class="action-badge action-label">🏷 Labeled</div>
+        <div class="label-pill" style="background:#fef9e0;color:#b06000">Shopping</div>
+      </div>
+      <div class="thread-row">
+        <div class="thread-avatar" style="background:#a142f4">L</div>
+        <div class="thread-info"><div class="thread-sender">LinkedIn</div><div class="thread-subject">Sarah Chen and 14 others viewed your profile this week</div></div>
+        <div class="action-badge action-archive">📦 Archived</div>
+        <div class="label-pill" style="background:#f3e8fd;color:#7627bb">Social</div>
+      </div>
+      <div class="thread-row">
+        <div class="thread-avatar" style="background:#1a73e8">W</div>
+        <div class="thread-info"><div class="thread-sender">Wells Fargo</div><div class="thread-subject">Low balance alert — account ending in 4219 below $200</div></div>
+        <div class="action-badge action-label">🏷 Labeled</div>
+        <div class="label-pill" style="background:#e8f0fe;color:#1a73e8">Finance</div>
+      </div>
+      <div class="thread-row">
+        <div class="thread-avatar" style="background:#f28b2c">S</div>
+        <div class="thread-info"><div class="thread-sender">Shopify</div><div class="thread-subject">Black Friday — 50% off all plans today only, don't miss it</div></div>
+        <div class="action-badge action-archive">📦 Archived</div>
+        <div class="label-pill" style="background:#fef0e0;color:#b45309">Promo</div>
+      </div>
+      <div class="thread-row">
+        <div class="thread-avatar" style="background:#34a853">N</div>
+        <div class="thread-info"><div class="thread-sender">Netflix</div><div class="thread-subject">New releases in December — titles added just for you</div></div>
+        <div class="action-badge action-archive">📦 Archived</div>
+        <div class="label-pill" style="background:#fce8e6;color:#c5221f">Newsletter</div>
+      </div>
+      <div class="thread-row">
+        <div class="thread-avatar" style="background:#5f6368">T</div>
+        <div class="thread-info"><div class="thread-sender">Twitter/X Notifications</div><div class="thread-subject">You have 3 new mentions from @dev_community</div></div>
+        <div class="action-badge action-skip">— No match</div>
+      </div>
+      <div class="thread-row">
+        <div class="thread-avatar" style="background:#1a73e8">B</div>
+        <div class="thread-info"><div class="thread-sender">Bank of America</div><div class="thread-subject">eStatement available — December 2024</div></div>
+        <div class="action-badge action-label">🏷 Labeled</div>
+        <div class="label-pill" style="background:#e8f0fe;color:#1a73e8">Finance</div>
+      </div>
+      <div class="thread-row">
+        <div class="thread-avatar" style="background:#24292e">G</div>
+        <div class="thread-info"><div class="thread-sender">GitHub</div><div class="thread-subject">[myorg/backend] Issue #78 opened by alice — API timeout</div></div>
+        <div class="action-badge action-label">🏷 Labeled</div>
+        <div class="label-pill" style="background:#e6f4ea;color:#137333">GitHub Dev</div>
+      </div>
+      <div class="thread-row" style="opacity:.5">
+        <div class="thread-avatar" style="background:#9aa0a6">…</div>
+        <div class="thread-info"><div class="thread-sender">Scanning next batch…</div><div class="thread-subject">Fetching threads 235–280</div></div>
+        <div class="spinner" style="width:16px;height:16px;border-width:2px;border-color:rgba(0,0,0,.15);border-top-color:#1a73e8"></div>
+      </div>
+    </div>
+
+    <\!-- Right panel -->
+    <div class="right-panel">
+      <div class="panel-section">
+        <div class="panel-title">Run Summary</div>
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="kpi-val">234</div><div class="kpi-lbl">Scanned</div><div class="kpi-delta">▲ 47% done</div></div>
+          <div class="kpi-card"><div class="kpi-val">89</div><div class="kpi-lbl">Labeled</div><div class="kpi-delta">▲ 38% rate</div></div>
+          <div class="kpi-card"><div class="kpi-val">23</div><div class="kpi-lbl">Archived</div><div class="kpi-delta">10% rate</div></div>
+          <div class="kpi-card"><div class="kpi-val">122</div><div class="kpi-lbl">No match</div></div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-title">Rules in Progress</div>
+        <div class="rule-progress">
+          <div class="rp-header"><div class="rp-dot" style="background:#1a73e8"></div><div class="rp-name">Finance / Banking</div><div class="rp-count">31</div></div>
+          <div class="rp-bar-wrap"><div class="rp-bar" style="width:72%"></div></div>
+        </div>
+        <div class="rule-progress">
+          <div class="rp-header"><div class="rp-dot" style="background:#ea4335"></div><div class="rp-name">Newsletters</div><div class="rp-count">28</div></div>
+          <div class="rp-bar-wrap"><div class="rp-bar" style="width:65%;background:#ea4335"></div></div>
+        </div>
+        <div class="rule-progress">
+          <div class="rp-header"><div class="rp-dot" style="background:#34a853"></div><div class="rp-name">GitHub Dev</div><div class="rp-count">19</div></div>
+          <div class="rp-bar-wrap"><div class="rp-bar" style="width:44%;background:#34a853"></div></div>
+        </div>
+        <div class="rule-progress">
+          <div class="rp-header"><div class="rp-dot" style="background:#fbbc04"></div><div class="rp-name">Shopping</div><div class="rp-count">11</div></div>
+          <div class="rp-bar-wrap"><div class="rp-bar" style="width:25%;background:#fbbc04"></div></div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="panel-title">Activity Log</div>
+        <div class="log-entry"><span class="log-time">09:14:32</span><span class="log-ok">✓</span> Label cache cleared, run started</div>
+        <div class="log-entry"><span class="log-time">09:14:33</span><span class="log-info">i</span> Fetched 100 threads (batch 1)</div>
+        <div class="log-entry"><span class="log-time">09:14:34</span><span class="log-ok">✓</span> Applied Finance label — 18 threads</div>
+        <div class="log-entry"><span class="log-time">09:14:35</span><span class="log-ok">✓</span> Applied Newsletter label — 14 threads</div>
+        <div class="log-entry"><span class="log-time">09:14:36</span><span class="log-info">i</span> Fetched 100 threads (batch 2)</div>
+        <div class="log-entry"><span class="log-time">09:14:37</span><span class="log-ok">✓</span> Applied GitHub Dev label — 11 threads</div>
+        <div class="log-entry"><span class="log-time">09:14:38</span><span class="log-info">i</span> Fetched 34 threads (batch 3, partial)</div>
+        <div class="log-entry"><span class="log-time">09:14:39</span><span class="log-info">…</span> Processing batch 3…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

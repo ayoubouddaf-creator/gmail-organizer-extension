@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy – Gmail Organizer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #060a10;
+      color: #e2e8f0;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── M-BAR ── */
+    .mbar {
+      height: 3px;
+      background: linear-gradient(to right, #EA4335 25%, #FBBC05 25%, #FBBC05 50%, #34A853 50%, #34A853 75%, #4285F4 75%);
+    }
+
+    /* ── HEADER / NAV ── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(6,10,16,0.75);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex; align-items: center; gap: 14px;
+      padding: 0 48px; height: 58px;
+    }
+    .logo {
+      width: 30px; height: 30px; border-radius: 7px; flex-shrink: 0;
+      overflow: hidden; display: flex; align-items: center; justify-content: center;
+    }
+    .logo img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 7px; }
+    .site-name { font-weight: 700; font-size: 15px; color: rgba(226,232,240,0.9); }
+    .back-link {
+      margin-left: auto; font-size: 13px; color: rgba(226,232,240,0.45);
+      text-decoration: none; transition: color .2s;
+    }
+    .back-link:hover { color: rgba(226,232,240,0.9); }
+    .theme-toggle {
+      background: rgba(255,255,255,0.07); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.12); color: rgba(226,232,240,0.6);
+      padding: 6px 14px; border-radius: 99px; font-size: 12px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; gap: 6px;
+      transition: all .2s; white-space: nowrap; margin-left: 12px;
+    }
+    .theme-toggle:hover { background: rgba(255,255,255,0.12); color: rgba(226,232,240,0.9); }
+
+    /* ── ORBS ── */
+    .orb-layer { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .orb { position: absolute; border-radius: 50%; filter: blur(80px); }
+    .orb1 { width: 500px; height: 500px; background: #4285F4; opacity: .1; top: -150px; right: -100px; }
+    .orb2 { width: 380px; height: 380px; background: #EA4335; opacity: .08; bottom: 10%; left: -80px; }
+
+    /* ── MAIN ── */
+    main {
+      position: relative; z-index: 1;
+      max-width: 780px; margin: 56px auto 80px; padding: 0 24px;
+    }
+
+    .page-title {
+      font-size: clamp(2rem,4vw,2.8rem); font-weight: 900; color: #e2e8f0;
+      margin-bottom: 8px; line-height: 1.15;
+    }
+    .page-title em {
+      font-style: normal;
+      background: linear-gradient(135deg,#93c5fd,#86efac);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .meta { font-size: 12px; color: rgba(226,232,240,0.3); margin-bottom: 36px; }
+
+    /* Highlight box */
+    .highlight {
+      background: rgba(66,133,244,0.1); backdrop-filter: blur(12px);
+      border: 1px solid rgba(66,133,244,0.25); border-radius: 14px;
+      padding: 18px 22px; margin-bottom: 40px;
+    }
+    .highlight p { margin: 0; color: rgba(147,197,253,0.9); font-weight: 500; font-size: 14px; }
+
+    /* Sections */
+    section { margin-bottom: 36px; }
+    h3 {
+      font-size: 14px; font-weight: 700; color: rgba(226,232,240,0.85);
+      margin-bottom: 12px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    h3::before {
+      content: '';
+      display: inline-block; width: 3px; height: 16px; border-radius: 2px; flex-shrink: 0;
+      background: linear-gradient(180deg,#4285F4,#34A853);
+    }
+    p { margin-bottom: 12px; color: rgba(226,232,240,0.45); font-size: 14px; }
+    ul { margin: 6px 0 12px 18px; }
+    li { margin-bottom: 7px; color: rgba(226,232,240,0.45); font-size: 14px; }
+    strong { color: rgba(226,232,240,0.7); }
+    em { color: rgba(226,232,240,0.6); font-style: italic; }
+    code {
+      font-size: 12px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+      padding: 1px 6px; border-radius: 4px; color: #93c5fd;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+    a { color: #93c5fd; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative; z-index: 1;
+      background: rgba(4,7,16,0.9);
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding: 32px 48px; text-align: center;
+      font-size: 12px; color: rgba(226,232,240,0.25);
+    }
+    footer a { color: rgba(226,232,240,0.35); text-decoration: none; margin: 0 8px; }
+    footer a:hover { color: rgba(226,232,240,0.7); }
+
+    /* ════════════════════════════
+       LIGHT MODE
+    ════════════════════════════ */
+    body.light { background: #f0f4ff; color: #0f172a; }
+    body.light .orb1 { opacity: .06; }
+    body.light .orb2 { opacity: .05; }
+
+    body.light header {
+      background: rgba(240,244,255,0.88); border-bottom-color: rgba(0,0,0,0.08);
+    }
+    body.light .site-name { color: #0f172a; }
+    body.light .back-link { color: rgba(15,23,42,0.5); }
+    body.light .back-link:hover { color: #0f172a; }
+    body.light .theme-toggle {
+      background: rgba(0,0,0,0.05); border-color: rgba(0,0,0,0.1); color: rgba(15,23,42,0.5);
+    }
+    body.light .theme-toggle:hover { background: rgba(0,0,0,0.09); color: #0f172a; }
+
+    body.light .page-title { color: #0f172a; }
+    body.light .page-title em {
+      background: linear-gradient(135deg,#4285F4,#34A853);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    body.light .meta { color: rgba(15,23,42,0.35); }
+
+    body.light .highlight {
+      background: rgba(66,133,244,0.07); border-color: rgba(66,133,244,0.2);
+    }
+    body.light .highlight p { color: #4285F4; }
+
+    body.light h3 { color: #0f172a; }
+    body.light p { color: rgba(15,23,42,0.55); }
+    body.light li { color: rgba(15,23,42,0.55); }
+    body.light strong { color: rgba(15,23,42,0.75); }
+    body.light em { color: rgba(15,23,42,0.6); }
+    body.light code {
+      background: rgba(0,0,0,0.06); border-color: rgba(0,0,0,0.1); color: #4285F4;
+    }
+    body.light a { color: #4285F4; }
+
+    body.light footer {
+      background: rgba(226,232,240,0.6); border-top-color: rgba(0,0,0,0.07); color: rgba(15,23,42,0.3);
+    }
+    body.light footer a { color: rgba(15,23,42,0.4); }
+    body.light footer a:hover { color: #0f172a; }
+
+    @media (max-width: 640px) {
+      header { padding: 0 16px; }
+      main { margin: 36px auto 56px; }
+      footer { padding: 24px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- M-BAR -->
+<div class="mbar"></div>
+
+<!-- Floating orbs -->
+<div class="orb-layer">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo"><img src="../icons/icon-128.png" alt="Gmail Organizer icon"></div>
+  <span class="site-name">Gmail Organizer</span>
+  <a href="index.html" class="back-link">← Back to Home</a>
+  <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">☀️ Light</button>
+</header>
+
+<script>
+  function toggleTheme() {
+    const light = document.body.classList.toggle('light');
+    const btn = document.getElementById('themeToggle');
+    btn.textContent = light ? '🌙 Dark' : '☀️ Light';
+    try { localStorage.setItem('goTheme', light ? 'light' : 'dark'); } catch(e) {}
+  }
+  try {
+    if (localStorage.getItem('goTheme') === 'light') {
+      document.body.classList.add('light');
+      document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('themeToggle');
+        if (btn) btn.textContent = '🌙 Dark';
+      });
+    }
+  } catch(e) {}
+</script>
+
+<!-- MAIN CONTENT -->
+<main>
+  <h2 class="page-title">Privacy <em>Policy</em></h2>
+  <p class="meta">Effective date: April 17, 2026 &nbsp;·&nbsp; Last updated: April 17, 2026</p>
+
+  <div class="highlight">
+    <p>📌 Short version: Gmail Organizer processes your Gmail data locally in your browser to organize your inbox. We never collect, sell, or share your personal data with any third party.</p>
+  </div>
+
+  <section>
+    <h3>1. What is Gmail Organizer?</h3>
+    <p>Gmail Organizer is a Chrome browser extension that helps you organize your Gmail inbox using customizable rules, AI-powered categorization, labels, analytics, snooze, and unsubscribe features. All processing happens locally within your browser using Google's official Gmail API.</p>
+  </section>
+
+  <section>
+    <h3>2. Data We Access</h3>
+    <p>To function, the extension requests the following OAuth scope from Google:</p>
+    <ul>
+      <li><strong>gmail.modify</strong> – Read, label, archive, and modify your Gmail messages according to the rules you configure.</li>
+    </ul>
+    <p>This access is used <em>only</em> to carry out the actions you configure inside the extension (e.g., applying labels, archiving newsletters, organizing threads).</p>
+  </section>
+
+  <section>
+    <h3>3. How We Use Your Data</h3>
+    <p>Your Gmail data is used exclusively to:</p>
+    <ul>
+      <li>Apply the labels, filters, and automation rules you create.</li>
+      <li>Display analytics about your inbox (email volume, category breakdowns, etc.) directly in the extension UI.</li>
+      <li>Summarize threads or categorize emails when you enable the optional AI Assistant feature (see Section 5).</li>
+    </ul>
+    <p>We do <strong>not</strong> store your email content on any external server. All Gmail API calls are made directly from your browser to Google's servers.</p>
+  </section>
+
+  <section>
+    <h3>4. Data Storage</h3>
+    <p>The extension stores the following data <strong>locally in your browser</strong> using Chrome's <code>storage.sync</code> API (synced across your Chrome profile via your Google account):</p>
+    <ul>
+      <li>Your extension settings and preferences (theme, language, notification preferences, etc.).</li>
+      <li>The rules and automation workflows you define.</li>
+      <li>Cached analytics data for faster loading.</li>
+    </ul>
+    <p>This data is stored only in your Chrome profile and is never transmitted to our servers.</p>
+  </section>
+
+  <section>
+    <h3>5. Optional AI Assistant (Gemini API)</h3>
+    <p>The extension includes an optional AI Assistant powered by Google's Gemini API. This feature is <strong>disabled by default</strong> and only activates if you enter your own Gemini API key in the settings.</p>
+    <p>When enabled:</p>
+    <ul>
+      <li>Email subject lines or snippets may be sent to Google's Gemini API for classification or summarization.</li>
+      <li>This data is sent directly from your browser to Google's Gemini API endpoint (<code>generativelanguage.googleapis.com</code>) and is subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</li>
+      <li>Your Gemini API key is stored only in your local Chrome storage and is never transmitted to us.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h3>6. Data We Do Not Collect</h3>
+    <p>Gmail Organizer does <strong>not</strong>:</p>
+    <ul>
+      <li>Collect, transmit, or store your email content on any server we operate.</li>
+      <li>Sell, rent, or share any of your data with third parties.</li>
+      <li>Use your data for advertising or marketing purposes.</li>
+      <li>Track your browsing activity outside of Gmail.</li>
+      <li>Create profiles about you based on your email content.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h3>7. Third-Party Services</h3>
+    <p>The extension communicates directly with the following Google services on your behalf:</p>
+    <ul>
+      <li><strong>Gmail API</strong> (<code>gmail.googleapis.com</code>) – For reading and modifying your emails.</li>
+      <li><strong>Gemini API</strong> (<code>generativelanguage.googleapis.com</code>) – Only if you enable the AI Assistant and provide your own API key.</li>
+    </ul>
+    <p>Both services are governed by <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</p>
+  </section>
+
+  <section>
+    <h3>8. Authentication</h3>
+    <p>The extension uses Chrome's built-in <code>chrome.identity</code> API and Google OAuth 2.0 to authenticate you. Your Google account credentials are handled entirely by Chrome and Google — the extension never sees or stores your password.</p>
+  </section>
+
+  <section>
+    <h3>9. Your Rights &amp; Control</h3>
+    <p>You are always in control:</p>
+    <ul>
+      <li><strong>Revoke access</strong> at any time via <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">Google Account Permissions</a>.</li>
+      <li><strong>Remove your data</strong> by uninstalling the extension, which clears all locally stored settings.</li>
+      <li><strong>Review your rules</strong> and settings at any time within the extension's options page.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h3>10. Children's Privacy</h3>
+    <p>Gmail Organizer is not directed at children under 13. We do not knowingly collect personal information from children under 13.</p>
+  </section>
+
+  <section>
+    <h3>11. Changes to This Policy</h3>
+    <p>We may update this Privacy Policy from time to time. If we make significant changes, we will update the "Last updated" date at the top of this page. Continued use of the extension after changes constitutes acceptance of the updated policy.</p>
+  </section>
+
+  <section>
+    <h3>12. Contact</h3>
+    <p>If you have any questions about this Privacy Policy, please contact us at:</p>
+    <p><a href="mailto:soufianeodf@gmail.com">soufianeodf@gmail.com</a></p>
+    <p>You can also open an issue on our <a href="https://github.com/ayoubouddaf-creator/gmail-organizer-extension" target="_blank" rel="noopener">GitHub repository</a>.</p>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  &copy; 2026 Gmail Organizer &nbsp;·&nbsp;
+  <a href="index.html">Home</a> &nbsp;·&nbsp;
+  <a href="privacy-policy.html">Privacy Policy</a>
+</footer>
+
+</body>
+</html>

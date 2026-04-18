@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Gmail Organizer</title>
+  <style>
+    /* ── CSS Variables ───────────────────────────────────────────────── */
+    :root {
+      --bg:          #0d0d12;
+      --bg-raised:   rgba(255,255,255,0.04);
+      --bg-card:     rgba(255,255,255,0.06);
+      --border:      rgba(255,255,255,0.07);
+      --border-md:   rgba(255,255,255,0.12);
+      --text:        #e8e8f0;
+      --text-2:      #6b6b80;
+      --text-3:      #444455;
+      --blue:        #4f9cf9;
+      --blue-dim:    rgba(79,156,249,0.15);
+      --green:       #4ade80;
+      --green-dim:   rgba(74,222,128,0.15);
+      --red:         #f87171;
+      --red-dim:     rgba(248,113,113,0.15);
+      --yellow:      #fbbf24;
+      --yellow-dim:  rgba(251,191,36,0.15);
+      --purple:      #a78bfa;
+      --shadow:      0 8px 32px rgba(0,0,0,0.6);
+      --radius:      12px;
+    }
+    [data-theme="light"] {
+      --bg:          #f0f2f8;
+      --bg-raised:   rgba(0,0,0,0.04);
+      --bg-card:     rgba(0,0,0,0.06);
+      --border:      rgba(0,0,0,0.08);
+      --border-md:   rgba(0,0,0,0.14);
+      --text:        #1a1a2e;
+      --text-2:      #6b6b80;
+      --text-3:      #aaaabc;
+      --blue:        #2563eb;
+      --blue-dim:    rgba(37,99,235,0.12);
+      --green:       #16a34a;
+      --green-dim:   rgba(22,163,74,0.12);
+      --red:         #dc2626;
+      --red-dim:     rgba(220,38,38,0.12);
+      --yellow:      #d97706;
+      --yellow-dim:  rgba(217,119,6,0.12);
+      --purple:      #7c3aed;
+    }
+
+    /* ── Reset ───────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    button { font-family: inherit; cursor: pointer; }
+    ul { list-style: none; }
+
+    /* ── Body / Panel ────────────────────────────────────────────────── */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      width: 360px;
+      min-width: 360px;
+      max-width: 360px;
+      min-height: 200px;
+      overflow-x: hidden;
+    }
+    .panel { padding: 0; }
+
+    /* ── Glass layers ────────────────────────────────────────────────── */
+    .glass {
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+    .glass-md {
+      background: var(--bg-card);
+      border: 1px solid var(--border-md);
+    }
+
+    /* ── Header ──────────────────────────────────────────────────────── */
+    .g-header {
+      position: relative;
+      background: linear-gradient(160deg, rgba(79,156,249,0.1) 0%, transparent 70%);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 16px 12px;
+      overflow: hidden;
+    }
+    .g-header::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 120px; height: 120px;
+      background: radial-gradient(circle, rgba(79,156,249,0.15), transparent 70%);
+      pointer-events: none;
+    }
+    .g-header-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .g-account { display: flex; align-items: center; gap: 10px; }
+    .g-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, #4f9cf9, #7c3aed);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; color: #fff;
+      border: 2px solid rgba(79,156,249,0.35);
+      flex-shrink: 0;
+    }
+    .g-account-email { font-size: 12px; font-weight: 600; color: var(--text); max-width: 220px; overflow: visible; text-overflow: unset; white-space: nowrap; }
+    .g-account-plan { font-size: 10px; color: var(--green); font-weight: 600; margin-top: 1px; }
+    .g-header-btns { display: flex; gap: 6px; }
+    .g-icon-btn {
+      width: 30px; height: 30px; border-radius: 8px;
+      background: var(--bg-raised); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: var(--text-2);
+      transition: background .15s;
+    }
+    .g-icon-btn:hover { background: var(--bg-card); }
+
+    /* Score arc */
+    .g-score-row { display: flex; align-items: center; gap: 14px; }
+    .g-arc-wrap { position: relative; width: 64px; height: 64px; flex-shrink: 0; }
+    .g-arc-wrap svg { transform: rotate(-90deg); }
+    .g-arc-num {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      line-height: 1;
+    }
+    .g-arc-num-big { font-size: 20px; font-weight: 900; color: var(--green); }
+    .g-arc-num-small { font-size: 9px; color: var(--text-3); margin-top: 1px; }
+    .g-score-info { flex: 1; min-width: 0; }
+    .g-score-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 7px; }
+    .g-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+    .gchip {
+      font-size: 10px; padding: 3px 8px; border-radius: 20px;
+      font-weight: 600; border: 1px solid transparent;
+    }
+    .gc-r { background: var(--red-dim);    color: var(--red);    border-color: rgba(248,113,113,0.2); }
+    .gc-y { background: var(--yellow-dim); color: var(--yellow); border-color: rgba(251,191,36,0.2); }
+    .gc-g { background: var(--green-dim);  color: var(--green);  border-color: rgba(74,222,128,0.2); }
+    .gc-b { background: var(--blue-dim);   color: var(--blue);   border-color: rgba(79,156,249,0.2); }
+    .gc-p { background: rgba(167,139,250,0.12); color: var(--purple); border-color: rgba(167,139,250,0.2); }
+
+    /* ── Warnings ────────────────────────────────────────────────────── */
+    #configWarning, #setupCard, #conflictBanner {
+      margin: 10px 14px 0 !important;
+      border-radius: var(--radius) !important;
+      font-size: 12px !important;
+    }
+    .setup-card {
+      background: rgba(79,156,249,0.06);
+      border: 1px solid rgba(79,156,249,0.18);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+    }
+    .setup-card .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--blue); margin-bottom: 4px; font-weight: 700; }
+    .setup-card h2 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .setup-card .copy { font-size: 11px; color: var(--text-2); }
+    .setup-list { padding-left: 16px; font-size: 11px; color: var(--text-2); margin-top: 4px; }
+    .setup-list li { margin-bottom: 2px; }
+
+    /* ── Body area ───────────────────────────────────────────────────── */
+    .g-body { padding: 12px 14px 0; }
+
+    /* ── CTA buttons ─────────────────────────────────────────────────── */
+    .g-cta-row { display: flex; gap: 8px; margin-bottom: 12px; }
+    .g-cta {
+      flex: 1; border: none; border-radius: 12px;
+      padding: 11px 8px; font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      position: relative; overflow: hidden; transition: transform .1s, box-shadow .1s;
+    }
+    .g-cta:active { transform: scale(.97); }
+    .g-cta::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.1) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .g-cta-primary {
+      background: linear-gradient(135deg, #2563eb 0%, #1a4ab0 100%);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(37,99,235,.35), inset 0 1px 0 rgba(255,255,255,.15);
+    }
+    .g-cta-primary:hover { box-shadow: 0 6px 24px rgba(37,99,235,.5); }
+    .g-cta-secondary {
+      background: var(--bg-raised);
+      color: var(--text-2);
+      border: 1px solid var(--border-md);
+    }
+    .g-cta-secondary:hover { background: var(--bg-card); color: var(--text); }
+    .g-cta kbd {
+      background: rgba(255,255,255,.15);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-size: 10px;
+      font-family: inherit;
+      font-weight: 600;
+    }
+    .g-cta-secondary kbd { background: var(--bg-card); }
+
+    /* ── Status line ─────────────────────────────────────────────────── */
+    .g-status {
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--text-2);
+      min-height: 34px;
+      margin-bottom: 12px;
+    }
+    .results-inline { list-style: none; margin-top: 3px; }
+    .results-inline li { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+
+    /* ── Tool rows (Prism style) ─────────────────────────────────────── */
+    .g-tools-label {
+      font-size: 9px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 2px;
+      color: var(--text-3); margin-bottom: 8px;
+    }
+    .g-grid { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+
+    .tool-btn {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 11px; border-radius: 11px;
+      border: 1px solid transparent;
+      text-align: left; width: 100%;
+      transition: filter .15s;
+      position: relative;
+    }
+    .tool-btn:hover { filter: brightness(1.2); }
+    .tool-btn:active { filter: brightness(.9); }
+
+    /* Per-tool colour themes */
+    .tool-btn.tc-red    { background: rgba(248,113,113,.08); border-color: rgba(248,113,113,.14); }
+    .tool-btn.tc-amber  { background: rgba(251,191,36,.08);  border-color: rgba(251,191,36,.14); }
+    .tool-btn.tc-blue   { background: rgba(79,156,249,.08);  border-color: rgba(79,156,249,.14); }
+    .tool-btn.tc-purple { background: rgba(167,139,250,.08); border-color: rgba(167,139,250,.14); }
+    .tool-btn.tc-green  { background: rgba(74,222,128,.08);  border-color: rgba(74,222,128,.14); }
+    .tool-btn.tc-gray   { background: var(--bg-raised);      border-color: var(--border); }
+
+    .tool-icon-wrap {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; flex-shrink: 0;
+    }
+    .ti-red    { background: rgba(248,113,113,.18); }
+    .ti-amber  { background: rgba(251,191,36,.18); }
+    .ti-blue   { background: rgba(79,156,249,.18); }
+    .ti-purple { background: rgba(167,139,250,.18); }
+    .ti-green  { background: rgba(74,222,128,.18); }
+    .ti-gray   { background: rgba(255,255,255,.06); }
+
+    .tool-text { flex: 1; min-width: 0; }
+    .tool-name {
+      font-size: 12px; font-weight: 600; line-height: 1.2;
+    }
+    .tn-red    { color: #f87171; }
+    .tn-amber  { color: #fbbf24; }
+    .tn-blue   { color: #60a5fa; }
+    .tn-purple { color: #a78bfa; }
+    .tn-green  { color: #4ade80; }
+    .tn-gray   { color: var(--text-2); }
+
+    .tool-sub { font-size: 10px; color: var(--text-3); margin-top: 1px; }
+    .tool-arrow { font-size: 13px; color: var(--text-3); flex-shrink: 0; }
+
+    .tool-badge {
+      font-size: 10px; font-weight: 800;
+      padding: 2px 7px; border-radius: 20px;
+      background: rgba(0,0,0,.25); flex-shrink: 0;
+      display: none;
+    }
+    .tb-red    { color: #f87171; }
+    .tb-amber  { color: #fbbf24; }
+    .tb-blue   { color: #60a5fa; }
+    .tb-purple { color: #a78bfa; }
+    .tb-green  { color: #4ade80; }
+
+    /* legacy compat */
+    .tool-icon { display: none; }
+    .tool-alert { display: none !important; }
+
+    /* ── Info banner (Concept C — pill style) ───────────────────────── */
+    .g-info-banner {
+      background: var(--bg-raised); border: 1px solid rgba(255,255,255,.08);
+      border-radius: 11px; padding: 10px 12px; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .ib-seg {
+      background: var(--bg-card);
+      border: 1px solid var(--border-md);
+      border-radius: 20px;
+      padding: 5px 12px;
+      text-align: center;
+      min-width: 58px;
+      flex-shrink: 0;
+    }
+    .ib-div { width: 1px; height: 32px; background: rgba(255,255,255,.07); flex-shrink: 0; }
+    .ib-lbl { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px; }
+    .ib-num { font-size: 18px; font-weight: 900; line-height: 1; }
+    .ib-s-blue   .ib-lbl { color: rgba(79,156,249,.7); }
+    .ib-s-blue   .ib-num  { color: #60a5fa; }
+    .ib-s-purple .ib-lbl { color: rgba(167,139,250,.7); }
+    .ib-s-purple .ib-num  { color: #a78bfa; }
+    .ib-auto { flex: 1; min-width: 0; padding: 0; display: flex; flex-direction: column; justify-content: center; }
+    .ib-auto-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px; }
+    .ib-auto-lbl { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: rgba(74,222,128,.8); }
+    .ib-dot { width: 4px; height: 4px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 4px #4ade80; display: inline-block; margin-right: 4px; vertical-align: middle; }
+    .ib-run-btn { font-size: 9px; font-weight: 700; padding: 3px 9px; border-radius: 20px; border: none; cursor: pointer; background: rgba(74,222,128,.15); color: #4ade80; font-family: inherit; white-space: nowrap; }
+    .ib-run-btn:hover { background: rgba(74,222,128,.25); }
+    .ib-auto-val { font-size: 11px; font-weight: 600; color: var(--text); line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ib-auto-sub { font-size: 9px; color: var(--text-3); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    /* compat — kept for JS */
+    .info-chip-label, .info-chip-val, .info-chip-action { display: none; }
+
+    /* ── Expandable (bulk delete / stats) ────────────────────────────── */
+    .expando { margin-bottom: 8px; }
+    .expando-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; padding: 9px 12px;
+      background: var(--bg-raised); border: 1px solid var(--border);
+      border-radius: 10px; font-size: 11px; font-weight: 600; color: var(--text-2);
+      transition: all .15s;
+    }
+    .expando-toggle:hover { background: var(--bg-card); color: var(--text); }
+    .expando-toggle[aria-expanded="true"] { border-radius: 10px 10px 0 0; border-bottom-color: transparent; color: var(--text); }
+    .arrow { font-size: 9px; color: var(--text-3); transition: transform .2s; }
+    .expando-toggle[aria-expanded="true"] .arrow { transform: rotate(180deg); }
+    .expando-body {
+      display: none;
+      background: var(--bg-raised); border: 1px solid var(--border);
+      border-top: none; border-radius: 0 0 10px 10px;
+      padding: 12px;
+    }
+    .expando-body.open { display: block; }
+
+    /* ── Stats metric cards (always visible) ──────────────────────────── */
+    .g-stats-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .stat-card {
+      border-radius: 11px;
+      padding: 10px 8px 8px;
+      text-align: center;
+      border: 1px solid transparent;
+    }
+    .sc-blue  { background: rgba(79,156,249,.09);  border-color: rgba(79,156,249,.18); }
+    .sc-green { background: rgba(74,222,128,.09);  border-color: rgba(74,222,128,.18); }
+    .sc-red   { background: rgba(248,113,113,.09); border-color: rgba(248,113,113,.18); }
+    .sc-num {
+      font-size: 22px; font-weight: 900; line-height: 1; margin-bottom: 3px;
+    }
+    .sc-blue  .sc-num { color: #60a5fa; }
+    .sc-green .sc-num { color: #4ade80; }
+    .sc-red   .sc-num { color: #f87171; }
+    .sc-label {
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .5px; color: var(--text-3); margin-bottom: 6px;
+    }
+    .sc-bar { height: 2px; background: rgba(255,255,255,.06); border-radius: 1px; overflow: hidden; }
+    .sc-fill { height: 100%; border-radius: 1px; width: 0%; transition: width .6s ease; }
+    .sf-blue  { background: #60a5fa; }
+    .sf-green { background: #4ade80; }
+    .sf-red   { background: #f87171; }
+
+    /* Stats inside expando (kept for compat) */
+    .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 10px; }
+    .stat-mini { background: var(--bg-card); border-radius: 8px; padding: 8px 6px; text-align: center; }
+    .stat-mini-num { font-size: 18px; font-weight: 800; }
+    .stat-mini-lbl { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: .5px; margin-top: 2px; }
+
+    /* Bulk delete inputs */
+    .bulk-input {
+      width: 100%; padding: 8px 11px;
+      background: var(--bg); border: 1px solid var(--border-md);
+      border-radius: 9px; color: var(--text);
+      font-size: 12px; outline: none; font-family: inherit;
+    }
+    .bulk-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(79,156,249,.12); }
+
+    /* ── Activity timeline ───────────────────────────────────────────── */
+    .g-timeline {
+      background: var(--bg-raised); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px; margin-bottom: 12px;
+    }
+    .g-tl-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .g-tl-title { font-size: 11px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 1px; }
+    .g-tl-more { font-size: 10px; color: var(--blue); background: none; border: none; font-weight: 600; }
+    .tl-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 0; border-bottom: 1px solid var(--border);
+    }
+    .tl-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .tl-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+    .tl-dot-green { background: var(--green); box-shadow: 0 0 5px var(--green); }
+    .tl-dot-blue  { background: var(--blue);  box-shadow: 0 0 5px var(--blue); }
+    .tl-dot-red   { background: var(--red);   box-shadow: 0 0 5px var(--red); }
+    .tl-dot-gray  { background: var(--text-3); }
+    .tl-text { flex: 1; font-size: 11px; color: var(--text-2); line-height: 1.4; }
+    .tl-text strong { color: var(--text); font-weight: 600; }
+    .tl-time { font-size: 10px; color: var(--text-3); white-space: nowrap; }
+
+    /* Undo row */
+    .latest-undo-row {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--blue-dim); border: 1px solid rgba(79,156,249,.2);
+      border-radius: 9px; padding: 8px 10px; margin-bottom: 8px;
+    }
+    .latest-undo-row .status { flex: 1; font-size: 11px; color: var(--blue); }
+
+    /* ── Footer ──────────────────────────────────────────────────────── */
+    .g-footer {
+      display: flex; justify-content: center;
+      padding: 8px 14px 14px;
+      border-top: 1px solid var(--border);
+      margin-top: 4px;
+    }
+
+    /* ── Buttons (reusable) ──────────────────────────────────────────── */
+    .button {
+      border: none; border-radius: 8px; padding: 7px 14px;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      font-family: inherit; display: inline-flex; align-items: center; gap: 5px;
+      transition: all .15s;
+    }
+    .button.primary { background: var(--blue); color: #fff; }
+    .button.primary:hover { background: #3b82f6; }
+    .button.secondary { background: var(--bg-card); color: var(--text); border: 1px solid var(--border-md); }
+    .button.ghost { background: transparent; color: var(--text-2); border: 1px solid var(--border); }
+    .button.ghost:hover { background: var(--bg-raised); color: var(--text); }
+    .button.danger { background: var(--red-dim); color: var(--red); border: 1px solid rgba(248,113,113,.2); }
+    .button.danger:hover { background: rgba(248,113,113,.25); }
+    .link-button { background: none; border: none; color: var(--blue); font-size: 12px; font-weight: 600; cursor: pointer; padding: 0; font-family: inherit; }
+    .link-button.danger { color: var(--red); }
+
+    /* Quick run / Test rule cards */
+    .schedule-card.compact {
+      background: var(--bg-raised); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px; margin-bottom: 10px;
+    }
+    .schedule-card .section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-3); font-weight: 700; }
+
+    /* History list (kept for JS) */
+    .history-list { display: flex; flex-direction: column; gap: 0; }
+    .history-list li {
+      font-size: 11px; color: var(--text-2); padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .history-list li:last-child { border-bottom: none; }
+
+    /* ── Modals ──────────────────────────────────────────────────────── */
+    .snooze-overlay, .summary-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.75);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 50;
+    }
+    .snooze-modal, .summary-modal {
+      background: #16161e;
+      border: 1px solid var(--border-md);
+      border-radius: 16px; padding: 18px;
+      width: 300px; max-height: 80vh; overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,.8);
+    }
+    .snooze-modal h3, .summary-modal h3 { font-size: 14px; font-weight: 700; color: var(--text); }
+    .snooze-popover {
+      background: #16161e; border: 1px solid var(--border-md);
+      border-radius: 12px; padding: 12px; z-index: 100;
+      box-shadow: 0 8px 32px rgba(0,0,0,.6);
+    }
+    .snooze-preset-btn {
+      text-align: left; padding: 8px 10px;
+      background: var(--bg-raised); border: 1px solid var(--border);
+      border-radius: 8px; font-size: 12px; color: var(--text);
+      width: 100%; font-family: inherit; cursor: pointer;
+    }
+    .snooze-preset-btn:hover { background: var(--bg-card); }
+
+    /* ── Toasts ──────────────────────────────────────────────────────── */
+    .toast-container { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; flex-direction: column; gap: 6px; }
+    .toast {
+      background: #1e1e2e; border: 1px solid var(--border-md);
+      border-radius: 10px; padding: 9px 14px;
+      font-size: 12px; color: var(--text); white-space: nowrap;
+      box-shadow: 0 4px 16px rgba(0,0,0,.5);
+      animation: toastIn .2s ease;
+    }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Scrollbar ───────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border-md); border-radius: 2px; }
+  </style>
+</head>
+<body class="popup">
+<main class="panel">
+
+  <!-- ① Glassmorphic header with score arc -->
+  <div class="g-header">
+    <!-- Account row -->
+    <div class="g-header-row">
+      <div id="accountBar" class="g-account" style="display:none;flex:1;min-width:0;">
+        <div id="accountAvatar" class="g-avatar">?</div>
+        <div style="flex:1;min-width:0;">
+          <div id="accountEmail" class="g-account-email">Loading…</div>
+          <!-- Concept B: plan + progress bar + count -->
+          <div id="creditsBarRow" style="display:none;align-items:center;gap:6px;margin-top:3px;">
+            <span id="accountPlan" class="g-account-plan" style="flex-shrink:0;">—</span>
+            <div style="flex:1;height:4px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;">
+              <div id="creditsBarFill" style="height:100%;border-radius:2px;background:var(--green);width:100%;transition:width .4s ease,background .4s ease;"></div>
+            </div>
+            <span id="creditsDisplay" style="font-size:10px;font-weight:700;color:var(--green);flex-shrink:0;white-space:nowrap;"></span>
+          </div>
+          <!-- fallback when no credits info -->
+          <div id="accountPlanFallback" class="g-account-plan">—</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex:1;justify-content:flex-end">
+        <div style="position:relative;">
+          <button id="langPickerBtn" class="g-icon-btn" title="Language" aria-label="Change language" style="font-size:15px;min-width:30px;">🇬🇧</button>
+          <div id="langDropdown" style="display:none;position:fixed;background:#1a1a2e;border:1px solid rgba(167,139,250,.3);border-radius:10px;padding:7px;z-index:99999;box-shadow:0 8px 24px rgba(0,0,0,.5);min-width:152px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+              <button class="lang-opt" data-lang="en" style="background:none;border:1px solid transparent;border-radius:6px;padding:7px 10px;cursor:pointer;font-size:14px;color:#e8e8f0;display:flex;align-items:center;gap:6px;font-family:inherit;">🇬🇧 EN</button>
+              <button class="lang-opt" data-lang="fr" style="background:none;border:1px solid transparent;border-radius:6px;padding:7px 10px;cursor:pointer;font-size:14px;color:#e8e8f0;display:flex;align-items:center;gap:6px;font-family:inherit;">🇫🇷 FR</button>
+              <button class="lang-opt" data-lang="es" style="background:none;border:1px solid transparent;border-radius:6px;padding:7px 10px;cursor:pointer;font-size:14px;color:#e8e8f0;display:flex;align-items:center;gap:6px;font-family:inherit;">🇪🇸 ES</button>
+              <button class="lang-opt" data-lang="de" style="background:none;border:1px solid transparent;border-radius:6px;padding:7px 10px;cursor:pointer;font-size:14px;color:#e8e8f0;display:flex;align-items:center;gap:6px;font-family:inherit;">🇩🇪 DE</button>
+              <button class="lang-opt" data-lang="it" style="background:none;border:1px solid transparent;border-radius:6px;padding:7px 10px;cursor:pointer;font-size:14px;color:#e8e8f0;display:flex;align-items:center;gap:6px;font-family:inherit;">🇮🇹 IT</button>
+              <button class="lang-opt" data-lang="tr" style="background:none;border:1px solid transparent;border-radius:6px;padding:7px 10px;cursor:pointer;font-size:14px;color:#e8e8f0;display:flex;align-items:center;gap:6px;font-family:inherit;">🇹🇷 TR</button>
+              <button class="lang-opt" data-lang="ar" style="background:none;border:1px solid transparent;border-radius:6px;padding:7px 10px;cursor:pointer;font-size:14px;color:#e8e8f0;display:flex;align-items:center;gap:6px;font-family:inherit;grid-column:span 2;justify-content:center;">🇸🇦 AR</button>
+            </div>
+          </div>
+        </div>
+        <button id="themeToggle" class="g-icon-btn" title="Toggle theme" aria-label="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+        <button id="openOptionsButton" class="g-icon-btn" title="Settings" aria-label="Settings">⚙️</button>
+      </div>
+    </div>
+
+    <!-- Score arc + health chips -->
+    <div class="g-score-row" id="scoreCard">
+      <div class="g-arc-wrap">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="32" cy="32" r="26" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="5"/>
+          <circle id="arcCircle" cx="32" cy="32" r="26" fill="none"
+            stroke="url(#arcGrad)" stroke-width="5"
+            stroke-dasharray="163.4" stroke-dashoffset="163.4"
+            stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#4ade80"/>
+              <stop offset="100%" stop-color="#16a34a"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="g-arc-num">
+          <div id="scoreGrade" class="g-arc-num-big">?</div>
+          <div class="g-arc-num-small">/ 100</div>
+        </div>
+      </div>
+      <div class="g-score-info">
+        <div id="scoreLabel" class="g-score-title" data-i18n="inboxHealth">Inbox health</div>
+        <div class="g-chips" id="scoreChips">
+          <span id="scoreDetail" class="gchip gc-b" style="display:none"></span>
+        </div>
+        <div style="margin-top:6px;display:flex;align-items:center;gap:8px;">
+          <button id="refreshScoreBtn" style="font-size:10px;color:var(--blue);background:none;border:none;cursor:pointer;font-weight:600;padding:0;" data-i18n="refresh">↻ Refresh</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② Warnings -->
+  <div style="padding: 0 14px;">
+    <div id="conflictBanner" style="display:none;margin-top:10px;background:var(--yellow-dim);border:1px solid rgba(251,188,5,.2);border-radius:10px;padding:9px 12px;font-size:11px;color:var(--yellow);">
+      ⚠ <span id="conflictText"></span>
+    </div>
+    <section id="configWarning" class="setup-card" style="margin-top:10px" hidden>
+      <p class="section-label">Setup required</p>
+      <h2>OAuth client ID not configured</h2>
+      <p class="copy small">Replace the placeholder in manifest.json, then reload.</p>
+      <button id="configOpenSettingsButton" class="button secondary" type="button" style="margin-top:8px;font-size:11px">Open settings</button>
+    </section>
+    <section id="setupCard" class="setup-card" style="display:none!important"></section>
+  </div>
+
+  <!-- ③ Body -->
+  <div class="g-body">
+
+    <!-- Auto-organize one-click button -->
+    <button id="autoOrganizePopupBtn" data-i18n="autoOrganize" style="
+      width:100%; margin-bottom:8px;
+      background:linear-gradient(135deg,#4f8ef7,#7c3aed);
+      color:#fff; border:none; border-radius:10px;
+      padding:11px 16px; font-size:13px; font-weight:700;
+      cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;
+      box-shadow:0 3px 10px rgba(79,142,247,.35); transition:opacity .2s;
+    ">✨ Auto-organize my inbox</button>
+
+    <!-- CTA buttons -->
+    <div class="g-cta-row">
+      <button id="previewButton" class="g-cta g-cta-secondary" data-i18n="preview">👁 Preview <kbd>P</kbd></button>
+      <button id="runButton" class="g-cta g-cta-primary" data-i18n="organize">📥 Organize <kbd>R</kbd></button>
+    </div>
+
+    <!-- Quick run panel — moved here so it appears right below the buttons -->
+    <section class="schedule-card compact" id="quickRunCard" style="display:none;margin-top:8px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <p class="section-label" data-i18n="selectRules">Select rules to run:</p>
+        <button id="closeQuickRun" class="link-button" style="font-size:11px" data-i18n="cancel">✕ Cancel</button>
+      </div>
+      <p style="font-size:11px;color:var(--text-2);margin-bottom:8px;" data-i18n="pickRules">Pick which rules to apply to your inbox:</p>
+      <div id="quickRulesList" style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;max-height:160px;overflow-y:auto;"></div>
+      <div style="display:flex;gap:8px;">
+        <button id="quickPreviewBtn" class="button ghost" style="flex:1;font-size:12px" data-i18n="previewBtn">Preview</button>
+        <button id="quickRunBtn" class="button primary" style="flex:1;font-size:12px" data-i18n="runSelected">Run selected</button>
+      </div>
+    </section>
+
+    <!-- Diagnostics bar -->
+    <div id="diagBar" style="display:none;margin-bottom:8px;padding:8px 10px;background:var(--bg-raised);border-radius:8px;font-size:11px;color:var(--text-2);line-height:1.6;"></div>
+    <div style="display:none;">
+      <button id="diagBtn" style="background:none;border:none;color:var(--text-3);font-size:10px;cursor:pointer;text-decoration:underline;">🔍 Run diagnostics</button>
+    </div>
+
+    <!-- Status line -->
+    <div class="g-status">
+      <span id="statusText" class="status" data-i18n="ready">Ready.</span>
+      <span id="summaryText" style="margin-left:4px;font-size:11px;color:var(--text-2);"></span>
+      <ul id="resultsList" class="results-inline"></ul>
+    </div>
+
+    <!-- Info banner: rules · per run · automation (Concept C — pills) -->
+    <div class="g-info-banner">
+      <div class="ib-seg ib-s-blue">
+        <div class="ib-lbl" data-i18n="rules">Rules</div>
+        <div id="ruleCount" class="ib-num">0</div>
+      </div>
+      <div class="ib-seg ib-s-purple">
+        <div class="ib-lbl" data-i18n="perRun">Per run</div>
+        <div id="threadLimit" class="ib-num">—</div>
+      </div>
+      <div class="ib-div"></div>
+      <div class="ib-auto" id="automationCard">
+        <div class="ib-auto-top">
+          <span class="ib-auto-lbl"><span class="ib-dot"></span><span data-i18n="automation">Automation</span></span>
+          <button id="runNowBtn" class="ib-run-btn" data-i18n="runNow">Run now</button>
+        </div>
+        <div id="autoRunStatus" class="ib-auto-val" data-i18n="off">Off</div>
+        <div id="routineSummary" class="ib-auto-sub"></div>
+      </div>
+    </div>
+
+    <!-- Statistics (always visible — Concept 1: Metric Cards) -->
+    <div class="g-stats-cards">
+      <div class="stat-card sc-blue">
+        <div id="statTotal" class="sc-num">—</div>
+        <div class="sc-label" data-i18n="organized">Organized</div>
+        <div class="sc-bar"><div id="statTotalBar" class="sc-fill sf-blue"></div></div>
+      </div>
+      <div class="stat-card sc-green">
+        <div id="statWeek" class="sc-num">—</div>
+        <div class="sc-label" data-i18n="thisWeek">This week</div>
+        <div class="sc-bar"><div id="statWeekBar" class="sc-fill sf-green"></div></div>
+      </div>
+      <div class="stat-card sc-red">
+        <div id="statDeleted" class="sc-num">—</div>
+        <div class="sc-label" data-i18n="deleted">Deleted</div>
+        <div class="sc-bar"><div id="statDeletedBar" class="sc-fill sf-red"></div></div>
+      </div>
+    </div>
+    <div id="topLabelsBar" style="display:none;"></div>
+
+    <!-- Tools list (Prism style) -->
+    <div class="g-tools-label" data-i18n="inboxTools">Inbox tools</div>
+    <div class="g-grid">
+
+      <button id="cleanupLabelsBtn" class="tool-btn tc-red">
+        <span class="tool-icon-wrap ti-red">🧹</span>
+        <span class="tool-text">
+          <span class="tool-name tn-red" data-i18n="cleanupLabels">Clean up labels</span>
+          <span class="tool-sub" data-i18n="cleanupLabelsSub">Remove old flat labels</span>
+        </span>
+        <span id="cleanupBadge" class="tool-badge tb-red"></span>
+        <span class="tool-arrow">›</span>
+      </button>
+
+      <button id="todayEmailsBtn" class="tool-btn tc-green">
+        <span class="tool-icon-wrap ti-green">📬</span>
+        <span class="tool-text">
+          <span class="tool-name tn-green" data-i18n="todayEmails">Today's emails</span>
+          <span class="tool-sub" id="todayEmailsSub" data-i18n="todayEmailsSub">New in inbox today</span>
+        </span>
+        <span id="todayEmailsBadge" class="tool-badge tb-green"></span>
+        <span class="tool-arrow">›</span>
+      </button>
+
+      <button id="scanUnsubBtn" class="tool-btn tc-red">
+        <span class="tool-icon-wrap ti-red">🚫</span>
+        <span class="tool-text">
+          <span class="tool-name tn-red" data-i18n="unsubscribe">Unsubscribe</span>
+          <span class="tool-sub" id="unsubCount" data-i18n="unsubscribeSub">Scan for newsletters</span>
+        </span>
+        <span id="unsubBadge" class="tool-badge tb-red"></span>
+        <span class="tool-arrow">›</span>
+      </button>
+
+      <button id="scanFollowBtn" class="tool-btn tc-amber">
+        <span class="tool-icon-wrap ti-amber">↩️</span>
+        <span class="tool-text">
+          <span class="tool-name tn-amber" data-i18n="toReply">To reply</span>
+          <span class="tool-sub" id="followUpCount" data-i18n="toReplySub">Threads needing a reply</span>
+        </span>
+        <span id="followBadge" class="tool-badge tb-amber"></span>
+        <span class="tool-arrow">›</span>
+      </button>
+
+      <button id="scanDupeBtn" class="tool-btn tc-blue">
+        <span class="tool-icon-wrap ti-blue">📋</span>
+        <span class="tool-text">
+          <span class="tool-name tn-blue" data-i18n="duplicates">Duplicates</span>
+          <span class="tool-sub" id="dupeCount" data-i18n="duplicatesSub">Scan for duplicate threads</span>
+        </span>
+        <span id="dupeBadge" class="tool-badge tb-blue"></span>
+        <span class="tool-arrow">›</span>
+      </button>
+
+      <button id="scanReadLaterBtn" class="tool-btn tc-blue">
+        <span class="tool-icon-wrap ti-blue">📖</span>
+        <span class="tool-text">
+          <span class="tool-name tn-blue" data-i18n="readLater">Read Later</span>
+          <span class="tool-sub" id="readLaterCount" data-i18n="readLaterSub">Saved articles &amp; digests</span>
+        </span>
+        <span id="readLaterBadge" class="tool-badge tb-blue"></span>
+        <span class="tool-arrow">›</span>
+      </button>
+
+      <button id="scanSnoozedBtn" class="tool-btn tc-purple">
+        <span class="tool-icon-wrap ti-purple">💤</span>
+        <span class="tool-text">
+          <span class="tool-name tn-purple" data-i18n="snoozed">Snoozed</span>
+          <span class="tool-sub" id="snoozedCount" data-i18n="snoozedSub">View snoozed threads</span>
+        </span>
+        <span id="snoozeBadge" class="tool-badge tb-purple"></span>
+        <span class="tool-arrow">›</span>
+      </button>
+
+      <button id="bulkArchiveRunBtn" class="tool-btn tc-green" data-preview-pair="bulkArchivePreviewBtn">
+        <span class="tool-icon-wrap ti-green">📦</span>
+        <span class="tool-text">
+          <span class="tool-name tn-green" data-i18n="archiveOld">Archive old</span>
+          <span class="tool-sub" data-i18n="archiveOldSub">Emails older than 14 days</span>
+        </span>
+        <span class="tool-arrow">›</span>
+      </button>
+
+      <button id="bulkActionBtn" class="tool-btn tc-amber">
+        <span class="tool-icon-wrap ti-amber">⚡</span>
+        <span class="tool-text">
+          <span class="tool-name tn-amber" data-i18n="bulkAction">Bulk action</span>
+          <span class="tool-sub" data-i18n="bulkActionSub">Search &amp; apply to matching emails</span>
+        </span>
+        <span class="tool-arrow">›</span>
+      </button>
+
+      <button id="emptyTrashButton" class="tool-btn tc-gray">
+        <span class="tool-icon-wrap ti-gray">🗑</span>
+        <span class="tool-text">
+          <span class="tool-name tn-gray" data-i18n="emptyTrash">Empty trash</span>
+          <span class="tool-sub" data-i18n="emptyTrashSub">Permanently clear trash</span>
+        </span>
+        <span class="tool-arrow">›</span>
+      </button>
+
+      <button id="refreshButton" class="tool-btn tc-gray">
+        <span class="tool-icon-wrap ti-gray">🔄</span>
+        <span class="tool-text">
+          <span class="tool-name tn-gray" data-i18n="refreshTool">Refresh</span>
+          <span class="tool-sub" data-i18n="refreshToolSub">Reload inbox data</span>
+        </span>
+        <span class="tool-arrow">›</span>
+      </button>
+
+      <button id="openStatsBtn" class="tool-btn tc-gray">
+        <span class="tool-icon-wrap ti-gray">📈</span>
+        <span class="tool-text">
+          <span class="tool-name tn-gray" data-i18n="fullAnalytics">Full analytics</span>
+          <span class="tool-sub" data-i18n="fullAnalyticsSub">Open detailed report</span>
+        </span>
+        <span class="tool-arrow">›</span>
+      </button>
+
+    </div>
+
+    <!-- Hidden compat divs -->
+    <div id="unsubCount" style="display:none"></div>
+    <div id="dupeCount" style="display:none"></div>
+    <div id="followUpCount" style="display:none"></div>
+    <div id="snoozedCount" style="display:none"></div>
+    <div id="trashStatus" style="display:none"></div>
+    <div id="bulkArchiveStatus" style="display:none"></div>
+    <button id="previewTrashButton" style="display:none"></button>
+    <button id="bulkArchivePreviewBtn" style="display:none"></button>
+
+    <!-- Bulk delete expando -->
+    <div class="expando" id="bulkDeleteCard">
+      <button class="expando-toggle" id="bulkDeleteToggle" aria-expanded="true">
+        <span data-i18n="bulkDeleteTitle">🔍 Bulk delete by sender / keyword</span>
+        <span class="arrow">▲</span>
+      </button>
+      <div class="expando-body open">
+        <p style="font-size:11px;color:var(--text-2);margin-bottom:9px;" data-i18n="bulkDeleteDesc">Delete every email from a sender or matching a keyword.</p>
+        <div style="display:flex;gap:7px;margin-bottom:8px;">
+          <input id="bulkDeleteQuery" class="bulk-input" type="text" placeholder="e.g. promo@example.com or newsletter" data-i18n-placeholder="bulkDeletePlaceholder" style="flex:1"/>
+          <button id="bulkDeleteSearchBtn" class="button ghost" style="font-size:11px;padding:6px 12px;flex-shrink:0" data-i18n="search">Search</button>
+        </div>
+        <div id="bulkDeleteResult" style="font-size:12px;color:var(--text-2);min-height:18px;margin-bottom:6px;"></div>
+        <button id="bulkDeleteRunBtn" class="button danger" style="width:100%;display:none;" data-i18n="deleteAllMatched">🗑 Delete all matched emails</button>
+        <div id="bulkDeleteProgress" style="font-size:11px;color:var(--text-2);margin-top:6px;display:none;"></div>
+      </div>
+    </div>
+
+
+
+    <!-- Activity timeline (replaces plain history list) -->
+    <div class="g-timeline">
+      <div class="g-tl-header">
+        <span class="g-tl-title" data-i18n="recentActivity">Recent activity</span>
+      </div>
+      <div id="latestUndoRow" class="latest-undo-row" hidden>
+        <p id="latestUndoText" class="status"></p>
+        <button id="latestUndoButton" class="button ghost" type="button" style="font-size:11px;padding:5px 10px;white-space:nowrap" data-i18n="undo">Undo</button>
+      </div>
+      <ul id="historyList" class="history-list"></ul>
+    </div>
+
+  </div><!-- /g-body -->
+
+  <!-- Footer -->
+  <div class="g-footer">
+    <button id="signOutButton" class="link-button danger" style="font-size:11px" data-i18n="resetSignIn">Reset sign-in</button>
+  </div>
+
+  <!-- 🔧 Dev plan switcher — visible only to owner -->
+  <div id="devPlanPanel" style="display:none;margin:0 14px 14px;padding:10px 12px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.18);border-radius:10px;">
+    <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--purple);margin-bottom:8px;">🔧 Dev — Plan Switcher</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;">
+      <button class="dev-plan-btn" data-plan="free_full"   style="font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.1);background:var(--bg-raised);color:var(--text-2);cursor:pointer;font-family:inherit;">Free (full credits)</button>
+      <button class="dev-plan-btn" data-plan="free_low"    style="font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.1);background:var(--bg-raised);color:var(--yellow);cursor:pointer;font-family:inherit;">Free (3 left)</button>
+      <button class="dev-plan-btn" data-plan="free_empty"  style="font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.1);background:var(--bg-raised);color:var(--red);cursor:pointer;font-family:inherit;">Free (0 left)</button>
+      <button class="dev-plan-btn" data-plan="basic"       style="font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid rgba(79,156,249,.3);background:var(--blue-dim);color:var(--blue);cursor:pointer;font-family:inherit;">Basic (7-day)</button>
+      <button class="dev-plan-btn" data-plan="pro_monthly" style="font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid rgba(74,222,128,.3);background:var(--green-dim);color:var(--green);cursor:pointer;font-family:inherit;">Pro Monthly</button>
+      <button class="dev-plan-btn" data-plan="pro_yearly"  style="font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid rgba(74,222,128,.3);background:var(--green-dim);color:var(--green);cursor:pointer;font-family:inherit;">Pro Yearly ⭐</button>
+      <button class="dev-plan-btn" data-plan="clear"       style="font-size:10px;padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.1);background:var(--bg-raised);color:var(--text-3);cursor:pointer;font-family:inherit;">↩ Use backend</button>
+    </div>
+    <div id="devPlanStatus" style="font-size:10px;color:var(--text-3);margin-top:6px;"></div>
+  </div>
+
+  <!-- Kept for JS compat (hidden) -->
+  <section class="metrics" style="display:none !important">
+    <div class="metric"><span class="metric-label">Rules</span><strong id="_ruleCountDupe">0</strong></div>
+    <div class="metric"><span class="metric-label">Per run</span><strong id="_threadLimitDupe">0</strong></div>
+  </section>
+  <div id="shortcutHintCard" style="display:none !important"></div>
+
+  <!-- ── Clean-up labels modal ─────────────────────────────────────── -->
+  <div id="cleanupOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:50;display:none;align-items:flex-end;justify-content:center;">
+    <div style="background:#16161e;border:1px solid rgba(255,255,255,.1);border-radius:16px 16px 0 0;width:100%;max-width:360px;padding:18px 16px 20px;max-height:85vh;display:flex;flex-direction:column;">
+      <!-- modal header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#e8e8f0;">🧹 Clean up labels</div>
+          <div id="cleanupModalSub" style="font-size:11px;color:#555;margin-top:2px;">Scanning…</div>
+        </div>
+        <button id="cleanupCloseBtn" style="background:none;border:none;color:#555;font-size:18px;cursor:pointer;line-height:1;padding:0;">✕</button>
+      </div>
+      <!-- scanning spinner -->
+      <div id="cleanupScanning" style="padding:24px 0;text-align:center;font-size:12px;color:#555;">⏳ Scanning your labels…</div>
+      <!-- chip grid -->
+      <div id="cleanupChips" style="display:none;flex-wrap:wrap;gap:6px;overflow-y:auto;max-height:240px;margin:10px 0;padding-right:2px;"></div>
+      <!-- footer -->
+      <div id="cleanupFooter" style="display:none;padding-top:10px;border-top:1px solid rgba(255,255,255,.06);display:none;align-items:center;justify-content:space-between;">
+        <span id="cleanupSelCount" style="font-size:11px;color:#555;">0 selected</span>
+        <div style="display:flex;gap:8px;">
+          <button id="cleanupSelectAll" style="background:none;border:none;color:#4f9cf9;font-size:11px;font-weight:600;cursor:pointer;padding:0;font-family:inherit;">Select all</button>
+          <button id="cleanupDeleteBtn" style="background:rgba(248,113,113,.15);color:#f87171;border:1px solid rgba(248,113,113,.25);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;" disabled>🗑 Delete selected</button>
+        </div>
+      </div>
+      <!-- confirmation step (hidden until user clicks Delete) -->
+      <div id="cleanupConfirm" style="display:none;margin-top:12px;background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.2);border-radius:12px;padding:14px;">
+        <div style="font-size:13px;font-weight:700;color:#f87171;margin-bottom:6px;">⚠️ This cannot be undone</div>
+        <div id="cleanupConfirmMsg" style="font-size:12px;color:#aaa;margin-bottom:12px;line-height:1.5;"></div>
+        <div style="display:flex;gap:8px;">
+          <button id="cleanupCancelConfirm" style="flex:1;background:rgba(255,255,255,.05);color:#666;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">Cancel</button>
+          <button id="cleanupConfirmDelete" style="flex:1;background:linear-gradient(135deg,#dc2626,#b91c1c);color:#fff;border:none;border-radius:8px;padding:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Yes, delete them</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <div id="snoozedOverlay" class="snooze-overlay" style="display:none;">
+    <div class="snooze-modal">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <h3>Snoozed threads</h3>
+        <button id="closeSnoozedBtn" class="link-button" style="font-size:18px;padding:0;">✕</button>
+      </div>
+      <div id="snoozedList" style="display:flex;flex-direction:column;gap:8px;max-height:400px;overflow-y:auto;"></div>
+    </div>
+  </div>
+  <div id="summaryOverlay" class="summary-overlay" style="display:none;">
+    <div class="summary-modal">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <h3>Thread summary</h3>
+        <button id="closeSummaryBtn" class="link-button" style="font-size:18px;padding:0;">✕</button>
+      </div>
+      <div id="summaryContent" style="display:none;font-size:13px;color:var(--text-2);line-height:1.6;"></div>
+      <div id="summaryLoading" style="text-align:center;padding:20px;color:var(--text-2);">
+        <div style="margin-bottom:10px;">Analyzing thread...</div>
+        <div style="width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto;"></div>
+      </div>
+    </div>
+  </div>
+  <div id="snoozePopover" class="snooze-popover" style="display:none;position:fixed;width:220px;">
+    <div style="font-size:11px;font-weight:700;color:var(--text-2);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;">Snooze until</div>
+    <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px;">
+      <button class="snooze-preset-btn" data-preset="1h">1 hour</button>
+      <button class="snooze-preset-btn" data-preset="tomorrow-9am">Tomorrow 9 AM</button>
+      <button class="snooze-preset-btn" data-preset="1w">Next week</button>
+      <button class="snooze-preset-btn" data-preset="custom">Custom date/time…</button>
+    </div>
+    <input id="snoozeCustomInput" type="datetime-local" style="display:none;width:100%;padding:6px 8px;border:1px solid var(--border-md);border-radius:8px;background:var(--bg);color:var(--text);font-size:12px;margin-bottom:8px;outline:none;">
+    <div style="display:flex;gap:6px;">
+      <button id="snoozeConfirmBtn" class="button primary" style="flex:1;padding:6px 8px;font-size:11px;">Snooze</button>
+      <button id="snoozeCancelBtn" class="button ghost" style="flex:1;padding:6px 8px;font-size:11px;">Cancel</button>
+    </div>
+  </div>
+
+</main>
+<script type="module" src="popup.js"></script>
+</body>
+</html>
