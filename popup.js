@@ -196,11 +196,11 @@ if (themeToggle) {
 }
 
 // ── Upgrade / Checkout Flow ───────────────────────────────────────────────
-// Direct Stripe payment links — primary checkout method
+// Lemon Squeezy payment links
 const STRIPE_PAYMENT_LINKS = {
-  basic:       "https://buy.stripe.com/test_bJe8wQ1mneoN2er9Gx9fW00",
-  pro_monthly: "https://buy.stripe.com/test_cNi00k4yz80p5qD1a19fW01",
-  pro_yearly:  "https://buy.stripe.com/test_6oUcN6d55dkJ2er6ul9fW02",
+  basic:       "https://gmail-organizer.lemonsqueezy.com/checkout/buy/e96efc99-ed1e-444a-9878-111396b2ff77",
+  pro_monthly: "https://gmail-organizer.lemonsqueezy.com/checkout/buy/0af6b55e-cdd8-4963-907d-78807219150b",
+  pro_yearly:  "https://gmail-organizer.lemonsqueezy.com/checkout/buy/b1cc248c-98b6-4ef4-94a4-d09140701e5e",
 };
 
 async function openUpgradeCheckout(plan) {
