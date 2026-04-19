@@ -18,7 +18,7 @@ echo "$SK" | firebase functions:secrets:set STRIPE_SECRET_KEY --force
 echo "$PRICE_BASIC" | firebase functions:secrets:set STRIPE_PRICE_BASIC --force
 echo "$PRICE_PRO_MONTHLY" | firebase functions:secrets:set STRIPE_PRICE_PRO_MONTHLY --force
 echo "$PRICE_PRO_YEARLY" | firebase functions:secrets:set STRIPE_PRICE_PRO_YEARLY --force
-echo "whsec_JHkqpjgufn6joPWPFoWrud8MPz2KD3dI" | firebase functions:secrets:set STRIPE_WEBHOOK_SECRET --force
+echo "YOUR_WEBHOOK_SECRET_HERE" | firebase functions:secrets:set STRIPE_WEBHOOK_SECRET --force
 
 echo "🚀 Deploying Cloud Functions..."
 firebase deploy --only functions

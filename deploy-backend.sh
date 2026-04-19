@@ -4,7 +4,7 @@
 
 # ── CONFIG (fill these in) ────────────────────────────────────────────────────
 STRIPE_SECRET_KEY="sk_test_YOUR_STRIPE_SECRET_KEY_HERE"
-STRIPE_WEBHOOK_SECRET="whsec_JHkqpjgufn6joPWPFoWrud8MPz2KD3dI"
+STRIPE_WEBHOOK_SECRET="YOUR_WEBHOOK_SECRET_HERE"
 # ─────────────────────────────────────────────────────────────────────────────
 
 echo "📦 Installing dependencies..."
