@@ -2194,7 +2194,7 @@ const CAT_DEFINITIONS = [
     name: 'To respond',
     desc: 'Need your response',
     color: '#ef4444',
-    label: 'Action/To Respond',
+    label: 'To Respond',
     match: {
       fromDomains: [],
       fromIncludes: [],
@@ -2254,7 +2254,7 @@ const CAT_DEFINITIONS = [
     name: 'To follow up',
     desc: 'Waiting for their reply',
     color: '#8b5cf6',
-    label: 'Action/Follow Up',
+    label: 'Follow Up',
     match: {
       fromDomains: [],
       fromIncludes: [],
@@ -2278,7 +2278,7 @@ const CAT_DEFINITIONS = [
     name: 'Read Later',
     desc: 'Newsletters, digests & articles to read when you have time',
     color: '#0ea5e9',
-    label: 'Reading/Saved',
+    label: 'Read Later',
     match: {
       fromDomains: ['substack.com', 'beehiiv.com', 'ghost.io', 'medium.com', 'mailchimp.com', 'convertkit.com', 'buttondown.email', 'revue.co', 'tinyletter.com'],
       fromIncludes: ['digest@', 'weekly@', 'daily@', 'newsletter@', 'letter@', 'roundup@', 'edition@'],
@@ -3324,11 +3324,11 @@ if (reloadExtBtn) {
   // ── Built-in domain categorizer (no API key needed) ──────────────────────
   var LOCAL_DOMAIN_MAP = {
     // ── Google services ──────────────────────────────────────────────────
-    'google.com':        {'label':'Updates/Google','action':'archive','name':'Google'},
-    'accounts.google.com':{'label':'Updates/Google','action':'archive','name':'Google Account'},
-    'youtube.com':       {'label':'Updates/Google','action':'archive','name':'YouTube'},
-    'googlemail.com':    {'label':'Updates/Google','action':'archive','name':'Google Mail'},
-    'google.fr':         {'label':'Updates/Google','action':'archive','name':'Google'},
+    'google.com':        {'label':'Google Updates','action':'archive','name':'Google'},
+    'accounts.google.com':{'label':'Google Updates','action':'archive','name':'Google Account'},
+    'youtube.com':       {'label':'Google Updates','action':'archive','name':'YouTube'},
+    'googlemail.com':    {'label':'Google Updates','action':'archive','name':'Google Mail'},
+    'google.fr':         {'label':'Google Updates','action':'archive','name':'Google'},
 
     // ── Work — Dev & Code ─────────────────────────────────────────────────
     'github.com':        {'label':'Work/Dev','action':'archive','name':'GitHub'},
@@ -3349,23 +3349,23 @@ if (reloadExtBtn) {
     'openrouter.ai':     {'label':'Work/Dev','action':'archive','name':'OpenRouter'},
 
     // ── Work — Projects & Tools ───────────────────────────────────────────
-    'atlassian.net':     {'label':'Work/Projects','action':'archive','name':'Atlassian'},
-    'jira.com':          {'label':'Work/Projects','action':'archive','name':'Jira'},
-    'confluence.com':    {'label':'Work/Projects','action':'archive','name':'Confluence'},
-    'clickup.com':       {'label':'Work/Projects','action':'archive','name':'ClickUp'},
-    'linear.app':        {'label':'Work/Projects','action':'archive','name':'Linear'},
-    'asana.com':         {'label':'Work/Projects','action':'archive','name':'Asana'},
-    'trello.com':        {'label':'Work/Projects','action':'archive','name':'Trello'},
-    'monday.com':        {'label':'Work/Projects','action':'archive','name':'Monday.com'},
-    'notion.so':         {'label':'Work/Projects','action':'archive','name':'Notion'},
-    'notion.io':         {'label':'Work/Projects','action':'archive','name':'Notion'},
-    'slack.com':         {'label':'Work/Projects','action':'archive','name':'Slack'},
-    'figma.com':         {'label':'Work/Projects','action':'archive','name':'Figma'},
-    'zapier.com':        {'label':'Work/Projects','action':'archive','name':'Zapier'},
-    'make.com':          {'label':'Work/Projects','action':'archive','name':'Make'},
-    'hubspot.com':       {'label':'Work/Projects','action':'archive','name':'HubSpot'},
-    'datadog.com':       {'label':'Work/Projects','action':'archive','name':'Datadog'},
-    'twilio.com':        {'label':'Work/Projects','action':'archive','name':'Twilio'},
+    'atlassian.net':     {'label':'Work Projects','action':'archive','name':'Atlassian'},
+    'jira.com':          {'label':'Work Projects','action':'archive','name':'Jira'},
+    'confluence.com':    {'label':'Work Projects','action':'archive','name':'Confluence'},
+    'clickup.com':       {'label':'Work Projects','action':'archive','name':'ClickUp'},
+    'linear.app':        {'label':'Work Projects','action':'archive','name':'Linear'},
+    'asana.com':         {'label':'Work Projects','action':'archive','name':'Asana'},
+    'trello.com':        {'label':'Work Projects','action':'archive','name':'Trello'},
+    'monday.com':        {'label':'Work Projects','action':'archive','name':'Monday.com'},
+    'notion.so':         {'label':'Work Projects','action':'archive','name':'Notion'},
+    'notion.io':         {'label':'Work Projects','action':'archive','name':'Notion'},
+    'slack.com':         {'label':'Work Projects','action':'archive','name':'Slack'},
+    'figma.com':         {'label':'Work Projects','action':'archive','name':'Figma'},
+    'zapier.com':        {'label':'Work Projects','action':'archive','name':'Zapier'},
+    'make.com':          {'label':'Work Projects','action':'archive','name':'Make'},
+    'hubspot.com':       {'label':'Work Projects','action':'archive','name':'HubSpot'},
+    'datadog.com':       {'label':'Work Projects','action':'archive','name':'Datadog'},
+    'twilio.com':        {'label':'Work Projects','action':'archive','name':'Twilio'},
 
     // ── Work — Freelance ─────────────────────────────────────────────────
     'fiverr.com':        {'label':'Work/Freelance','action':'label','name':'Fiverr'},
@@ -3410,10 +3410,10 @@ if (reloadExtBtn) {
     'hbo.com':           {'label':'Updates/Subscriptions','action':'archive','name':'HBO'},
 
     // ── Updates — Marketing/Promotions ────────────────────────────────────
-    'mailchimp.com':     {'label':'Updates/Marketing','action':'archive','name':'Newsletter'},
-    'convertkit.com':    {'label':'Updates/Marketing','action':'archive','name':'Newsletter'},
-    'klaviyo.com':       {'label':'Updates/Marketing','action':'archive','name':'Marketing'},
-    'sendinblue.com':    {'label':'Updates/Marketing','action':'archive','name':'Marketing'},
+    'mailchimp.com':     {'label':'Marketing','action':'archive','name':'Newsletter'},
+    'convertkit.com':    {'label':'Marketing','action':'archive','name':'Newsletter'},
+    'klaviyo.com':       {'label':'Marketing','action':'archive','name':'Marketing'},
+    'sendinblue.com':    {'label':'Marketing','action':'archive','name':'Marketing'},
 
     // ── Social ────────────────────────────────────────────────────────────
     'facebook.com':      {'label':'Social/Facebook','action':'archive','name':'Facebook'},
@@ -3443,11 +3443,11 @@ if (reloadExtBtn) {
   // Canonical label map — ALL variants collapse to one clean label
   var FLAT_LABEL_MAP = {
     // Old category system labels → main hierarchy
-    'info/fyi':                  'Updates/Notifications',
-    'collaboration/comments':    'Work/Projects',
-    'notifications/tools':       'Updates/Notifications',
-    'calendar/meetings':         'Action/Follow Up',
-    'career/applications':       'Work/Projects',
+    'info/fyi':                  'Notifications',
+    'collaboration/comments':    'Work Projects',
+    'notifications/tools':       'Notifications',
+    'calendar/meetings':         'Follow Up',
+    'career/applications':       'Work Projects',
     // Finance consolidation
     'finance/banking':           'Finance/Payments',
     'finance/receipts':          'Finance/Payments',
@@ -3459,28 +3459,28 @@ if (reloadExtBtn) {
     'travel/flights':            'Travel/Bookings',
     'travel/general':            'Travel/Bookings',
     // Social consolidation
-    'social/general':            'Social/Updates',
-    'social/updates':            'Social/Updates',
+    'social/general':            'Social Emails',
+    'social/updates':            'Social Emails',
     // Updates consolidation
-    'updates/promotions':        'Updates/Marketing',
-    'updates/general':           'Updates/Notifications',
+    'updates/promotions':        'Marketing',
+    'updates/general':           'Notifications',
     // Flat labels
-    'marketing':                 'Updates/Marketing',
-    'promotions':                'Updates/Marketing',
+    'marketing':                 'Marketing',
+    'promotions':                'Marketing',
     'newsletters':'Reading/Newsletter','newsletter':'Reading/Newsletter',
-    'social':'Social/Updates','notifications':'Updates/Notifications',
-    'updates':'Updates/Notifications','work':'Work/Projects',
+    'social':'Social Emails','notifications':'Notifications',
+    'updates':'Notifications','work':'Work Projects',
     'finance':'Finance/Payments','shopping':'Shopping/Orders',
     'travel':'Travel/Bookings','reading':'Reading/Newsletter',
-    'spam':'Updates/Notifications','receipts':'Finance/Payments',
+    'spam':'Notifications','receipts':'Finance/Payments',
     'orders':'Shopping/Orders','invoices':'Finance/Payments',
-    'bills':'Finance/Payments','jobs':'Work/Projects',
+    'bills':'Finance/Payments','jobs':'Work Projects',
     'news':'Reading/Newsletter','blog':'Reading/Newsletter',
     'education':'Reading/Education','dev':'Work/Dev',
-    'github':'Work/Dev','slack':'Work/Projects',
+    'github':'Work/Dev','slack':'Work Projects',
   };
   function normalizeLabelStyle(label) {
-    if (!label) return 'Updates/Notifications';
+    if (!label) return 'Notifications';
     var key = label.toLowerCase().trim();
     // Check full label (handles already-hierarchical variants like Finance/Banking)
     if (FLAT_LABEL_MAP[key]) return FLAT_LABEL_MAP[key];
@@ -3490,13 +3490,13 @@ if (reloadExtBtn) {
     if (/shop|order|buy|store|ecommerce/i.test(key))   return 'Shopping/Orders';
     if (/pay|bank|financ|invoice|receipt|bill|wallet/i.test(key)) return 'Finance/Payments';
     if (/news|letter|digest|blog|article|read/i.test(key))  return 'Reading/Newsletter';
-    if (/social|network|connect|community/i.test(key)) return 'Social/Updates';
+    if (/social|network|connect|community/i.test(key)) return 'Social Emails';
     if (/travel|flight|hotel|trip|booking/i.test(key)) return 'Travel/Bookings';
-    if (/work|job|career|freelan|dev|code|git/i.test(key)) return 'Work/Projects';
-    if (/market|promo|offer|deal|sale/i.test(key))     return 'Updates/Marketing';
+    if (/work|job|career|freelan|dev|code|git/i.test(key)) return 'Work Projects';
+    if (/market|promo|offer|deal|sale/i.test(key))     return 'Marketing';
     if (/subscri|premium|plan|renew/i.test(key))       return 'Updates/Subscriptions';
     // Default
-    return 'Updates/Notifications';
+    return 'Notifications';
   }
 
   // Subject-based scoring rules — each entry: [regex, label, action, score]
@@ -3512,7 +3512,7 @@ if (reloadExtBtn) {
     // Work — Dev & code
     [/pull request|merge request|ci |build failed|build passed|deploy|pipeline|release|commit|new issue|repo|branch|alert:|down:|error:|incident/i, 'Work/Dev', 'archive', 4],
     // Work — Projects & tools
-    [/assigned to you|task due|mentioned you|commented on|new task|new ticket|sprint|board update|project update|due today|overdue/i, 'Work/Projects', 'archive', 4],
+    [/assigned to you|task due|mentioned you|commented on|new task|new ticket|sprint|board update|project update|due today|overdue/i, 'Work Projects', 'archive', 4],
     // Work — Freelance
     [/proposal|contract|milestone|offer|new order received|new message from buyer|job invite|hired|bid accepted|freelance/i, 'Work/Freelance', 'label', 4],
     // Reading — Newsletter
@@ -3520,15 +3520,15 @@ if (reloadExtBtn) {
     // Reading — Education
     [/course|lesson|quiz|certificate|enroll|class available|new lecture|learning path|webinar|tutorial|your progress/i, 'Reading/Education', 'archive', 3],
     // Social
-    [/mentioned you|tagged you|sent you a message|friend request|followed you|liked your|commented on your|new connection|invite to connect/i, 'Social/Updates', 'archive', 3],
+    [/mentioned you|tagged you|sent you a message|friend request|followed you|liked your|commented on your|new connection|invite to connect/i, 'Social Emails', 'archive', 3],
     // Subscriptions
     [/subscription|plan renewal|your plan|trial end|upgrade your|premium|expires on|auto-renew|next billing/i, 'Updates/Subscriptions', 'archive', 3],
     // Marketing & promos
-    [/% off|\bsale\b|discount|promo|deal|limited time|exclusive offer|flash sale|new arrivals|shop now|don't miss/i, 'Updates/Marketing', 'archive', 2],
+    [/% off|\bsale\b|discount|promo|deal|limited time|exclusive offer|flash sale|new arrivals|shop now|don't miss/i, 'Marketing', 'archive', 2],
     // Security & account
-    [/security alert|unusual sign|verify your|confirm your email|password reset|two-factor|login attempt|account activity|suspicious/i, 'Updates/Notifications', 'label', 3],
+    [/security alert|unusual sign|verify your|confirm your email|password reset|two-factor|login attempt|account activity|suspicious/i, 'Notifications', 'label', 3],
     // General notifications (lowest priority)
-    [/new feature|product update|changelog|release notes|status update|we.ve updated|terms of service|privacy policy/i, 'Updates/Notifications', 'archive', 1],
+    [/new feature|product update|changelog|release notes|status update|we.ve updated|terms of service|privacy policy/i, 'Notifications', 'archive', 1],
   ];
 
   function scoreSubjects(subjects) {
@@ -3579,9 +3579,9 @@ if (reloadExtBtn) {
     if (/travel|flight|hotel|booking|airbnb|expedia|airfrance|ryanair/.test(d)) return { label: 'Travel/Bookings',      action: 'label',   name: cap };
     if (/freelan|upwork|fiverr|malt|toptal|99designs/.test(d))              return { label: 'Work/Freelance',         action: 'label',   name: cap };
     if (/github|gitlab|sentry|vercel|netlify|heroku|render|railway/.test(d)) return { label: 'Work/Dev',             action: 'archive', name: cap };
-    if (/jira|asana|trello|notion|clickup|linear|monday/.test(d))           return { label: 'Work/Projects',          action: 'archive', name: cap };
+    if (/jira|asana|trello|notion|clickup|linear|monday/.test(d))           return { label: 'Work Projects',          action: 'archive', name: cap };
     if (/subscri|premium|billing|renew/.test(d))                            return { label: 'Updates/Subscriptions',  action: 'archive', name: cap };
-    if (/market|promo|offer|deal|campaign/.test(d))                         return { label: 'Updates/Marketing',      action: 'archive', name: cap };
+    if (/market|promo|offer|deal|campaign/.test(d))                         return { label: 'Marketing',      action: 'archive', name: cap };
 
     // 4. Weak subject signal (score 1-2) — still better than pure fallback
     if (subjectScore && subjectScore.score >= 1) {
@@ -3589,7 +3589,7 @@ if (reloadExtBtn) {
     }
 
     // 5. Last resort
-    return { label: 'Updates/Notifications', action: 'archive', name: cap };
+    return { label: 'Notifications', action: 'archive', name: cap };
   }
 
   // ── Inline results helpers ────────────────────────────────────────────────

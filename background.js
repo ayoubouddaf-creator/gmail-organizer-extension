@@ -1948,18 +1948,18 @@ async function getCurrentHistoryId(token) {
 // Called both during organize runs AND retroactive labeling so deletions
 // of flat labels are never immediately recreated under the old flat name.
 const _FLAT_LABEL_MAP = {
-  'marketing':'Updates/Marketing','promotions':'Updates/Marketing',
+  'marketing':'Marketing','promotions':'Marketing',
   'newsletters':'Reading/Newsletter','newsletter':'Reading/Newsletter',
-  'social':'Social/Updates','notifications':'Updates/Notifications',
-  'updates':'Updates/Notifications','work':'Work/Projects',
+  'social':'Social Emails','notifications':'Notifications',
+  'updates':'Notifications','work':'Work Projects',
   'finance':'Finance/Payments','shopping':'Shopping/Orders',
   'travel':'Travel/Bookings','reading':'Reading/Newsletter',
   'receipts':'Finance/Payments','orders':'Shopping/Orders',
-  'invoices':'Finance/Payments','info/fyi':'Updates/Notifications',
-  'collaboration/comments':'Work/Projects','notifications/tools':'Updates/Notifications',
-  'calendar/meetings':'Action/Follow Up','career/applications':'Work/Projects',
+  'invoices':'Finance/Payments','info/fyi':'Notifications',
+  'collaboration/comments':'Work Projects','notifications/tools':'Notifications',
+  'calendar/meetings':'Follow Up','career/applications':'Work Projects',
   'finance/banking':'Finance/Payments','travel/stays':'Travel/Bookings',
-  'travel/flights':'Travel/Bookings','social/general':'Social/Updates'
+  'travel/flights':'Travel/Bookings','social/general':'Social Emails'
 };
 function normalizeLabelName(raw) {
   if (!raw || raw.indexOf('/') !== -1) return raw || 'Updates/General';
@@ -2489,12 +2489,13 @@ async function ensureParentLabels(token, fullName) {
       })
     });
     if (!r.ok) {
-      if (r.status === 409) {
-        var refreshed = await getLabelsByName(token);
-        var existingId = refreshed.get(parentName);
-        if (existingId) { labelsByName.set(parentName, existingId); continue; }
-      }
-      throw new Error("Failed to create parent label \"" + parentName + "\".");
+      // Always try a fresh lookup first — label may already exist (409 or system label conflict)
+      var refreshed = await getLabelsByName(token);
+      var existingId = refreshed.get(parentName);
+      if (existingId) { labelsByName.set(parentName, existingId); continue; }
+      // Non-fatal: log and skip rather than aborting the whole organize run
+      tsLog('warn', 'ensureParentLabels: could not create parent "' + parentName + '" (HTTP ' + r.status + '), skipping');
+      continue;
     }
     var created = await r.json();
     labelsByName.set(parentName, created.id);
@@ -4005,15 +4006,15 @@ const CAT_MATCH_PATTERNS = {
 };
 
 const CAT_LABELS = {
-  'to-respond':     'Action/To Respond',
-  'fyi':            'Updates/Notifications',   // merged: Info/FYI → Updates/Notifications
-  'comment':        'Work/Projects',            // merged: Collaboration/Comments → Work/Projects
-  'notification':   'Updates/Notifications',   // merged: Notifications/Tools → Updates/Notifications
-  'meeting-update': 'Action/Follow Up',         // merged: Calendar/Meetings → Action/Follow Up
-  'to-follow-up':   'Action/Follow Up',
-  'marketing':      'Updates/Marketing',        // merged: Marketing (flat) → Updates/Marketing
-  'social':         'Social/Updates',           // consolidated
-  'reading-later':  'Reading/Saved',            // newsletters & long reads → save for later
+  'to-respond':     'To Respond',
+  'fyi':            'Notifications',
+  'comment':        'Work Projects',
+  'notification':   'Notifications',
+  'meeting-update': 'Follow Up',
+  'to-follow-up':   'Follow Up',
+  'marketing':      'Marketing',
+  'social':         'Social Emails',
+  'reading-later':  'Read Later',
 };
 
 // Default state for all categories — mirrors options.js defaults so a fresh install
@@ -5261,7 +5262,7 @@ async function autoLabelFollowUps(opts) {
   var dryRun = !!(opts && opts.dryRun);
 
   var token = await getToken();
-  var followUpLabelId = await getOrCreateLabel(token, 'Action/Follow Up', null);
+  var followUpLabelId = await getOrCreateLabel(token, 'Follow Up', null);
   var query = 'in:sent older_than:' + daysThreshold + 'd';
   var data = await gmailRequest(token, '/threads?q=' + encodeURIComponent(query) + '&maxResults=' + Math.min(maxItems, 200));
   await trackQuotaUnit(5);
@@ -5288,7 +5289,7 @@ async function autoLabelFollowUps(opts) {
             body: JSON.stringify({ addLabelIds: [followUpLabelId] })
           });
           await trackQuotaUnit(5);
-          _storeLabelDecision({ threadId: threads[i].id, label: 'Action/Follow Up', ruleId: 'auto-followup', ruleName: 'Auto: no reply', from: '', subject: '', reason: 'sent ' + daysThreshold + '+ days ago, no reply' });
+          _storeLabelDecision({ threadId: threads[i].id, label: 'Follow Up', ruleId: 'auto-followup', ruleName: 'Auto: no reply', from: '', subject: '', reason: 'sent ' + daysThreshold + '+ days ago, no reply' });
         }
         labeled++;
       }
@@ -5381,7 +5382,7 @@ async function scanReadLater(opts) {
 
   // Find label ID for Reading/Saved
   var labelsByName = await getLabelsByName(token);
-  var savedLabelId = labelsByName.get('Reading/Saved');
+  var savedLabelId = labelsByName.get('Read Later');
 
   if (!savedLabelId) {
     return { count: 0, unread: 0, items: [], labelExists: false };
